@@ -1,4 +1,6 @@
 from PySide6.QtWidgets import QPushButton, QMainWindow, QVBoxLayout, QWidget
+from views.Forms import FormsStudend
+
 class MenuWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -21,6 +23,12 @@ class MenuWindow(QMainWindow):
         self.layout.addWidget(self.button5) 
         self.layout.addWidget(self.button6)
         
+        self.button1.clicked.connect(self.rg)
+        
         container = QWidget()
         container.setLayout(self.layout)
         self.setCentralWidget(container) 
+        
+    def rg (self):
+        self.rg_Window = FormsStudend()
+        self.rg_Window.show()

@@ -1,11 +1,9 @@
 import sys 
 from PySide6.QtWidgets import QApplication
-from views.Login import LoginWindow 
+from views.Login import LoginWindow
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    login_window = LoginWindow()
-    login_window.show()
+    Login_Window = LoginWindow()
+    Login_Window.show()
     sys.exit(app.exec())
-    
-    
