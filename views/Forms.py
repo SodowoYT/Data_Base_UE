@@ -597,7 +597,8 @@ class FormsStudend(QMainWindow):
         self.backP3.clicked.connect(self.RegisterPage3)
         self.layoutP4.addWidget(self.backP3, 5, 1)
         self.page4.setLayout(self.layoutP4)
-
+        
+        # Boton de Registro Final
         self.registerBton = QPushButton("Finalizar Registro")
         self.registerBton.clicked.connect(self.register_estudend)
         self.layoutP4.addWidget(self.registerBton, 6, 1)
