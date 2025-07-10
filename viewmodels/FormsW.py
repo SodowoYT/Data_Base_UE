@@ -14,9 +14,9 @@ class EstudendViewModel:
                 # Tallas
                 Altura, Peso, Talla_Camisa, Talla_Pantalon, Talla_Zapatos,
                 # Datos Medicos
-                Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Tipo_de_Sangre, Carton_Vacunas, Examen_de_Heces,
+                Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Tipo_de_Sangre, Examen_de_Heces,
                 # Ubicacion
-                Nacionalidad, Estado, Municipio, Punto_de_Referencia):
+                Nacionalidad, Estado, Municipio, Punto_de_Referencia, Carton_Vacunas=None):
       
       # Datos Personales
       self.Estudend.Nombre = Nombre

@@ -1,8 +1,10 @@
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QRadioButton, QMessageBox, QButtonGroup, QMainWindow, QStackedWidget, QGridLayout, QGroupBox, QSizePolicy, QSpacerItem
+from PySide6.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QRadioButton, QMessageBox, QButtonGroup, QMainWindow, QStackedWidget, QGridLayout, QGroupBox, QSizePolicy, QSpacerItem, QFileDialog
 from viewmodels.FormsW import EstudendViewModel
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap, QPainter
+import sqlite3
+
 
 class BgWidget(QWidget):
     def __init__(self, image_path):
@@ -16,6 +18,8 @@ class BgWidget(QWidget):
 class FormsStudend(QMainWindow):
     def __init__(self):
         super().__init__()
+
+        self.viewmodel = EstudendViewModel()  
 
         # Propiedades de la ventana
         self.setWindowTitle("Datos del Estudiante")
@@ -164,9 +168,19 @@ class FormsStudend(QMainWindow):
         self.tds = QLineEdit(self)
         self.tds.setPlaceholderText("Tipo de Sangre")
         self.grid2.addWidget(self.tds, 1, 1)
-        self.inputcartondevacunas = QLineEdit(self)
-        self.inputcartondevacunas.setPlaceholderText("Cartón de Vacunas")
-        self.grid2.addWidget(self.inputcartondevacunas, 2, 1)
+        
+        # Variable para la imagen de la vacuna
+        self.vacunaIMGpath = None
+        self.PushbuttonVacuna = QPushButton("Subir Imagen de Vacuna", self)
+        self.PushbuttonVacuna.clicked.connect(self.upload_vacuna_image)
+        self.grid2.addWidget(self.PushbuttonVacuna, 2, 1)
+        
+        self.vacunaIMG = QLabel(self)
+        self.vacunaIMG.setFixedSize(100, 100)
+        self.vacunaIMG.setScaledContents(True)
+        self.grid2.addWidget(self.vacunaIMG, 2, 2)
+
+        
         self.exdh = QLineEdit(self)
         self.exdh.setPlaceholderText("Examen de Heces")
         self.grid2.addWidget(self.exdh, 3, 1)
@@ -255,8 +269,7 @@ class FormsStudend(QMainWindow):
         self.page1.setLayout(self.layoutP1)
         self.Sc_Widget.addWidget(self.page1)
 
-
-
+        
         # Crear la segundasel página
         self.page2 = QWidget()
         self.layoutP2 = QGridLayout()
@@ -267,7 +280,7 @@ class FormsStudend(QMainWindow):
         self.Rplabel.setFixedSize(300, 45)
         self.Rplabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.dclabel = QLabel("Datos de Contacto", self)
-        self.dclabel.setProperty("class", "titulod")
+        self.dclabel.setProperty("class", "tituloz")
         self.dclabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         self.dclabel.setFixedSize(300, 45)
         self.dclabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
@@ -354,6 +367,7 @@ class FormsStudend(QMainWindow):
         self.Serial.setPlaceholderText("Serial de la Patria")
         self.grid7.addWidget(self.Serial, 4, 1)
         self.layoutP2.addLayout(self.grid7, 1, 2, Qt.AlignTop)
+        
         # Fila 3: Grid 8 Datos de Profesión
         # Titulo Grid 8
         self.Rplabel = QLabel("Datos de Profesión")
@@ -381,6 +395,13 @@ class FormsStudend(QMainWindow):
         self.layoutP2.addWidget(self.backBt, 5, 1)
         self.page2.setLayout(self.layoutP2)
         
+        # Boton de Next a la Pagina 2
+        self.NextP3 = QPushButton("Siguiente Pagina")
+        self.NextP3.clicked.connect(self.RegisterPage3)
+        self.layoutP2.addWidget(self.NextP3, 4, 1)
+        self.page2.setLayout(self.layoutP2)
+        
+        
         
         # Espaciador entre columnas 
         self.layoutP2.addItem(QSpacerItem(200, 20, QSizePolicy.Minimum, QSizePolicy.Expanding), 0, 1, 5, 1)
@@ -388,6 +409,205 @@ class FormsStudend(QMainWindow):
         # Muestra los Items en la Ventana 2
         self.page2.setLayout(self.layoutP2)
         self.Sc_Widget.addWidget(self.page2)
+        
+        
+        # Crear La Tercera Pagina
+        self.page3 = QWidget()
+        self.layoutP3 = QGridLayout()
+        
+        #Fila 0: Titutlos Tabla Datos del Padre.
+        self.dpLabel = QLabel("Datos Personales del Padre", self)
+        self.dpLabel.setProperty("class", "tituloz")
+        self.dpLabel.setFixedSize(300, 45)
+        self.dpLabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.dclabel = QLabel("Datos de Contacto del Padre", self)
+        self.dclabel.setProperty("class", "tituloz")
+        self.dclabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self.dclabel.setFixedSize(300, 45)
+        self.dclabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.layoutP3.addWidget(self.dpLabel, 0, 0, Qt.AlignLeft)
+        self.layoutP3.addWidget(self.dclabel, 0, 2, Qt.AlignRight)
+        
+        # Fila 1: Grid 9 Datos Personales
+        self.grid9 = QGridLayout()
+        self.nameP = QLineEdit(self)
+        self.nameP.setPlaceholderText("Nombres")
+        self.grid9.addWidget(self.nameP, 1, 0)
+        self.lastNP = QLineEdit(self)
+        self.lastNP.setPlaceholderText("Apellidos")
+        self.grid9.addWidget(self.lastNP, 1, 1)
+        self.ageP = QLineEdit(self)
+        self.ageP.setPlaceholderText("Edad")
+        self.grid9.addWidget(self.ageP, 2, 0)
+        self.dniP = QLineEdit(self)
+        self.dniP.setPlaceholderText("Cedula")
+        self.grid9.addWidget(self.dniP, 2, 1)
+        self.dateofbirthP = QLineEdit(self)
+        self.dateofbirthP.setPlaceholderText("Fecha de Nacimiento")
+        self.grid9.addWidget(self.dateofbirthP, 2, 2)
+        
+        
+        # Boton Vive Con el Niño
+        self.lwtc = QGroupBox("¿Vive Con el Niño?")
+        self.QrPSi = QRadioButton("Si")
+        self.QrPNo = QRadioButton("No")
+        self.QrPSi.setChecked(True)
+        self.QvLwtc = QVBoxLayout()
+        self.QvLwtc.addWidget(self.QrPSi)
+        self.QvLwtc.addWidget(self.QrPNo)
+        self.lwtc.setLayout(self.QvLwtc)
+        self.grid9.addWidget(self.lwtc, 3, 0)
+        # Final del Boton Vive Con el Niño
+        
+        self.Cnn = QLineEdit(self)
+        self.Cnn.setPlaceholderText("¿Causa por la que no vive con el Niño?")
+        self.grid9.addWidget(self.Cnn, 4, 0)
+        self.layoutP3.addLayout(self.grid9, 1, 0, Qt.AlignLeft)
+        
+        # Fila 2: Grid 10 Datos de Contacto
+        self.grid10 = QGridLayout()
+        self.PhoneMp = QLineEdit(self)
+        self.PhoneMp.setPlaceholderText("Telélefono Móvil")
+        self.grid10.addWidget(self.PhoneMp, 1, 0)
+        self.Dcp = QLineEdit(self)
+        self.Dcp.setPlaceholderText("Dirección")
+        self.grid10.addWidget(self.Dcp, 2, 0)
+        self.layoutP3.addLayout(self.grid10, 1, 2, Qt.AlignTop)
+        
+        #Fila 3: Titulo Datos de Profesion
+        self.Plabel = QLabel("Datos de Profesión del Padre")
+        self.Plabel.setProperty("class", "tituloz")
+        self.Plabel.setFixedSize(300, 45)
+        self.Plabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.layoutP3.addWidget(self.Plabel, 2, 0, Qt.AlignLeft)
+        
+        # Fila 3:Grid 11 Datos de Profesion
+        self.grid11 = QGridLayout()
+        self.Empdt = QLineEdit(self)
+        self.Empdt.setPlaceholderText("Emprensa donde Trabaja")
+        self.grid11.addWidget(self.Empdt, 1, 0)
+        self.Ted = QLineEdit(self)
+        self.Ted.setPlaceholderText("Tipo de Empleo que Desempeña")
+        self.grid11.addWidget(self.Ted, 2, 0)
+        self.layoutP3.addLayout(self.grid11, 3, 0, Qt.AlignTop)
+        
+        #Boton de Back a la Pagina 2
+        self.backP2 = QPushButton("Pagina Anterior")
+        self.backP2.clicked.connect(self.RegisterPage2)
+        self.layoutP3.addWidget(self.backP2, 6, 1)
+        self.page3.setLayout(self.layoutP3)
+        
+        # Boton de Next a la Pagina 2
+        self.NextP4 = QPushButton("Siguiente Pagina")
+        self.NextP4.clicked.connect(self.RegisterPage4)
+        self.layoutP3.addWidget(self.NextP4, 5, 1)
+        self.page3.setLayout(self.layoutP3)
+        
+        
+        # Espaciador entre columnas
+        self.layoutP3.addItem(QSpacerItem(200, 20, QSizePolicy.Minimum, QSizePolicy.Expanding), 0, 1, 6, 1)
+        
+        #Muestra los Items en la Ventana 3
+        self.page3.setLayout(self.layoutP3)
+        self.Sc_Widget.addWidget(self.page3)
+        
+        
+        # Crear La Cuarta Pagina
+        self.page4 = QWidget()
+        self.layoutP4 = QGridLayout()
+        
+        #Fila 0: Titutlos Tabla Datos del Madre.
+        self.dpLabel = QLabel("Datos Personales de la Madre", self)
+        self.dpLabel.setProperty("class", "tituloz")
+        self.dpLabel.setFixedSize(300, 45)
+        self.dpLabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.dclabel = QLabel("Datos de Contacto de la Madre", self)
+        self.dclabel.setProperty("class", "tituloz")
+        self.dclabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self.dclabel.setFixedSize(300, 45)
+        self.dclabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.layoutP4.addWidget(self.dpLabel, 0, 0, Qt.AlignLeft)
+        self.layoutP4.addWidget(self.dclabel, 0, 2, Qt.AlignRight)
+        
+        # Fila 1: Grid 12 Datos Personales
+        self.grid12 = QGridLayout()
+        self.nameM = QLineEdit(self)
+        self.nameM.setPlaceholderText("Nombres")
+        self.grid12.addWidget(self.nameM, 1, 0)
+        self.lastNM = QLineEdit(self)
+        self.lastNM.setPlaceholderText("Apellidos")
+        self.grid12.addWidget(self.lastNM, 1, 1)
+        self.ageM = QLineEdit(self)
+        self.ageM.setPlaceholderText("Edad")
+        self.grid12.addWidget(self.ageM, 2, 0)
+        self.dniM = QLineEdit(self)
+        self.dniM.setPlaceholderText("Cedula")
+        self.grid12.addWidget(self.dniM, 2, 1)
+        self.dateofbirthM = QLineEdit(self)
+        self.dateofbirthM.setPlaceholderText("Fecha de Nacimiento")
+        self.grid12.addWidget(self.dateofbirthM, 2, 2)
+        
+        
+        # Boton Vive Con el Niño
+        self.lwtc = QGroupBox("¿Vive Con el Niño?")
+        self.QrPSi = QRadioButton("Si")
+        self.QrPNo = QRadioButton("No")
+        self.QrPSi.setChecked(True)
+        self.QvLwtc = QVBoxLayout()
+        self.QvLwtc.addWidget(self.QrPSi)
+        self.QvLwtc.addWidget(self.QrPNo)
+        self.lwtc.setLayout(self.QvLwtc)
+        self.grid12.addWidget(self.lwtc, 3, 0)
+        # Final del Boton Vive Con el Niño
+        
+        self.Cnn = QLineEdit(self)
+        self.Cnn.setPlaceholderText("¿Causa por la que no vive con el Niño?")
+        self.grid12.addWidget(self.Cnn, 4, 0)
+        self.layoutP4.addLayout(self.grid12, 1, 0, Qt.AlignLeft)
+        
+        # Fila 2: Grid 13 Datos de Contacto
+        self.grid13 = QGridLayout()
+        self.PhoneMM = QLineEdit(self)
+        self.PhoneMM.setPlaceholderText("Telélefono Móvil")
+        self.grid13.addWidget(self.PhoneMM, 1, 0)
+        self.Dcp = QLineEdit(self)
+        self.Dcp.setPlaceholderText("Dirección")
+        self.grid13.addWidget(self.Dcp, 2, 0)
+        self.layoutP4.addLayout(self.grid13, 1, 2, Qt.AlignTop)
+        
+        #Fila 3: Titulo Datos de Profesion
+        self.Mlabel = QLabel("Datos de Profesión de la Madre")
+        self.Mlabel.setProperty("class", "tituloz")
+        self.Mlabel.setFixedSize(300, 45)
+        self.Mlabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.layoutP4.addWidget(self.Mlabel, 2, 0, Qt.AlignLeft)
+        
+        # Fila 3:Grid 14 Datos de Profesion
+        self.grid14 = QGridLayout()
+        self.Empdt = QLineEdit(self)
+        self.Empdt.setPlaceholderText("Emprensa donde Trabaja")
+        self.grid14.addWidget(self.Empdt, 1, 0)
+        self.Ted = QLineEdit(self)
+        self.Ted.setPlaceholderText("Tipo de Empleo que Desempeña")
+        self.grid14.addWidget(self.Ted, 2, 0)
+        self.layoutP4.addLayout(self.grid14, 3, 0, Qt.AlignTop)
+        
+        #Boton de Back a la Pagina 3
+        self.backP3 = QPushButton("Pagina Anterior")
+        self.backP3.clicked.connect(self.RegisterPage3)
+        self.layoutP4.addWidget(self.backP3, 5, 1)
+        self.page4.setLayout(self.layoutP4)
+
+        self.registerBton = QPushButton("Finalizar Registro")
+        self.registerBton.clicked.connect(self.register_estudend)
+        self.layoutP4.addWidget(self.registerBton, 6, 1)
+        
+        # Espaciador entre columnas
+        self.layoutP4.addItem(QSpacerItem(200, 20, QSizePolicy.Minimum, QSizePolicy.Expanding), 0, 1, 6, 1)
+        
+        #Muestra los Items en la Ventana 3
+        self.page4.setLayout(self.layoutP4)
+        self.Sc_Widget.addWidget(self.page4)
         
         # Def de Pagina 1
         ## Comando Funcion de Registro en la Pagina 1
@@ -398,129 +618,128 @@ class FormsStudend(QMainWindow):
         ## Comando Funcion de Registro en la Pagina 2
     def RegisterPage2(self):
         self.Sc_Widget.setCurrentIndex(1)
-
-        # # columna 7
-        # self.inputNdHermanos = QLineEdit(self)
-        # self.inputNdHermanos.setPlaceholderText("Número de Hermanos")
-        # self.layaoutMargenIzquierdo.addWidget(self.inputNdHermanos)
-        # # columna 8
-        # self.inputautorizadoPRetirarAlNiño = QLineEdit(self)
-        # self.inputautorizadoPRetirarAlNiño.setPlaceholderText("Autorizado para Retirar al Niño")
-        # self.layaoutMargenIzquierdo.addWidget(self.inputautorizadoPRetirarAlNiño)
         
-        # self.layaoutvistaEstudiante.addLayout(self.layaoutMargenIzquierdo)
-        # self.VaistaEstudiante.setLayout(self.layaoutvistaEstudiante)
-        # self.alternador.addWidget(self.VaistaEstudiante)
-
-    #     self.inputalgunadificultad= QLineEdit(self)
-    #     self.inputalgunadificultad.setPlaceholderText("Alguna Dificultad")
-    #     self.layaoutVistaEstudiante.addWidget(self.inputalgunadificultad, 3, 1)
-    #     # columna 19
-    #     self.inputespecifiquedificultad = QLineEdit(self)
-    #     self.inputespecifiquedificultad.setPlaceholderText("Especificar Dificultad")
-    #     self.layaoutVistaEstudiante.addWidget(self.inputespecifiquedificultad, 3, 2)
-    #     # columna 20
-    #     self.inputtipodesangre = QLineEdit(self)
-
-    #     # columna 24
-    #     self.inputestado = QLineEdit(self)
-    #     self.inputestado.setPlaceholderText("Estado")
-    #     self.layaoutVistaEstudiante.addWidget(self.inputestado, 4, 1)
-    #     # columna 25
-    #     self.inputmunicipio = QLineEdit(self)
-    #     self.inputmunicipio.setPlaceholderText("Municipio")
-    #     self.layaoutVistaEstudiante.addWidget(self.inputmunicipio, 4, 2)
-    #     # columna 26
-    #     self.inputpuntodereferencia = QLineEdit(self)
-    #     self.inputpuntodereferencia.setPlaceholderText("Punto de Referencia")
-    #     self.layaoutVistaEstudiante.addWidget(self.inputpuntodereferencia, 4, 3)
+        # Def de Pagina 3
+        ## Comando Funcion de Registro en la Pagina 3
+    def RegisterPage3(self):
+        self.Sc_Widget.setCurrentIndex(2)
         
-    #     self.VistaEstudiante.setLayout(self.layaoutVistaEstudiante)
-    #     self.alternador.addWidget(self.VistaEstudiante)
-     
-    #     # Boton Registrar
-    #     # self.buttonsubmit = QPushButton("Registrar Estudiante", self)
-    #     # self.buttonsubmit.clicked.connect(self.register_estudend)
-    #     # # self.layaout.addWidget(self.buttonsubmit)
-    #     # self.setLayout(self.layaout)
-        
-        
-    #     # container = QWidget()
-    #     # container.setLayout(self.layaout)
-    #     # self.setCentralWidget(container)
-    #     self.viewmodel = EstudendViewModel()
+        # Def de Pagina 4
+        ## Comando Funcion de Registro en la Pagina 4
+    def RegisterPage4(self):
+        self.Sc_Widget.setCurrentIndex(3)
     
-    # def register_estudend(self):
-    #     # Datos Personales
-    #     nombre = self.inputnombre.text()
-    #     apellido = self.inputapellido.text()
-    #     edad = self.inputedad.text()
-    #     cedulaescolar = self.inputcedulaescolar.text()
-    #     fechadenacimiento = self.inputfechadenacimiento.text()
-    #     lateralidad = self.inputlateralidad.text()
-    #     genero = self.inputgenero.text()
-    #     NdHermanos = self.inputNdHermanos.text()
-    #     autorizadoPRetirarAlNiño = self.inputautorizadoPRetirarAlNiño.text()
+    def register_estudend(self):
+        # Inicio Pagina Estudiante Pagina 1
+        Nombre = self.nameS.text()
+        Apellido = self.lastNS.text()
+        CedulaEscolar = self.dni.text()
+        Edad = self.ageS.text()
+        Genero = "Masculino" if self.QrBM.isChecked() else "Femenino"
+        FechaDeNacimiento = self.dateofbirth.text()
+        Lateralidad = "Derecho" if self.QrBD.isChecked() else "Izquierdo"
+        Nacionalidad = self.ncl.text()
+        Estado = self.est.text()
+        Municipio = self.mun.text()
+        Direccion_Actual = self.dra.text()
+        Punto_de_Referencia = self.pdr.text()
+        Altura = self.alt.text()
+        Peso = self.kg.text()
+        Talla_Zapatos = self.tza.text()
+        Talla_Camisa = self.tca.text()
+        Talla_Pantalon = self.tpan.text()
+        NdHermanos = self.Nofs.text()
+        AutorizadoPRetirarAlNiño = self.authorizeRC.text()
+        Alergico_a = self.ala.text()
+        Alguna_Dificultad = "Si" if self.QrBY.isChecked() else "No"
+        Especificar_Dificultad = self.tds.text() if Alguna_Dificultad == "Si" else ""
+        Correo_Electronico = self.email.text()
+        Telefono_de_Habitacion = self.tfh.text()
+        Carton_Vacunas = None
+        if self.vacunaIMGpath:
+            with open(self.vacunaIMGpath, 'rb') as f:
+                Carton_Vacunas_Img = f.read()
+        tipo_de_Sangre = self.tds.text()
+        Examen_de_Heces = self.exdh.text()
+        # Final Pagina Estudiante Pagina 1
         
-    #     # Datos de Contacto
-    #     correo = self.inputcorreo.text()
-    #     telefonoHabitacion = self.inputtelefonoHabitacion.text()
-    #     direccionActual = self.inputdireccionActual.text()
+        # Inicio Pagina Representante Pagina 2
+        NombreR = self.nameR.text()
+        ApellidoR = self.lastNR.text()
+        EdadR = self.ageR.text()
+        CedulaR = self.dniR.text()
+        FechaDeNacimientoR = self.dateofbirthR.text()
+        MaritalStatus = "Soltero" if self.QrBS.isChecked() else "Casado" if self.QrBC.isChecked() else "Divorciado"
+        Afinidad = self.Affi.text()
+        Rif = self.Rif.text()
+        PlanillaSige = "Si" if self.QrBSi.isChecked() else "No"
+        Telefono_MovilR = self.PhoneM.text()
+        Telefono_HabitacionR = self.PhoneR.text()
+        Correo_ElectronicoR = self.EmailR.text()
+        Telefono_FamiliarR = self.PhoneF.text()
+        NacionalidadR = self.NclR.text()
+        DireccionR = self.DrR.text()
+        Codigo_Patria = self.CodeP.text()
+        Serial_Patria = self.Serial.text()
+        # Final Pagina Representante Pagina 2
         
-    #     # Tallas
-    #     altura = self.inputaltura.text()
-    #     peso = self.inputpeso.text()
-    #     tallaCamisa = self.inputtallaCamisa.text()
-    #     tallaPantalon = self.inputtallaPantalon.text()
-    #     tallaZapatos = self.inputtallaZapatos.text()
+        # Inicio Pagina Padre Pagina 3
+        NombreP = self.nameP.text()
+        ApellidoP = self.lastNP.text()
+        EdadP = self.ageP.text()
+        CedulaP = self.dniP.text()
+        FechaDeNacimientoP = self.dateofbirthP.text()
+        ViveConElNiño = "Si" if self.QrPSi.isChecked() else "No"
+        CausaNoViveConElNiño = self.Cnn.text()
+        Telefono_MovilP = self.PhoneMp.text()
+        DireccionP = self.Dcp.text()
+        Empresa_Padre = self.Empdt.text()
+        Tipo_Empleo_Padre = self.Ted.text()
+        # Final Pagina Padre Pagina 3
         
-    #     # Datos Médicos
-    #     alergicoa = self.inputalergicoa.text()
-    #     algunadificultad = self.inputalgunadificultad.text()
-    #     especifiquedificultad = self.inputespecifiquedificultad.text()
-    #     tipodesangre = self.inputtipodesangre.text()
-    #     cartondevacunas = self.inputcartondevacunas.text()
-    #     examendeheces = self.inputexamendeheces.text()
+        # Inicio Pagina Madre Pagina 4
+        NombreM = self.nameM.text()
+        ApellidoM = self.lastNM.text()
+        EdadM = self.ageM.text()
+        CedulaM = self.dniM.text()
+        FechaDeNacimientoM = self.dateofbirthM.text()
+        ViveConElNiñoM = "Si" if self.QrPSi.isChecked() else "No"
+        CausaNoViveConElNiñoM = self.Cnn.text()
+        Telefono_MovilM = self.PhoneMM.text()
+        DireccionM = self.Dcp.text()
+        Empresa_Madre = self.Empdt.text()
+        Tipo_Empleo_Madre = self.Ted.text()
+        # Final Pagina Madre Pagina 4
         
-    #     # Ubicación
-    #     nacionalidad = self.inputnacionalidad.text()
-    #     estado = self.inputestado.text()
-    #     municipio = self.inputmunicipio.text()
-    #     puntodereferencia = self.inputpuntodereferencia.text()
-        
-        
-    #     if nombre and apellido and edad and cedulaescolar and fechadenacimiento and lateralidad and genero and NdHermanos and autorizadoPRetirarAlNiño and correo and telefonoHabitacion and direccionActual and altura and peso and tallaCamisa and tallaPantalon and tallaZapatos and alergicoa and algunadificultad and especifiquedificultad and tipodesangre and cartondevacunas and examendeheces and nacionalidad and estado and municipio and puntodereferencia: 
-    #         self.viewmodel.set_date(
-    #             nombre, 
-    #             apellido, 
-    #             cedulaescolar, 
-    #             edad, 
-    #             genero, 
-    #             fechadenacimiento, 
-    #             lateralidad, 
-    #             NdHermanos, 
-    #             autorizadoPRetirarAlNiño,
-    #             correo,
-    #             telefonoHabitacion,
-    #             direccionActual,
-    #             altura,
-    #             peso,
-    #             tallaCamisa,
-    #             tallaPantalon,
-    #             tallaZapatos,
-    #             alergicoa,
-    #             algunadificultad,
-    #             especifiquedificultad,
-    #             tipodesangre,
-    #             cartondevacunas,
-    #             examendeheces,
-    #             nacionalidad,
-    #             estado,
-    #             municipio,
-    #             puntodereferencia
-    #         )
-    #         QMessageBox.information(self, "Registro Exitoso", "Estudiante registrado exitosamente.")
-    #         self.close()
+
+
+        if Nombre and Apellido and CedulaEscolar and Edad and Genero and FechaDeNacimiento and Lateralidad and Nacionalidad and Estado and Municipio and Direccion_Actual and Punto_de_Referencia and Altura and Peso and Talla_Zapatos and Talla_Camisa and Talla_Pantalon and NdHermanos and AutorizadoPRetirarAlNiño and Alergico_a and Alguna_Dificultad and Correo_Electronico and Telefono_de_Habitacion and tipo_de_Sangre and Examen_de_Heces and NombreR and ApellidoR and EdadR and CedulaR and FechaDeNacimientoR and MaritalStatus and Afinidad and Rif and PlanillaSige and Telefono_MovilR and Telefono_HabitacionR and Correo_ElectronicoR and Telefono_FamiliarR and NacionalidadR and DireccionR and Codigo_Patria and Serial_Patria and NombreP and ApellidoP and EdadP and CedulaP and FechaDeNacimientoP and ViveConElNiño and CausaNoViveConElNiño and Telefono_MovilP and DireccionP and Empresa_Padre and Tipo_Empleo_Padre and NombreM and ApellidoM and EdadM and CedulaM and FechaDeNacimientoM and ViveConElNiñoM and CausaNoViveConElNiñoM and Telefono_MovilM and DireccionM and Empresa_Madre and Tipo_Empleo_Madre:
+            self.viewmodel.set_date(
+                Nombre, Apellido, CedulaEscolar, Edad, Genero, FechaDeNacimiento,
+                Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual,
+                Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa,
+                Talla_Pantalon, NdHermanos, AutorizadoPRetirarAlNiño,
+                Alergico_a, Alguna_Dificultad, Especificar_Dificultad,
+                Correo_Electronico, Telefono_de_Habitacion,
+                Carton_Vacunas, tipo_de_Sangre, Examen_de_Heces,
+                NombreR, ApellidoR, EdadR, CedulaR, FechaDeNacimientoR,
+                MaritalStatus, Afinidad, Rif, PlanillaSige,
+                Telefono_MovilR, Telefono_HabitacionR, Correo_ElectronicoR, Telefono_FamiliarR, NacionalidadR, DireccionR, Codigo_Patria, Serial_Patria,
+                NombreP, ApellidoP, EdadP, CedulaP, FechaDeNacimientoP, ViveConElNiño, CausaNoViveConElNiño, Telefono_MovilP, DireccionP, Empresa_Padre, Tipo_Empleo_Padre,
+                NombreM, ApellidoM, EdadM, CedulaM, FechaDeNacimientoM, ViveConElNiñoM, CausaNoViveConElNiñoM, Telefono_MovilM, DireccionM, Empresa_Madre, Tipo_Empleo_Madre
+            )
+            QMessageBox.information(self, "Registro Exitoso", "El estudiante ha sido registrado exitosamente.")
             
-    #     else:
-    #         QMessageBox.warning(self, "Error", "Por favor, complete todos los campos.")
+            self.close()
+        else:
+            QMessageBox.warning(self, "Campos Vacíos", "Por favor, complete todos los campos obligatorios.")
+    
+    def upload_vacuna_image(self):
+        file_name = QFileDialog(self)
+        file_name.setNameFilter("Images (*.png *.jpg *.jpeg *.bmp)")
+        if file_name.exec():
+            filepath = file_name.selectedFiles()[0]
+            self.vacunaIMGpath = filepath
+            pixmap = QPixmap(filepath)
+            self.vacunaIMG.setPixmap(pixmap.scaled(self.vacunaIMG.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
+    
