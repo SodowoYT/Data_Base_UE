@@ -1,5 +1,6 @@
 
 # Pendientes
+* Agregar una funcion que muestre la fecha y la hora en cada pagina del forms. (Extra)
 * Agregar un H1 para cada pag de forms
 * Agregar un formato fecha al forms
 * Colocar foto tabla estudiante y representantes.
