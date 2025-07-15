@@ -1,20 +1,15 @@
 class Padre:
-    def __init__(self, nombres ="", apellidos ="", edad ="", cedula ="", fechaDNacimiento ="", viveConElNiño ="", causaPNoVive ="", empresaDTrabaja ="", tipoEmpleoqDesempeña ="", telefonoMovil ="", direccion =""):
+    def __init__(self, NombreP="", ApellidoP="", CedulaP="", FechaDNacimientoP="", EdadP="", EmpresaDTrabajaP="", TipoEmpleoqDesempeñaP="", ViveConElNiñoP="", CausaPNoViveP="", DireccionP="", TelefonoMovilP=""):
     
-      # Datos Personales
-      self.nombres = nombres
-      self.apellidos = apellidos
-      self.edad = edad
-      self.cedula =  cedula
-      self.fechaDNacimiento = fechaDNacimiento
-      self.viveConElNiño = viveConElNiño
-      self.causaPNoVive = causaPNoVive
-      
-      # Datos de Profesion
-      self.empresaDTrabaja = empresaDTrabaja
-      self.tipoEmpleoqDesempña = tipoEmpleoqDesempeña
-      
-      # Datos de Contacto
-      self.telefonoMovil = telefonoMovil
-      self.direccion = direccion
-      
+      # Datos Padre
+      self.NombreP = NombreP
+      self.ApellidoP = ApellidoP
+      self.CedulaP = CedulaP
+      self.FechaDNacimientoP = FechaDNacimientoP
+      self.EdadP = EdadP
+      self.EmpresaDTrabajaP = EmpresaDTrabajaP
+      self.TipoEmpleoqDesempeñaP = TipoEmpleoqDesempeñaP
+      self.ViveConElNiñoP = ViveConElNiñoP
+      self.CausaPNoViveP = CausaPNoViveP
+      self.DireccionP = DireccionP
+      self.TelefonoMovilP = TelefonoMovilP

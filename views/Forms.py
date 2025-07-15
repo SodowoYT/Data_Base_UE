@@ -277,12 +277,12 @@ class FormsStudend(QMainWindow):
         # Fila 0: Títulos Tabla Representante
         self.Rplabel = QLabel("Datos Personales", self)
         self.Rplabel.setProperty("class", "tituloz")
-        self.Rplabel.setFixedSize(300, 45)
+        self.Rplabel.setFixedSize(40, 45)
         self.Rplabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.dclabel = QLabel("Datos de Contacto", self)
-        self.dclabel.setProperty("class", "tituloz")
+        self.dclabel.setProperty("class", "titulod")
         self.dclabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-        self.dclabel.setFixedSize(300, 45)
+        self.dclabel.setFixedSize(400, 45)
         self.dclabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.layoutP2.addWidget(self.Rplabel, 0, 0, Qt.AlignLeft)
         self.layoutP2.addWidget(self.dclabel, 0, 2, Qt.AlignRight)
@@ -632,36 +632,36 @@ class FormsStudend(QMainWindow):
     
     def register_estudend(self):
         # Inicio Pagina Estudiante Pagina 1
-        Nombre = self.nameS.text()
-        Apellido = self.lastNS.text()
-        CedulaEscolar = self.dni.text()
-        Edad = self.ageS.text()
-        Genero = "Masculino" if self.QrBM.isChecked() else "Femenino"
-        FechaDeNacimiento = self.dateofbirth.text()
-        Lateralidad = "Derecho" if self.QrBD.isChecked() else "Izquierdo"
-        Nacionalidad = self.ncl.text()
-        Estado = self.est.text()
-        Municipio = self.mun.text()
-        Direccion_Actual = self.dra.text()
-        Punto_de_Referencia = self.pdr.text()
-        Altura = self.alt.text()
-        Peso = self.kg.text()
-        Talla_Zapatos = self.tza.text()
-        Talla_Camisa = self.tca.text()
-        Talla_Pantalon = self.tpan.text()
-        NdHermanos = self.Nofs.text()
-        AutorizadoPRetirarAlNiño = self.authorizeRC.text()
-        Alergico_a = self.ala.text()
-        Alguna_Dificultad = "Si" if self.QrBY.isChecked() else "No"
-        Especificar_Dificultad = self.tds.text() if Alguna_Dificultad == "Si" else ""
-        Correo_Electronico = self.email.text()
-        Telefono_de_Habitacion = self.tfh.text()
-        Carton_Vacunas = None
+        nombre = self.nameS.text()
+        apellido = self.lastNS.text()
+        cedulaEscolar = self.dni.text()
+        edad = self.ageS.text()
+        genero = "Masculino" if self.QrBM.isChecked() else "Femenino"
+        fechaDNacimiento = self.dateofbirth.text()
+        lateralidad = "Derecho" if self.QrBD.isChecked() else "Izquierdo"
+        nacionalidad = self.ncl.text()
+        estado = self.est.text()
+        municipio = self.mun.text()
+        direccionActual = self.dra.text()
+        puntoDReferencia = self.pdr.text()
+        altura = self.alt.text()
+        peso = self.kg.text()
+        tallaZapatos = self.tza.text()
+        tallaCamisa = self.tca.text()
+        tallaPantalon = self.tpan.text()
+        numeroDHermanos = self.Nofs.text()
+        autorizadoPRetirarANiño = self.authorizeRC.text()
+        alergicoA = self.ala.text()
+        algunaDificultad = "Si" if self.QrBY.isChecked() else "No"
+        especificarDificultad = self.tds.text() if algunaDificultad == "Si" else ""
+        correoElectronico = self.email.text()
+        telefonoDHabitacion = self.tfh.text()
+        cartonVacunas = None
         if self.vacunaIMGpath:
             with open(self.vacunaIMGpath, 'rb') as f:
-                Carton_Vacunas_Img = f.read()
-        tipo_de_Sangre = self.tds.text()
-        Examen_de_Heces = self.exdh.text()
+                cartonVacunas = f.read()
+        tipoDSangre = self.tds.text()
+        examenDHeces = self.exdh.text()
         # Final Pagina Estudiante Pagina 1
         
         # Inicio Pagina Representante Pagina 2
@@ -670,18 +670,22 @@ class FormsStudend(QMainWindow):
         EdadR = self.ageR.text()
         CedulaR = self.dniR.text()
         FechaDeNacimientoR = self.dateofbirthR.text()
-        MaritalStatus = "Soltero" if self.QrBS.isChecked() else "Casado" if self.QrBC.isChecked() else "Divorciado"
+        EstadoCivil = "Soltero" if self.QrBS.isChecked() else "Casado" if self.QrBC.isChecked() else "Divorciado"
         Afinidad = self.Affi.text()
-        Rif = self.Rif.text()
-        PlanillaSige = "Si" if self.QrBSi.isChecked() else "No"
-        Telefono_MovilR = self.PhoneM.text()
-        Telefono_HabitacionR = self.PhoneR.text()
-        Correo_ElectronicoR = self.EmailR.text()
-        Telefono_FamiliarR = self.PhoneF.text()
+        RifR = self.Rif.text()
+        PlanillaSigeR = "Si" if self.QrBSi.isChecked() else "No"
+        TelefonoMovilR = self.PhoneM.text()
+        TelefonoHabitacionR = self.PhoneR.text()
+        CorreoElectronicoR = self.EmailR.text()
+        TelefonoFamiliarR = self.PhoneF.text()
         NacionalidadR = self.NclR.text()
         DireccionR = self.DrR.text()
-        Codigo_Patria = self.CodeP.text()
-        Serial_Patria = self.Serial.text()
+        CodigoPatriaR = self.CodeP.text()
+        SerialPatriaR = self.Serial.text()
+        ProfesionR = self.Pfson.text()
+        OcupacionR = self.Occu.text()
+        EmpresaDTrabajaR = self.Epdt.text()
+        
         # Final Pagina Representante Pagina 2
         
         # Inicio Pagina Padre Pagina 3
@@ -689,13 +693,13 @@ class FormsStudend(QMainWindow):
         ApellidoP = self.lastNP.text()
         EdadP = self.ageP.text()
         CedulaP = self.dniP.text()
-        FechaDeNacimientoP = self.dateofbirthP.text()
-        ViveConElNiño = "Si" if self.QrPSi.isChecked() else "No"
-        CausaNoViveConElNiño = self.Cnn.text()
-        Telefono_MovilP = self.PhoneMp.text()
+        FechaDNacimientoP = self.dateofbirthP.text()
+        ViveConElNiñoP = "Si" if self.QrPSi.isChecked() else "No"
+        CausaPNoViveP = self.Cnn.text()
+        EmpresaDTrabajaP = self.Empdt.text()
+        TipoEmpleoqDesempeñaP = self.Ted.text()
+        TelefonoMovilP = self.PhoneMp.text()
         DireccionP = self.Dcp.text()
-        Empresa_Padre = self.Empdt.text()
-        Tipo_Empleo_Padre = self.Ted.text()
         # Final Pagina Padre Pagina 3
         
         # Inicio Pagina Madre Pagina 4
@@ -703,31 +707,36 @@ class FormsStudend(QMainWindow):
         ApellidoM = self.lastNM.text()
         EdadM = self.ageM.text()
         CedulaM = self.dniM.text()
-        FechaDeNacimientoM = self.dateofbirthM.text()
+        FechaDNacimientoM = self.dateofbirthM.text()
         ViveConElNiñoM = "Si" if self.QrPSi.isChecked() else "No"
-        CausaNoViveConElNiñoM = self.Cnn.text()
-        Telefono_MovilM = self.PhoneMM.text()
+        CausaPNoViveM = self.Cnn.text()
+        EmpresaDTrabajaM = self.Empdt.text()
+        TipoEmpleoqDesempeñaM = self.PhoneMM.text()
         DireccionM = self.Dcp.text()
-        Empresa_Madre = self.Empdt.text()
-        Tipo_Empleo_Madre = self.Ted.text()
+        TelefonoMovilM = self.PhoneMM.text()
+    
         # Final Pagina Madre Pagina 4
         
 
 
-        if Nombre and Apellido and CedulaEscolar and Edad and Genero and FechaDeNacimiento and Lateralidad and Nacionalidad and Estado and Municipio and Direccion_Actual and Punto_de_Referencia and Altura and Peso and Talla_Zapatos and Talla_Camisa and Talla_Pantalon and NdHermanos and AutorizadoPRetirarAlNiño and Alergico_a and Alguna_Dificultad and Correo_Electronico and Telefono_de_Habitacion and tipo_de_Sangre and Examen_de_Heces and NombreR and ApellidoR and EdadR and CedulaR and FechaDeNacimientoR and MaritalStatus and Afinidad and Rif and PlanillaSige and Telefono_MovilR and Telefono_HabitacionR and Correo_ElectronicoR and Telefono_FamiliarR and NacionalidadR and DireccionR and Codigo_Patria and Serial_Patria and NombreP and ApellidoP and EdadP and CedulaP and FechaDeNacimientoP and ViveConElNiño and CausaNoViveConElNiño and Telefono_MovilP and DireccionP and Empresa_Padre and Tipo_Empleo_Padre and NombreM and ApellidoM and EdadM and CedulaM and FechaDeNacimientoM and ViveConElNiñoM and CausaNoViveConElNiñoM and Telefono_MovilM and DireccionM and Empresa_Madre and Tipo_Empleo_Madre:
-            self.viewmodel.set_date(
-                Nombre, Apellido, CedulaEscolar, Edad, Genero, FechaDeNacimiento,
-                Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual,
-                Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa,
-                Talla_Pantalon, NdHermanos, AutorizadoPRetirarAlNiño,
-                Alergico_a, Alguna_Dificultad, Especificar_Dificultad,
-                Correo_Electronico, Telefono_de_Habitacion,
-                Carton_Vacunas, tipo_de_Sangre, Examen_de_Heces,
-                NombreR, ApellidoR, EdadR, CedulaR, FechaDeNacimientoR,
-                MaritalStatus, Afinidad, Rif, PlanillaSige,
-                Telefono_MovilR, Telefono_HabitacionR, Correo_ElectronicoR, Telefono_FamiliarR, NacionalidadR, DireccionR, Codigo_Patria, Serial_Patria,
-                NombreP, ApellidoP, EdadP, CedulaP, FechaDeNacimientoP, ViveConElNiño, CausaNoViveConElNiño, Telefono_MovilP, DireccionP, Empresa_Padre, Tipo_Empleo_Padre,
-                NombreM, ApellidoM, EdadM, CedulaM, FechaDeNacimientoM, ViveConElNiñoM, CausaNoViveConElNiñoM, Telefono_MovilM, DireccionM, Empresa_Madre, Tipo_Empleo_Madre
+        if nombre and apellido and cedulaEscolar and edad and fechaDNacimiento and lateralidad and numeroDHermanos and autorizadoPRetirarANiño and correoElectronico and telefonoDHabitacion and direccionActual and altura and peso and tallaZapatos and tallaCamisa and tallaPantalon and alergicoA and algunaDificultad and tipoDSangre and cartonVacunas and examenDHeces and nacionalidad and estado and municipio and puntoDReferencia \
+        and NombreR and ApellidoR and EdadR and CedulaR and FechaDeNacimientoR and EstadoCivil and Afinidad and RifR and PlanillaSigeR and TelefonoMovilR and TelefonoHabitacionR and CorreoElectronicoR and TelefonoFamiliarR and NacionalidadR and DireccionR and CodigoPatriaR and SerialPatriaR \
+            and NombreP and ApellidoP and EdadP and CedulaP and FechaDNacimientoP and ViveConElNiñoP and CausaPNoViveP and EmpresaDTrabajaP and TipoEmpleoqDesempeñaP and TelefonoMovilP and DireccionP  \
+                and NombreM and ApellidoM and EdadM and CedulaM and FechaDNacimientoM and ViveConElNiñoM and CausaPNoViveM and EmpresaDTrabajaM and TipoEmpleoqDesempeñaM and TelefonoMovilM and DireccionM:
+            
+                
+            self.viewmodel.registrar_estudiante(
+            nombre, apellido, cedulaEscolar, edad, genero, fechaDNacimiento, lateralidad, numeroDHermanos, autorizadoPRetirarANiño, correoElectronico, telefonoDHabitacion, direccionActual, altura, peso, tallaCamisa, tallaPantalon, tallaZapatos, alergicoA, algunaDificultad, especificarDificultad, cartonVacunas, tipoDSangre, examenDHeces, nacionalidad, estado, municipio, puntoDReferencia 
+            )
+            self.viewmodel.registrar_representante(
+            NombreR, ApellidoR, CedulaR, FechaDeNacimientoR, EdadR, EstadoCivil, NacionalidadR, Afinidad, ProfesionR, OcupacionR, EmpresaDTrabajaR, DireccionR, TelefonoMovilR, TelefonoHabitacionR, TelefonoFamiliarR, CorreoElectronicoR, RifR, PlanillaSigeR, CodigoPatriaR, SerialPatriaR
+
+            )
+            self.viewmodel.registrar_padre(
+                NombreP, ApellidoP, CedulaP, FechaDNacimientoP, EdadP, TipoEmpleoqDesempeñaP, EmpresaDTrabajaP,  ViveConElNiñoP, CausaPNoViveP, DireccionP, TelefonoMovilP
+            )
+            self.viewmodel.registrar_madre(
+                NombreM, ApellidoM, CedulaM, FechaDNacimientoM, EdadM, TipoEmpleoqDesempeñaM, EmpresaDTrabajaM, ViveConElNiñoM, CausaPNoViveM, DireccionM, TelefonoMovilM
             )
             QMessageBox.information(self, "Registro Exitoso", "El estudiante ha sido registrado exitosamente.")
             
@@ -743,4 +752,3 @@ class FormsStudend(QMainWindow):
             self.vacunaIMGpath = filepath
             pixmap = QPixmap(filepath)
             self.vacunaIMG.setPixmap(pixmap.scaled(self.vacunaIMG.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
-    
