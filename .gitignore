@@ -8,3 +8,7 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Ignorar test y docs cuando sea necesario
+# test/
+# docs/

@@ -2,7 +2,7 @@ import os.path
 from PySide6.QtWidgets import QPushButton, QMainWindow, QVBoxLayout, QWidget, QFileDialog, QMessageBox
 import shutil
 import os
-
+from views.RegsUser import RgtrUser
 class Options(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -15,13 +15,16 @@ class Options(QMainWindow):
         
         self.Option1 = QPushButton("Respaldo", self)
         self.Option2 = QPushButton("Restaurar", self)
+        self.Option3 = QPushButton("Registrar Usuario", self)
         
         # Conectar los botones a sus respectivas funciones
         self.Option1.clicked.connect(self.backup)
         self.Option2.clicked.connect(self.restore)
+        self.Option3.clicked.connect(self.register_user)
         
         self.layout.addWidget(self.Option1)
         self.layout.addWidget(self.Option2) 
+        self.layout.addWidget(self.Option3)
         
         container = QWidget()
         container.setLayout(self.layout)
@@ -46,3 +49,7 @@ class Options(QMainWindow):
                 QMessageBox.information(self, "Restaurar Respaldo", f"Respaldo restaurado desde: {origen}")
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"Error al restaurar el respaldo: {e}")
+                
+    def register_user(self):
+        self.rg_Window = RgtrUser()
+        self.rg_Window.show()
