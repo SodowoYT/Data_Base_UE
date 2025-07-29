@@ -5,7 +5,7 @@ class database:
     self.cursor = self.connection.cursor()
 
 # Insertado de datos del estudiante
-  def insertEstudend(self, Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, Tipo_de_Sangre, Examen_de_Heces, Carton_Vacunas=None):
+  def insertEstudend(self, Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces):
     
     self.cursor.execute('''
       INSERT INTO Estudend (Nombre, Apellido, CedulaEscolar, Edad, Genero, FN, Lateralidad,  Nacionalidad, Estado, Municipio, DA, PTR, Altura, Peso, Zapatos, Camisa, Pantalon, NDH, APRN, AlergicoA, AlgunaDificultad, EspecifiqueDificultad, CorreoElectronico, TelefonoHabitacion, CartonVacunas, TipodeSangre, EDH)
@@ -25,21 +25,22 @@ class database:
 
 # Insertaddo de datos del padre
 
-  def insertDTP (self, nombre, apellido, cedula, fechaDNacimiento, edad, tipoEmpleoqDesempeña, empresaDTrabaja, viveConElNiño, causaPNoVive,   direccion, telefonoMovil):
+  def insertDTP (self,  NombreP, ApellidoP, CedulaP, FechaDNacimientoP, EdadP, TipoEmpleoqDesempeñaP, EmpresaDTrabajaP,  ViveConElNiñoP, CausaPNoViveP, DireccionP, TelefonoMovilP):
     self.cursor.execute('''
-      INSERT INTO DTP (Nombre, Apellido, Cedula, FN, Edad, TED,EMDT, VCN, CPNVCN, Direccion, TelefonoMovil )
+      INSERT INTO DTP (NombreP, ApellidoP, CedulaP, FNP, EdadP, TEDP, EMDTP, VCNP, CPNVCNP, DireccionP, TelefonoMovilP)
       VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (nombre, apellido, cedula, fechaDNacimiento, edad, tipoEmpleoqDesempeña, empresaDTrabaja, viveConElNiño, causaPNoVive,   direccion, telefonoMovil))
+    ''', (NombreP, ApellidoP, CedulaP, FechaDNacimientoP, EdadP, TipoEmpleoqDesempeñaP, EmpresaDTrabajaP,  ViveConElNiñoP, CausaPNoViveP, DireccionP, TelefonoMovilP))
     self.connection.commit()
 
 # Insertado de datos de la madre
 
-  def insertDTM (self, nombre, apellido, cedula, fechaDNacimiento, edad, tipoEmpleoqDesempeña, empresaDTrabaja, viveConElNiño, causaPNoVive,   direccion, telefonoMovil):
+  def insertDTM (self, NombreM, ApellidoM, CedulaM, FechaDNacimientoM, EdadM, TipoEmpleoqDesempeñaM, EmpresaDTrabajaM, ViveConElNiñoM, CausaPNoViveM, DireccionM, TelefonoMovilM):
     self.cursor.execute('''
-      INSERT INTO DTM (Nombre, Apellido, Cedula, FN, Edad, TED,EMDT, VCN, CPNVCN, Direccion, TelefonoMovil )
+      INSERT INTO DTM (NombreM, ApellidoM, CedulaM, FNM, EdadM, TEDM, EMDTM, VCNM, CPNVCNM, DireccionM, TelefonoMovilM)
       VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (nombre, apellido, cedula, fechaDNacimiento, edad, tipoEmpleoqDesempeña, empresaDTrabaja, viveConElNiño, causaPNoVive,   direccion, telefonoMovil))
+    ''', (NombreM, ApellidoM, CedulaM, FechaDNacimientoM, EdadM, TipoEmpleoqDesempeñaM, EmpresaDTrabajaM, ViveConElNiñoM, CausaPNoViveM, DireccionM, TelefonoMovilM))
     self.connection.commit()
+
 
 # Consultar datos de estudiante
   def SelectEstudend(self):
