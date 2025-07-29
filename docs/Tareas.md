@@ -12,3 +12,6 @@
 * Configurar el archivo Print.py 
 * Terminar el modelo de consultas.
 * Terminar el modelo de mantenimiento.
+* Interfaz de menu y configuracion de dimensiones
+* terminar interfaz de options y register usuario
+* terminar interfaz de consultas
