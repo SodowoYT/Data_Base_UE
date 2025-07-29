@@ -8,7 +8,7 @@ class EstudendViewModel:
     def registrar_estudiante(self,
                             nombre, apellido, cedulaEscolar, edad, genero, fechaDNacimiento, lateralidad, nacionalidad,  estado, municipio, direccionActual, puntoDReferencia, altura, peso,tallaZapatos,  tallaCamisa, tallaPantalon, numeroDHermanos, autorizadoPRetirarANiño,  alergicoA, algunaDificultad, especificarDificultad, correoElectronico, telefonoDHabitacion,  cartonVacunas, tipoDSangre, examenDHeces ):
             self.database.insertEstudend(
-                                        nombre, apellido, cedulaEscolar, edad, genero, fechaDNacimiento, lateralidad, numeroDHermanos, autorizadoPRetirarANiño, correoElectronico, telefonoDHabitacion, direccionActual, altura, peso, tallaCamisa, tallaPantalon, tallaZapatos, alergicoA, algunaDificultad, especificarDificultad, cartonVacunas, tipoDSangre, examenDHeces, nacionalidad, estado, municipio, puntoDReferencia
+                                        nombre, apellido, cedulaEscolar, edad, genero, fechaDNacimiento, lateralidad, nacionalidad,  estado, municipio, direccionActual, puntoDReferencia, altura, peso,tallaZapatos,  tallaCamisa, tallaPantalon, numeroDHermanos, autorizadoPRetirarANiño,  alergicoA, algunaDificultad, especificarDificultad, correoElectronico, telefonoDHabitacion,  cartonVacunas, tipoDSangre, examenDHeces
                                         )
 
     def registrar_representante(self,
@@ -28,6 +28,3 @@ class EstudendViewModel:
             self.database.insertDTM(
                                     NombreM, ApellidoM, CedulaM, FechaDNacimientoM, EdadM, TipoEmpleoqDesempeñaM, EmpresaDTrabajaM, ViveConElNiñoM, CausaPNoViveM, DireccionM, TelefonoMovilM
                                     )
-
-
-

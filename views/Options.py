@@ -1,5 +1,6 @@
 import os.path
 from PySide6.QtWidgets import QPushButton, QMainWindow, QVBoxLayout, QWidget, QFileDialog, QMessageBox
+from PySide6.QtGui import QIcon
 import shutil
 import os
 from views.RegsUser import RgtrUser
@@ -7,6 +8,7 @@ class Options(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Opciones")
+        self.setWindowIcon(QIcon("utilities/resources/imgs/ico/IconApp.ico"))
         self.setGeometry(100, 100, 300, 200)
         
         self.layout = QVBoxLayout()
@@ -29,6 +31,22 @@ class Options(QMainWindow):
         container = QWidget()
         container.setLayout(self.layout)
         self.setCentralWidget(container)
+
+        self.Option1.setStyleSheet("""
+QPushButton {
+    background-color: #0c3f67;
+    color: white;
+    border-radius: 15px;
+    padding: 6px 0px;
+    font-size: 15px;
+    min-height: 28px;
+}
+QPushButton:hover {
+    background-color: #14056d;
+}
+""")
+        self.Option2.setStyleSheet(self.Option1.styleSheet())
+        self.Option3.setStyleSheet(self.Option1.styleSheet())
         
     def backup(self):
         origen = os.path.join("utilities", "db", "DataBaseUE.db")

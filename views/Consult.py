@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QPushButton, QMainWindow, QVBoxLayout, QWidget, QTableView, QLineEdit, QMessageBox, QHBoxLayout, QDialog, QLabel, QScrollArea, QFormLayout, QFileDialog
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 from services.Connection import database
-from PySide6.QtGui import QPixmap
+from PySide6.QtGui import QPixmap, QIcon
 from PySide6.QtPrintSupport import QPrinter
 from PySide6.QtGui import QPainter
 import os
@@ -9,6 +9,8 @@ import os
 class ConsultWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.setWindowTitle("Consulta de Estudiantes")
+        self.setWindowIcon(QIcon("utilities/resources/imgs/ico/IconApp.ico"))
         self.layout = QVBoxLayout()
 
         # Buscador por cédula
