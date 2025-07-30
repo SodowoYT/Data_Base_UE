@@ -2,7 +2,9 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QRadioButton, QMessageBox, QButtonGroup, QMainWindow, QStackedWidget, QGridLayout, QGroupBox, QSizePolicy, QSpacerItem, QFileDialog
 from viewmodels.FormsW import EstudendViewModel
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QPixmap, QPainter
+from PySide6.QtGui import QPixmap, QPainter, QIcon
+from PySide6.QtWidgets import QDateEdit
+from PySide6.QtCore import QDate
 import sqlite3
 
 
@@ -23,14 +25,14 @@ class FormsStudend(QMainWindow):
 
         # Propiedades de la ventana
         self.setWindowTitle("Datos del Estudiante")
+        self.setWindowIcon(QIcon("utilities/resources/imgs/ico/IconApp.ico"))
         self.setGeometry(100, 100, 1000, 600)
-
         # Establecer imagen de fondo
         self.setStyleSheet("""
             .tituloz {
-                color: black;
-                font-family: Arial, sans-serif;
-                font-size: 20px;
+                color: white;
+                font-family: Monotype Corsiva, Times, Serif; 
+                font-size: 28px;
                 font-weight: bold;
                 padding: 8px 24px 8px 16px;
                 border-top-left-radius: 10px;
@@ -39,14 +41,14 @@ class FormsStudend(QMainWindow):
                 border-bottom-right-radius: 0;
                 background: qlineargradient(
                     x1:0, y1:0, x2:0.85, y2:0,
-                    stop:0 #ff9800, stop:0.85 #ffb74d, stop:0.85 #ffb74d, stop:1 transparent
+                    stop:0 #14056d, stop:0.85 #0c3f67, stop:0.85 #0d7acf, stop:1 transparent
                 );
                 margin-bottom: 8px;
             }
             .titulod {
-                color: black;
-                font-family: Arial, sans-serif;
-                font-size: 20px;
+                color: white;
+                font-family: Monotype Corsiva, Times, Serif; 
+                font-size: 28px;
                 font-weight: bold;
                 padding: 8px 24px 8px 16px;
                 border-top-right-radius: 10px;
@@ -55,18 +57,18 @@ class FormsStudend(QMainWindow):
                 border-bottom-left-radius: 0;
                 background: qlineargradient(
                     x1:1, y1:0, x2:0.15, y2:0,
-                    stop:0 #ff9800, stop:0.85 #ffb74d, stop:0.85 #ffb74d, stop:1 transparent
+                    stop:0 #14056d, stop:0.85 #0c3f67, stop:0.85 #0d7acf, stop:1 transparent
                 );
                 margin-bottom: 8px;
             }
             QGroupBox {
-                border: 1px solid black;
+                border: 1px solid white;
                 border-radius: 8px;
                 margin-top: 10px;
                 background: transparent;
             }
             QGroupBox::title {
-                color: black;
+                color: white;
                 font-weight: bold;
                 font-size: 15px;
                 subcontrol-origin: margin;
@@ -74,13 +76,26 @@ class FormsStudend(QMainWindow):
             }
             
             QRadioButton {
-                color: black;
+                color: white;
                 font-weight: bold;
             }
+            
+            QPushButton {
+                background-color: #0c3f67;
+                color: white;
+                border-radius: 15px;
+                padding: 8px 0px;
+                font-size: 16px;
+            }
+            QPushButton:hover {
+                background-color:  #14056d;
+            }
+            
         """)
 
+
         # Crear el widget de fondo
-        self.bg_widget = BgWidget("utilities/resources/imgs/Bg.png")
+        self.bg_widget = BgWidget("utilities/resources/imgs/bg/BlueBgI.png")
         self.setCentralWidget(self.bg_widget)
 
         self.main_layout = QVBoxLayout(self.bg_widget)
@@ -94,6 +109,23 @@ class FormsStudend(QMainWindow):
         # Crear la primera página
         self.page1 = QWidget()
         self.layoutP1 = QGridLayout()
+
+        # Título centrado
+        self.title_label1 = QLabel("Datos de Estudiante", self.page1)
+        self.title_label1.setAlignment(Qt.AlignCenter)
+        self.title_label1.setStyleSheet("""
+            font-family: Monotype Corsiva, Times, Serif;
+            font-size: 42px;
+            font-weight: bold;
+            color: #fff;
+            background: rgba(12, 63, 103, 0.82);
+            border-radius: 18px;
+            padding: 18px 32px 18px 32px;
+            margin-bottom: 16px;
+            border: 2px solid #0d7acf;
+            text-shadow: 2px 2px 8px #0c3f67, 0 2px 12px #000;
+        """)
+        self.layoutP1.addWidget(self.title_label1, 0, 0, 1, 3, Qt.AlignCenter)  # Ocupa 3 columnas
 
         # Fila 0: Títulos principales
         self.delabel = QLabel("Datos Personales", self)
@@ -128,8 +160,10 @@ class FormsStudend(QMainWindow):
         self.lastNS = QLineEdit(self)
         self.lastNS.setPlaceholderText("Apellidos")
         self.grid1.addWidget(self.lastNS, 1, 1)
-        self.dateofbirth = QLineEdit(self)
-        self.dateofbirth.setPlaceholderText("Fecha de Nacimiento")
+        self.dateofbirth = QDateEdit(self)
+        self.dateofbirth.setCalendarPopup(True)          # Habilita el calendario
+        self.dateofbirth.setDisplayFormat("dd/MM/yyyy")  # Formato de fecha
+        self.dateofbirth.setDate(QDate.currentDate())    # Fecha actual por defecto
         self.grid1.addWidget(self.dateofbirth, 2, 1)
         self.dni = QLineEdit(self)
         self.dni.setPlaceholderText("Cedula Escolar")
@@ -151,12 +185,12 @@ class FormsStudend(QMainWindow):
         self.grid1.addWidget(self.authorizeRC, 3, 2)
         self.layoutP1.addLayout(self.grid1, 1, 0, Qt.AlignTop)
         
-
+        # Fila 1: Título de Datos Médicos
         self.grid2 = QGridLayout()
         self.ala = QLineEdit(self)
         self.ala.setPlaceholderText("Alergico a")
         self.grid2.addWidget(self.ala, 1, 0)
-        self.gbad = QGroupBox("¿Alguna discapacidad?", self)
+        self.gbad = QGroupBox("¿Alguna dificultad?", self)
         self.QrBY = QRadioButton("Si", self)
         self.QrBN = QRadioButton("No", self)
         self.QrBY.setChecked(True)
@@ -165,6 +199,9 @@ class FormsStudend(QMainWindow):
         self.Qhbad.addWidget(self.QrBN)
         self.gbad.setLayout(self.Qhbad)
         self.grid2.addWidget(self.gbad, 2, 0)
+        self.epdf = QLineEdit(self)
+        self.epdf.setPlaceholderText("Especificar Dificultad")
+        self.grid2.addWidget(self.epdf, 3, 0)
         self.tds = QLineEdit(self)
         self.tds.setPlaceholderText("Tipo de Sangre")
         self.grid2.addWidget(self.tds, 1, 1)
@@ -274,15 +311,49 @@ class FormsStudend(QMainWindow):
         self.page2 = QWidget()
         self.layoutP2 = QGridLayout()
         
+        # Título centrado
+        self.title_label2 = QLabel("Datos del Representante", self.page2)
+        self.title_label1.setAlignment(Qt.AlignCenter)
+        self.title_label1.setStyleSheet("""
+            font-family: Monotype Corsiva, Times, Serif;
+            font-size: 42px;
+            font-weight: bold;
+            color: #fff;
+            background: rgba(12, 63, 103, 0.82);
+            border-radius: 18px;
+            padding: 18px 32px 18px 32px;
+            margin-bottom: 16px;
+            border: 2px solid #0d7acf;
+            text-shadow: 2px 2px 8px #0c3f67, 0 2px 12px #000;
+        """)
+        
+        # Título centrado
+        self.title_label2 = QLabel("Datos del Representante", self.page2)
+        self.title_label2.setAlignment(Qt.AlignCenter)
+        self.title_label2.setStyleSheet("""
+            font-family: Monotype Corsiva, Times, Serif;
+            font-size: 42px;
+            font-weight: bold;
+            color: #fff;
+            background: rgba(12, 63, 103, 0.82);
+            border-radius: 18px;
+            padding: 18px 32px 18px 32px;
+            margin-bottom: 16px;
+            border: 2px solid #0d7acf;
+            text-shadow: 2px 2px 8px #0c3f67, 0 2px 12px #000;
+        """)
+        self.layoutP2.addWidget(self.title_label2, 0, 0, 1, 3, Qt.AlignCenter)  # Ocupa 3 columnas
+
+        
         # Fila 0: Títulos Tabla Representante
         self.Rplabel = QLabel("Datos Personales", self)
         self.Rplabel.setProperty("class", "tituloz")
-        self.Rplabel.setFixedSize(300, 45)
+        self.Rplabel.setFixedSize(400, 45)
         self.Rplabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.dclabel = QLabel("Datos de Contacto", self)
-        self.dclabel.setProperty("class", "tituloz")
+        self.dclabel.setProperty("class", "titulod")
         self.dclabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-        self.dclabel.setFixedSize(300, 45)
+        self.dclabel.setFixedSize(400, 45)
         self.dclabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.layoutP2.addWidget(self.Rplabel, 0, 0, Qt.AlignLeft)
         self.layoutP2.addWidget(self.dclabel, 0, 2, Qt.AlignRight)
@@ -301,10 +372,12 @@ class FormsStudend(QMainWindow):
         self.dniR = QLineEdit(self)
         self.dniR.setPlaceholderText("Cedula")
         self.grid6.addWidget(self.dniR, 2, 1)
-        self.dateofbirthR = QLineEdit(self)
-        self.dateofbirthR.setPlaceholderText("Fecha de Nacimiento")
+        self.dateofbirthR = QDateEdit(self)
+        self.dateofbirthR.setCalendarPopup(True)
+        self.dateofbirthR.setDisplayFormat("dd/MM/yyyy")
+        self.dateofbirthR.setDate(QDate.currentDate())
         self.grid6.addWidget(self.dateofbirthR, 2, 2)
-        
+
         # Boton Marital Status
         self.MaritalStatus = QGroupBox("Estado Civil", self)
         self.QrBS = QRadioButton("Soltero", self)
@@ -392,7 +465,7 @@ class FormsStudend(QMainWindow):
         # Boton de Back a la Pagina 1
         self.backBt = QPushButton("Pagina Anterior")
         self.backBt.clicked.connect(self.RegisterPage1)
-        self.layoutP2.addWidget(self.backBt, 5, 1)
+        self.layoutP2.addWidget(self.backBt, 5, 1)  # Agrega el botón después de crearlo
         self.page2.setLayout(self.layoutP2)
         
         # Boton de Next a la Pagina 2
@@ -415,13 +488,30 @@ class FormsStudend(QMainWindow):
         self.page3 = QWidget()
         self.layoutP3 = QGridLayout()
         
+        # Título centrado
+        self.title_label3 = QLabel("Datos del Padre", self.page3)
+        self.title_label3.setAlignment(Qt.AlignCenter)
+        self.title_label3.setStyleSheet("""
+            font-family: Monotype Corsiva, Times, Serif;
+            font-size: 42px;
+            font-weight: bold;
+            color: #fff;
+            background: rgba(12, 63, 103, 0.82);
+            border-radius: 18px;
+            padding: 18px 32px 18px 32px;
+            margin-bottom: 16px;
+            border: 2px solid #0d7acf;
+            text-shadow: 2px 2px 8px #0c3f67, 0 2px 12px #000;
+        """)
+        self.layoutP3.addWidget(self.title_label3, 0, 0, 1, 3, Qt.AlignCenter)  # Ocupa 3 columnas
+        
         #Fila 0: Titutlos Tabla Datos del Padre.
-        self.dpLabel = QLabel("Datos Personales del Padre", self)
+        self.dpLabel = QLabel("Datos Personales", self)
         self.dpLabel.setProperty("class", "tituloz")
         self.dpLabel.setFixedSize(300, 45)
         self.dpLabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.dclabel = QLabel("Datos de Contacto del Padre", self)
-        self.dclabel.setProperty("class", "tituloz")
+        self.dclabel = QLabel("Datos de Contacto", self)
+        self.dclabel.setProperty("class", "titulod")
         self.dclabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         self.dclabel.setFixedSize(300, 45)
         self.dclabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
@@ -442,11 +532,12 @@ class FormsStudend(QMainWindow):
         self.dniP = QLineEdit(self)
         self.dniP.setPlaceholderText("Cedula")
         self.grid9.addWidget(self.dniP, 2, 1)
-        self.dateofbirthP = QLineEdit(self)
-        self.dateofbirthP.setPlaceholderText("Fecha de Nacimiento")
+        self.dateofbirthP = QDateEdit(self)
+        self.dateofbirthP.setCalendarPopup(True)
+        self.dateofbirthP.setDisplayFormat("dd/MM/yyyy")
+        self.dateofbirthP.setDate(QDate.currentDate())
         self.grid9.addWidget(self.dateofbirthP, 2, 2)
-        
-        
+
         # Boton Vive Con el Niño
         self.lwtc = QGroupBox("¿Vive Con el Niño?")
         self.QrPSi = QRadioButton("Si")
@@ -475,7 +566,7 @@ class FormsStudend(QMainWindow):
         self.layoutP3.addLayout(self.grid10, 1, 2, Qt.AlignTop)
         
         #Fila 3: Titulo Datos de Profesion
-        self.Plabel = QLabel("Datos de Profesión del Padre")
+        self.Plabel = QLabel("Datos de Profesión")
         self.Plabel.setProperty("class", "tituloz")
         self.Plabel.setFixedSize(300, 45)
         self.Plabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
@@ -516,13 +607,29 @@ class FormsStudend(QMainWindow):
         self.page4 = QWidget()
         self.layoutP4 = QGridLayout()
         
+        # Título centrado
+        self.title_label4 = QLabel("Datos de Madre", self.page4)
+        self.title_label4.setAlignment(Qt.AlignCenter)
+        self.title_label4.setStyleSheet("""
+            font-family: Monotype Corsiva, Times, Serif;
+            font-size: 42px;
+            font-weight: bold;
+            color: #fff;
+            background: rgba(12, 63, 103, 0.82);
+            border-radius: 18px;
+            padding: 18px 32px 18px 32px;
+            margin-bottom: 16px;
+            border: 2px solid #0d7acf;
+            text-shadow: 2px 2px 8px #0c3f67, 0 2px 12px #000;
+        """)
+        self.layoutP4.addWidget(self.title_label4, 0, 0, 1, 3, Qt.AlignCenter)  # Ocupa 3 columnas
         #Fila 0: Titutlos Tabla Datos del Madre.
-        self.dpLabel = QLabel("Datos Personales de la Madre", self)
+        self.dpLabel = QLabel("Datos Personales", self)
         self.dpLabel.setProperty("class", "tituloz")
         self.dpLabel.setFixedSize(300, 45)
         self.dpLabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.dclabel = QLabel("Datos de Contacto de la Madre", self)
-        self.dclabel.setProperty("class", "tituloz")
+        self.dclabel = QLabel("Datos de Contacto", self)
+        self.dclabel.setProperty("class", "titulod")
         self.dclabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         self.dclabel.setFixedSize(300, 45)
         self.dclabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
@@ -543,11 +650,13 @@ class FormsStudend(QMainWindow):
         self.dniM = QLineEdit(self)
         self.dniM.setPlaceholderText("Cedula")
         self.grid12.addWidget(self.dniM, 2, 1)
-        self.dateofbirthM = QLineEdit(self)
-        self.dateofbirthM.setPlaceholderText("Fecha de Nacimiento")
+        self.dateofbirthM = QDateEdit(self)
+        self.dateofbirthM.setCalendarPopup(True)
+        self.dateofbirthM.setDisplayFormat("dd/MM/yyyy")
+        self.dateofbirthM.setDate(QDate.currentDate())
         self.grid12.addWidget(self.dateofbirthM, 2, 2)
-        
-        
+
+
         # Boton Vive Con el Niño
         self.lwtc = QGroupBox("¿Vive Con el Niño?")
         self.QrPSi = QRadioButton("Si")
@@ -560,9 +669,9 @@ class FormsStudend(QMainWindow):
         self.grid12.addWidget(self.lwtc, 3, 0)
         # Final del Boton Vive Con el Niño
         
-        self.Cnn = QLineEdit(self)
-        self.Cnn.setPlaceholderText("¿Causa por la que no vive con el Niño?")
-        self.grid12.addWidget(self.Cnn, 4, 0)
+        self.CnnM = QLineEdit(self)
+        self.CnnM.setPlaceholderText("¿Causa por la que no vive con el Niño?")
+        self.grid12.addWidget(self.CnnM, 4, 0)
         self.layoutP4.addLayout(self.grid12, 1, 0, Qt.AlignLeft)
         
         # Fila 2: Grid 13 Datos de Contacto
@@ -570,13 +679,13 @@ class FormsStudend(QMainWindow):
         self.PhoneMM = QLineEdit(self)
         self.PhoneMM.setPlaceholderText("Telélefono Móvil")
         self.grid13.addWidget(self.PhoneMM, 1, 0)
-        self.Dcp = QLineEdit(self)
-        self.Dcp.setPlaceholderText("Dirección")
-        self.grid13.addWidget(self.Dcp, 2, 0)
+        self.DcpM = QLineEdit(self)
+        self.DcpM.setPlaceholderText("Dirección")
+        self.grid13.addWidget(self.DcpM, 2, 0)
         self.layoutP4.addLayout(self.grid13, 1, 2, Qt.AlignTop)
         
         #Fila 3: Titulo Datos de Profesion
-        self.Mlabel = QLabel("Datos de Profesión de la Madre")
+        self.Mlabel = QLabel("Datos de Profesión")
         self.Mlabel.setProperty("class", "tituloz")
         self.Mlabel.setFixedSize(300, 45)
         self.Mlabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
@@ -584,23 +693,24 @@ class FormsStudend(QMainWindow):
         
         # Fila 3:Grid 14 Datos de Profesion
         self.grid14 = QGridLayout()
-        self.Empdt = QLineEdit(self)
-        self.Empdt.setPlaceholderText("Emprensa donde Trabaja")
-        self.grid14.addWidget(self.Empdt, 1, 0)
-        self.Ted = QLineEdit(self)
-        self.Ted.setPlaceholderText("Tipo de Empleo que Desempeña")
-        self.grid14.addWidget(self.Ted, 2, 0)
+        self.EmpdtM = QLineEdit(self)
+        self.EmpdtM.setPlaceholderText("Emprensa donde Trabaja")
+        self.grid14.addWidget(self.EmpdtM, 1, 0)
+        self.TedM = QLineEdit(self)
+        self.TedM.setPlaceholderText("Tipo de Empleo que Desempeña")
+        self.grid14.addWidget(self.TedM, 2, 0)
         self.layoutP4.addLayout(self.grid14, 3, 0, Qt.AlignTop)
         
         #Boton de Back a la Pagina 3
         self.backP3 = QPushButton("Pagina Anterior")
         self.backP3.clicked.connect(self.RegisterPage3)
-        self.layoutP4.addWidget(self.backP3, 5, 1)
+        self.layoutP4.addWidget(self.backP3, 6, 1)
         self.page4.setLayout(self.layoutP4)
-
+        
+        # Boton de Registro Final
         self.registerBton = QPushButton("Finalizar Registro")
         self.registerBton.clicked.connect(self.register_estudend)
-        self.layoutP4.addWidget(self.registerBton, 6, 1)
+        self.layoutP4.addWidget(self.registerBton, 5, 1)
         
         # Espaciador entre columnas
         self.layoutP4.addItem(QSpacerItem(200, 20, QSizePolicy.Minimum, QSizePolicy.Expanding), 0, 1, 6, 1)
@@ -631,36 +741,36 @@ class FormsStudend(QMainWindow):
     
     def register_estudend(self):
         # Inicio Pagina Estudiante Pagina 1
-        Nombre = self.nameS.text()
-        Apellido = self.lastNS.text()
-        CedulaEscolar = self.dni.text()
-        Edad = self.ageS.text()
-        Genero = "Masculino" if self.QrBM.isChecked() else "Femenino"
-        FechaDeNacimiento = self.dateofbirth.text()
-        Lateralidad = "Derecho" if self.QrBD.isChecked() else "Izquierdo"
-        Nacionalidad = self.ncl.text()
-        Estado = self.est.text()
-        Municipio = self.mun.text()
-        Direccion_Actual = self.dra.text()
-        Punto_de_Referencia = self.pdr.text()
-        Altura = self.alt.text()
-        Peso = self.kg.text()
-        Talla_Zapatos = self.tza.text()
-        Talla_Camisa = self.tca.text()
-        Talla_Pantalon = self.tpan.text()
-        NdHermanos = self.Nofs.text()
-        AutorizadoPRetirarAlNiño = self.authorizeRC.text()
-        Alergico_a = self.ala.text()
-        Alguna_Dificultad = "Si" if self.QrBY.isChecked() else "No"
-        Especificar_Dificultad = self.tds.text() if Alguna_Dificultad == "Si" else ""
-        Correo_Electronico = self.email.text()
-        Telefono_de_Habitacion = self.tfh.text()
-        Carton_Vacunas = None
+        nombre = self.nameS.text()
+        apellido = self.lastNS.text()
+        cedulaEscolar = self.dni.text()
+        edad = self.ageS.text()
+        genero = "Masculino" if self.QrBM.isChecked() else "Femenino"
+        fechaDNacimiento = self.dateofbirth.date().toString("dd/MM/yyyy")
+        lateralidad = "Derecho" if self.QrBD.isChecked() else "Izquierdo"
+        nacionalidad = self.ncl.text()
+        estado = self.est.text()
+        municipio = self.mun.text()
+        direccionActual = self.dra.text()
+        puntoDReferencia = self.pdr.text()
+        altura = self.alt.text()
+        peso = self.kg.text()
+        tallaZapatos = self.tza.text()
+        tallaCamisa = self.tca.text()
+        tallaPantalon = self.tpan.text()
+        numeroDHermanos = self.Nofs.text()
+        autorizadoPRetirarANiño = self.authorizeRC.text()
+        alergicoA = self.ala.text()
+        algunaDificultad = "Si" if self.QrBY.isChecked() else "No"
+        especificarDificultad = self.epdf.text() 
+        correoElectronico = self.email.text()
+        telefonoDHabitacion = self.tfh.text()
+        cartonVacunas = None
         if self.vacunaIMGpath:
             with open(self.vacunaIMGpath, 'rb') as f:
-                Carton_Vacunas_Img = f.read()
-        tipo_de_Sangre = self.tds.text()
-        Examen_de_Heces = self.exdh.text()
+                cartonVacunas = f.read()
+        tipoDSangre = self.tds.text()
+        examenDHeces = self.exdh.text()
         # Final Pagina Estudiante Pagina 1
         
         # Inicio Pagina Representante Pagina 2
@@ -668,19 +778,23 @@ class FormsStudend(QMainWindow):
         ApellidoR = self.lastNR.text()
         EdadR = self.ageR.text()
         CedulaR = self.dniR.text()
-        FechaDeNacimientoR = self.dateofbirthR.text()
-        MaritalStatus = "Soltero" if self.QrBS.isChecked() else "Casado" if self.QrBC.isChecked() else "Divorciado"
+        FechaDeNacimientoR = self.dateofbirthR.date().toString("dd/MM/yyyy")
+        EstadoCivil = "Soltero" if self.QrBS.isChecked() else "Casado" if self.QrBC.isChecked() else "Divorciado"
         Afinidad = self.Affi.text()
-        Rif = self.Rif.text()
-        PlanillaSige = "Si" if self.QrBSi.isChecked() else "No"
-        Telefono_MovilR = self.PhoneM.text()
-        Telefono_HabitacionR = self.PhoneR.text()
-        Correo_ElectronicoR = self.EmailR.text()
-        Telefono_FamiliarR = self.PhoneF.text()
+        RifR = self.Rif.text()
+        PlanillaSigeR = "Si" if self.QrBSi.isChecked() else "No"
+        TelefonoMovilR = self.PhoneM.text()
+        TelefonoHabitacionR = self.PhoneR.text()
+        CorreoElectronicoR = self.EmailR.text()
+        TelefonoFamiliarR = self.PhoneF.text()
         NacionalidadR = self.NclR.text()
         DireccionR = self.DrR.text()
-        Codigo_Patria = self.CodeP.text()
-        Serial_Patria = self.Serial.text()
+        CodigoPatriaR = self.CodeP.text()
+        SerialPatriaR = self.Serial.text()
+        ProfesionR = self.Pfson.text()
+        OcupacionR = self.Occu.text()
+        EmpresaDTrabajaR = self.Epdt.text()
+        
         # Final Pagina Representante Pagina 2
         
         # Inicio Pagina Padre Pagina 3
@@ -688,13 +802,13 @@ class FormsStudend(QMainWindow):
         ApellidoP = self.lastNP.text()
         EdadP = self.ageP.text()
         CedulaP = self.dniP.text()
-        FechaDeNacimientoP = self.dateofbirthP.text()
-        ViveConElNiño = "Si" if self.QrPSi.isChecked() else "No"
-        CausaNoViveConElNiño = self.Cnn.text()
-        Telefono_MovilP = self.PhoneMp.text()
+        FechaDNacimientoP = self.dateofbirthP.date().toString("dd/MM/yyyy")
+        ViveConElNiñoP = "Si" if self.QrPSi.isChecked() else "No"
+        CausaPNoViveP = self.Cnn.text()
+        EmpresaDTrabajaP = self.Empdt.text()
+        TipoEmpleoqDesempeñaP = self.Ted.text()
+        TelefonoMovilP = self.PhoneMp.text()
         DireccionP = self.Dcp.text()
-        Empresa_Padre = self.Empdt.text()
-        Tipo_Empleo_Padre = self.Ted.text()
         # Final Pagina Padre Pagina 3
         
         # Inicio Pagina Madre Pagina 4
@@ -702,31 +816,35 @@ class FormsStudend(QMainWindow):
         ApellidoM = self.lastNM.text()
         EdadM = self.ageM.text()
         CedulaM = self.dniM.text()
-        FechaDeNacimientoM = self.dateofbirthM.text()
+        FechaDNacimientoM = self.dateofbirthM.date().toString("dd/MM/yyyy")
         ViveConElNiñoM = "Si" if self.QrPSi.isChecked() else "No"
-        CausaNoViveConElNiñoM = self.Cnn.text()
-        Telefono_MovilM = self.PhoneMM.text()
-        DireccionM = self.Dcp.text()
-        Empresa_Madre = self.Empdt.text()
-        Tipo_Empleo_Madre = self.Ted.text()
+        CausaPNoViveM = self.CnnM.text()
+        EmpresaDTrabajaM = self.EmpdtM.text()
+        TipoEmpleoqDesempeñaM = self.TedM.text()
+        DireccionM = self.DcpM.text()
+        TelefonoMovilM = self.PhoneMM.text()
+    
         # Final Pagina Madre Pagina 4
         
 
 
-        if Nombre and Apellido and CedulaEscolar and Edad and Genero and FechaDeNacimiento and Lateralidad and Nacionalidad and Estado and Municipio and Direccion_Actual and Punto_de_Referencia and Altura and Peso and Talla_Zapatos and Talla_Camisa and Talla_Pantalon and NdHermanos and AutorizadoPRetirarAlNiño and Alergico_a and Alguna_Dificultad and Correo_Electronico and Telefono_de_Habitacion and tipo_de_Sangre and Examen_de_Heces and NombreR and ApellidoR and EdadR and CedulaR and FechaDeNacimientoR and MaritalStatus and Afinidad and Rif and PlanillaSige and Telefono_MovilR and Telefono_HabitacionR and Correo_ElectronicoR and Telefono_FamiliarR and NacionalidadR and DireccionR and Codigo_Patria and Serial_Patria and NombreP and ApellidoP and EdadP and CedulaP and FechaDeNacimientoP and ViveConElNiño and CausaNoViveConElNiño and Telefono_MovilP and DireccionP and Empresa_Padre and Tipo_Empleo_Padre and NombreM and ApellidoM and EdadM and CedulaM and FechaDeNacimientoM and ViveConElNiñoM and CausaNoViveConElNiñoM and Telefono_MovilM and DireccionM and Empresa_Madre and Tipo_Empleo_Madre:
-            self.viewmodel.set_date(
-                Nombre, Apellido, CedulaEscolar, Edad, Genero, FechaDeNacimiento,
-                Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual,
-                Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa,
-                Talla_Pantalon, NdHermanos, AutorizadoPRetirarAlNiño,
-                Alergico_a, Alguna_Dificultad, Especificar_Dificultad,
-                Correo_Electronico, Telefono_de_Habitacion,
-                Carton_Vacunas, tipo_de_Sangre, Examen_de_Heces,
-                NombreR, ApellidoR, EdadR, CedulaR, FechaDeNacimientoR,
-                MaritalStatus, Afinidad, Rif, PlanillaSige,
-                Telefono_MovilR, Telefono_HabitacionR, Correo_ElectronicoR, Telefono_FamiliarR, NacionalidadR, DireccionR, Codigo_Patria, Serial_Patria,
-                NombreP, ApellidoP, EdadP, CedulaP, FechaDeNacimientoP, ViveConElNiño, CausaNoViveConElNiño, Telefono_MovilP, DireccionP, Empresa_Padre, Tipo_Empleo_Padre,
-                NombreM, ApellidoM, EdadM, CedulaM, FechaDeNacimientoM, ViveConElNiñoM, CausaNoViveConElNiñoM, Telefono_MovilM, DireccionM, Empresa_Madre, Tipo_Empleo_Madre
+        if nombre and apellido and cedulaEscolar and edad and fechaDNacimiento and lateralidad and nacionalidad and estado and municipio and direccionActual and puntoDReferencia and altura and peso and tallaZapatos and tallaCamisa and tallaPantalon and numeroDHermanos and autorizadoPRetirarANiño and alergicoA and algunaDificultad and especificarDificultad and correoElectronico and telefonoDHabitacion and cartonVacunas and tipoDSangre and examenDHeces \
+        and NombreR and ApellidoR and EdadR and CedulaR and FechaDeNacimientoR and EstadoCivil and Afinidad and RifR and PlanillaSigeR and TelefonoMovilR and TelefonoHabitacionR and CorreoElectronicoR and TelefonoFamiliarR and NacionalidadR and DireccionR and CodigoPatriaR and SerialPatriaR \
+            and NombreP and ApellidoP and EdadP and CedulaP and FechaDNacimientoP and ViveConElNiñoP and CausaPNoViveP and EmpresaDTrabajaP and TipoEmpleoqDesempeñaP and TelefonoMovilP and DireccionP  \
+                and NombreM and ApellidoM and CedulaM and FechaDNacimientoM and EdadM and TipoEmpleoqDesempeñaM and EmpresaDTrabajaM and ViveConElNiñoM and CausaPNoViveM and DireccionM and TelefonoMovilM:
+
+            self.viewmodel.registrar_estudiante(
+            nombre, apellido, cedulaEscolar, edad, genero, fechaDNacimiento, lateralidad, nacionalidad, estado, municipio, direccionActual, puntoDReferencia, altura, peso, tallaZapatos, tallaCamisa, tallaPantalon, numeroDHermanos, autorizadoPRetirarANiño, alergicoA, algunaDificultad, especificarDificultad, correoElectronico, telefonoDHabitacion, cartonVacunas, tipoDSangre, examenDHeces
+            )
+            self.viewmodel.registrar_representante(
+            NombreR, ApellidoR, CedulaR, FechaDeNacimientoR, EdadR, EstadoCivil, NacionalidadR, Afinidad, ProfesionR, OcupacionR, EmpresaDTrabajaR, DireccionR, TelefonoMovilR, TelefonoHabitacionR, TelefonoFamiliarR, CorreoElectronicoR, RifR, PlanillaSigeR, CodigoPatriaR, SerialPatriaR
+
+            )
+            self.viewmodel.registrar_padre(
+                NombreP, ApellidoP, CedulaP, FechaDNacimientoP, EdadP, TipoEmpleoqDesempeñaP, EmpresaDTrabajaP,  ViveConElNiñoP, CausaPNoViveP, DireccionP, TelefonoMovilP
+            )
+            self.viewmodel.registrar_madre(
+                NombreM, ApellidoM, CedulaM, FechaDNacimientoM, EdadM, TipoEmpleoqDesempeñaM, EmpresaDTrabajaM, ViveConElNiñoM, CausaPNoViveM, DireccionM, TelefonoMovilM
             )
             QMessageBox.information(self, "Registro Exitoso", "El estudiante ha sido registrado exitosamente.")
             
@@ -742,4 +860,3 @@ class FormsStudend(QMainWindow):
             self.vacunaIMGpath = filepath
             pixmap = QPixmap(filepath)
             self.vacunaIMG.setPixmap(pixmap.scaled(self.vacunaIMG.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
-    
