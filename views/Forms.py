@@ -3,6 +3,8 @@ from PySide6.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayo
 from viewmodels.FormsW import EstudendViewModel
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap, QPainter, QIcon
+from PySide6.QtWidgets import QDateEdit
+from PySide6.QtCore import QDate
 import sqlite3
 
 
@@ -60,13 +62,13 @@ class FormsStudend(QMainWindow):
                 margin-bottom: 8px;
             }
             QGroupBox {
-                border: 1px solid black;
+                border: 1px solid white;
                 border-radius: 8px;
                 margin-top: 10px;
                 background: transparent;
             }
             QGroupBox::title {
-                color: black;
+                color: white;
                 font-weight: bold;
                 font-size: 15px;
                 subcontrol-origin: margin;
@@ -74,7 +76,7 @@ class FormsStudend(QMainWindow):
             }
             
             QRadioButton {
-                color: black;
+                color: white;
                 font-weight: bold;
             }
             
@@ -93,7 +95,7 @@ class FormsStudend(QMainWindow):
 
 
         # Crear el widget de fondo
-        self.bg_widget = BgWidget("utilities/resources/imgs/bg/BlueBga.png")
+        self.bg_widget = BgWidget("utilities/resources/imgs/bg/BlueBgI.png")
         self.setCentralWidget(self.bg_widget)
 
         self.main_layout = QVBoxLayout(self.bg_widget)
@@ -111,7 +113,18 @@ class FormsStudend(QMainWindow):
         # Título centrado
         self.title_label1 = QLabel("Datos de Estudiante", self.page1)
         self.title_label1.setAlignment(Qt.AlignCenter)
-        self.title_label1.setStyleSheet("font-family: Monotype Corsiva, Times, Serif; font-size: 42px; font-weight: bold; color: #0c3f67;  margin-bottom: 16px;")
+        self.title_label1.setStyleSheet("""
+            font-family: Monotype Corsiva, Times, Serif;
+            font-size: 42px;
+            font-weight: bold;
+            color: #fff;
+            background: rgba(12, 63, 103, 0.82);
+            border-radius: 18px;
+            padding: 18px 32px 18px 32px;
+            margin-bottom: 16px;
+            border: 2px solid #0d7acf;
+            text-shadow: 2px 2px 8px #0c3f67, 0 2px 12px #000;
+        """)
         self.layoutP1.addWidget(self.title_label1, 0, 0, 1, 3, Qt.AlignCenter)  # Ocupa 3 columnas
 
         # Fila 0: Títulos principales
@@ -147,8 +160,10 @@ class FormsStudend(QMainWindow):
         self.lastNS = QLineEdit(self)
         self.lastNS.setPlaceholderText("Apellidos")
         self.grid1.addWidget(self.lastNS, 1, 1)
-        self.dateofbirth = QLineEdit(self)
-        self.dateofbirth.setPlaceholderText("Fecha de Nacimiento")
+        self.dateofbirth = QDateEdit(self)
+        self.dateofbirth.setCalendarPopup(True)          # Habilita el calendario
+        self.dateofbirth.setDisplayFormat("dd/MM/yyyy")  # Formato de fecha
+        self.dateofbirth.setDate(QDate.currentDate())    # Fecha actual por defecto
         self.grid1.addWidget(self.dateofbirth, 2, 1)
         self.dni = QLineEdit(self)
         self.dni.setPlaceholderText("Cedula Escolar")
@@ -298,8 +313,35 @@ class FormsStudend(QMainWindow):
         
         # Título centrado
         self.title_label2 = QLabel("Datos del Representante", self.page2)
+        self.title_label1.setAlignment(Qt.AlignCenter)
+        self.title_label1.setStyleSheet("""
+            font-family: Monotype Corsiva, Times, Serif;
+            font-size: 42px;
+            font-weight: bold;
+            color: #fff;
+            background: rgba(12, 63, 103, 0.82);
+            border-radius: 18px;
+            padding: 18px 32px 18px 32px;
+            margin-bottom: 16px;
+            border: 2px solid #0d7acf;
+            text-shadow: 2px 2px 8px #0c3f67, 0 2px 12px #000;
+        """)
+        
+        # Título centrado
+        self.title_label2 = QLabel("Datos del Representante", self.page2)
         self.title_label2.setAlignment(Qt.AlignCenter)
-        self.title_label2.setStyleSheet("font-family: Monotype Corsiva, Times, Serif; font-size: 42px; font-weight: bold; color: #0c3f67; margin-bottom: 16px;")
+        self.title_label2.setStyleSheet("""
+            font-family: Monotype Corsiva, Times, Serif;
+            font-size: 42px;
+            font-weight: bold;
+            color: #fff;
+            background: rgba(12, 63, 103, 0.82);
+            border-radius: 18px;
+            padding: 18px 32px 18px 32px;
+            margin-bottom: 16px;
+            border: 2px solid #0d7acf;
+            text-shadow: 2px 2px 8px #0c3f67, 0 2px 12px #000;
+        """)
         self.layoutP2.addWidget(self.title_label2, 0, 0, 1, 3, Qt.AlignCenter)  # Ocupa 3 columnas
 
         
@@ -330,10 +372,12 @@ class FormsStudend(QMainWindow):
         self.dniR = QLineEdit(self)
         self.dniR.setPlaceholderText("Cedula")
         self.grid6.addWidget(self.dniR, 2, 1)
-        self.dateofbirthR = QLineEdit(self)
-        self.dateofbirthR.setPlaceholderText("Fecha de Nacimiento")
+        self.dateofbirthR = QDateEdit(self)
+        self.dateofbirthR.setCalendarPopup(True)
+        self.dateofbirthR.setDisplayFormat("dd/MM/yyyy")
+        self.dateofbirthR.setDate(QDate.currentDate())
         self.grid6.addWidget(self.dateofbirthR, 2, 2)
-        
+
         # Boton Marital Status
         self.MaritalStatus = QGroupBox("Estado Civil", self)
         self.QrBS = QRadioButton("Soltero", self)
@@ -447,9 +491,20 @@ class FormsStudend(QMainWindow):
         # Título centrado
         self.title_label3 = QLabel("Datos del Padre", self.page3)
         self.title_label3.setAlignment(Qt.AlignCenter)
-        self.title_label3.setStyleSheet("font-family: Monotype Corsiva, Times, Serif; font-size: 42px; font-weight: bold; color: #0c3f67; margin-bottom: 16px;")
+        self.title_label3.setStyleSheet("""
+            font-family: Monotype Corsiva, Times, Serif;
+            font-size: 42px;
+            font-weight: bold;
+            color: #fff;
+            background: rgba(12, 63, 103, 0.82);
+            border-radius: 18px;
+            padding: 18px 32px 18px 32px;
+            margin-bottom: 16px;
+            border: 2px solid #0d7acf;
+            text-shadow: 2px 2px 8px #0c3f67, 0 2px 12px #000;
+        """)
         self.layoutP3.addWidget(self.title_label3, 0, 0, 1, 3, Qt.AlignCenter)  # Ocupa 3 columnas
-
+        
         #Fila 0: Titutlos Tabla Datos del Padre.
         self.dpLabel = QLabel("Datos Personales", self)
         self.dpLabel.setProperty("class", "tituloz")
@@ -477,11 +532,12 @@ class FormsStudend(QMainWindow):
         self.dniP = QLineEdit(self)
         self.dniP.setPlaceholderText("Cedula")
         self.grid9.addWidget(self.dniP, 2, 1)
-        self.dateofbirthP = QLineEdit(self)
-        self.dateofbirthP.setPlaceholderText("Fecha de Nacimiento")
+        self.dateofbirthP = QDateEdit(self)
+        self.dateofbirthP.setCalendarPopup(True)
+        self.dateofbirthP.setDisplayFormat("dd/MM/yyyy")
+        self.dateofbirthP.setDate(QDate.currentDate())
         self.grid9.addWidget(self.dateofbirthP, 2, 2)
-        
-        
+
         # Boton Vive Con el Niño
         self.lwtc = QGroupBox("¿Vive Con el Niño?")
         self.QrPSi = QRadioButton("Si")
@@ -554,9 +610,19 @@ class FormsStudend(QMainWindow):
         # Título centrado
         self.title_label4 = QLabel("Datos de Madre", self.page4)
         self.title_label4.setAlignment(Qt.AlignCenter)
-        self.title_label4.setStyleSheet("font-family: Monotype Corsiva, Times, Serif; font-size: 42px; font-weight: bold; color: #0c3f67; margin-bottom: 16px;")
+        self.title_label4.setStyleSheet("""
+            font-family: Monotype Corsiva, Times, Serif;
+            font-size: 42px;
+            font-weight: bold;
+            color: #fff;
+            background: rgba(12, 63, 103, 0.82);
+            border-radius: 18px;
+            padding: 18px 32px 18px 32px;
+            margin-bottom: 16px;
+            border: 2px solid #0d7acf;
+            text-shadow: 2px 2px 8px #0c3f67, 0 2px 12px #000;
+        """)
         self.layoutP4.addWidget(self.title_label4, 0, 0, 1, 3, Qt.AlignCenter)  # Ocupa 3 columnas
-
         #Fila 0: Titutlos Tabla Datos del Madre.
         self.dpLabel = QLabel("Datos Personales", self)
         self.dpLabel.setProperty("class", "tituloz")
@@ -584,11 +650,13 @@ class FormsStudend(QMainWindow):
         self.dniM = QLineEdit(self)
         self.dniM.setPlaceholderText("Cedula")
         self.grid12.addWidget(self.dniM, 2, 1)
-        self.dateofbirthM = QLineEdit(self)
-        self.dateofbirthM.setPlaceholderText("Fecha de Nacimiento")
+        self.dateofbirthM = QDateEdit(self)
+        self.dateofbirthM.setCalendarPopup(True)
+        self.dateofbirthM.setDisplayFormat("dd/MM/yyyy")
+        self.dateofbirthM.setDate(QDate.currentDate())
         self.grid12.addWidget(self.dateofbirthM, 2, 2)
-        
-        
+
+
         # Boton Vive Con el Niño
         self.lwtc = QGroupBox("¿Vive Con el Niño?")
         self.QrPSi = QRadioButton("Si")
@@ -636,13 +704,13 @@ class FormsStudend(QMainWindow):
         #Boton de Back a la Pagina 3
         self.backP3 = QPushButton("Pagina Anterior")
         self.backP3.clicked.connect(self.RegisterPage3)
-        self.layoutP4.addWidget(self.backP3, 5, 1)
+        self.layoutP4.addWidget(self.backP3, 6, 1)
         self.page4.setLayout(self.layoutP4)
         
         # Boton de Registro Final
         self.registerBton = QPushButton("Finalizar Registro")
         self.registerBton.clicked.connect(self.register_estudend)
-        self.layoutP4.addWidget(self.registerBton, 6, 1)
+        self.layoutP4.addWidget(self.registerBton, 5, 1)
         
         # Espaciador entre columnas
         self.layoutP4.addItem(QSpacerItem(200, 20, QSizePolicy.Minimum, QSizePolicy.Expanding), 0, 1, 6, 1)
@@ -678,7 +746,7 @@ class FormsStudend(QMainWindow):
         cedulaEscolar = self.dni.text()
         edad = self.ageS.text()
         genero = "Masculino" if self.QrBM.isChecked() else "Femenino"
-        fechaDNacimiento = self.dateofbirth.text()
+        fechaDNacimiento = self.dateofbirth.date().toString("dd/MM/yyyy")
         lateralidad = "Derecho" if self.QrBD.isChecked() else "Izquierdo"
         nacionalidad = self.ncl.text()
         estado = self.est.text()
@@ -710,7 +778,7 @@ class FormsStudend(QMainWindow):
         ApellidoR = self.lastNR.text()
         EdadR = self.ageR.text()
         CedulaR = self.dniR.text()
-        FechaDeNacimientoR = self.dateofbirthR.text()
+        FechaDeNacimientoR = self.dateofbirthR.date().toString("dd/MM/yyyy")
         EstadoCivil = "Soltero" if self.QrBS.isChecked() else "Casado" if self.QrBC.isChecked() else "Divorciado"
         Afinidad = self.Affi.text()
         RifR = self.Rif.text()
@@ -734,7 +802,7 @@ class FormsStudend(QMainWindow):
         ApellidoP = self.lastNP.text()
         EdadP = self.ageP.text()
         CedulaP = self.dniP.text()
-        FechaDNacimientoP = self.dateofbirthP.text()
+        FechaDNacimientoP = self.dateofbirthP.date().toString("dd/MM/yyyy")
         ViveConElNiñoP = "Si" if self.QrPSi.isChecked() else "No"
         CausaPNoViveP = self.Cnn.text()
         EmpresaDTrabajaP = self.Empdt.text()
@@ -748,7 +816,7 @@ class FormsStudend(QMainWindow):
         ApellidoM = self.lastNM.text()
         EdadM = self.ageM.text()
         CedulaM = self.dniM.text()
-        FechaDNacimientoM = self.dateofbirthM.text()
+        FechaDNacimientoM = self.dateofbirthM.date().toString("dd/MM/yyyy")
         ViveConElNiñoM = "Si" if self.QrPSi.isChecked() else "No"
         CausaPNoViveM = self.CnnM.text()
         EmpresaDTrabajaM = self.EmpdtM.text()
