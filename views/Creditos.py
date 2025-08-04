@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QMainWindow, QLabel, QVBoxLayout, QWidget, QPushButton
+from PySide6.QtWidgets import QMainWindow, QLabel, QVBoxLayout, QWidget, QPushButton, QTableView
 from PySide6.QtGui import QPixmap, QIcon
 from PySide6.QtCore import Qt
 
@@ -45,25 +45,34 @@ class CreditosWindow(QMainWindow):
         title_logo_frame.setLayout(title_logo_layout)
         layout.addWidget(title_logo_frame, alignment=Qt.AlignHCenter)
 
+        from PySide6.QtWidgets import QScrollArea
         autores = QLabel("""
 Desarrollado por:
 
-• Dalvin Ramirez (Desarrollador principal)(Diseñador de UI/UX)
+• Dalvin Ramirez (Desarrollador principal) (Diseñador de UI/UX)
 • Aliribet Gonzalez (Diseñadora Gráfica y Colaboradora)
 • Jose Mora (Documentación y Colaborador)
 • Genesis Cordero (Tester y Colaboradora)
+• Tiffany Molero (Documentación Colaboradora)
 • Auditoría Recibida por: Bill Anthony Nino Riera (Guia de Pyside6)
 
 • Agradecimientos especiales a todos los que contribuyeron al proyecto.
 • A la comunidad de código abierto por su inspiración y recursos.
 
-• Desarrollado por Estudiantes de la Universidad Experimental Rafael María Baralt (UERMB) de Venezuela.
+• Desarrollado por Estudiantes de la Universidad Experimental Rafael María Baralt (UNERMB) de Venezuela.
 
 Gracias por usar nuestra aplicación.
         """)
         autores.setAlignment(Qt.AlignCenter)
-        autores.setStyleSheet("font-size: 20px; color: #222; background: rgba(255,255,255,0.85); border-radius: 10px; padding: 18px 12px;")
-        layout.addWidget(autores)
+        autores.setWordWrap(True)
+        autores.setMinimumHeight(320)
+        autores.setStyleSheet("font-size: 22px; color: #222; background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #eaf6ff, stop:1 #cbe0f7); border-radius: 24px; padding: 28px 18px;")
+        scroll_area = QScrollArea()
+        scroll_area.setWidget(autores)
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setFixedHeight(320)
+        scroll_area.setStyleSheet("QScrollArea { border: none; background: transparent; } QScrollBar:vertical { background: rgba(12,63,103,0.18); width: 16px; margin: 4px 0 4px 0; border-radius: 8px; } QScrollBar::handle:vertical { background: #0c3f67; min-height: 32px; border-radius: 8px; } QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { background: none; height: 0px; } QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical { background: none; } QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: none; }")
+        layout.addWidget(scroll_area)
 
         btn_cerrar = QPushButton("Cerrar")
         btn_cerrar.setStyleSheet("background-color: #0c3f67; color: white; border-radius: 12px; padding: 8px 32px; font-size: 16px;")
