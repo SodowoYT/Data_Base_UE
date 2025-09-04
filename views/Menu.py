@@ -36,13 +36,15 @@ class MenuWindow(QMainWindow):
         self.logo.setAlignment(Qt.AlignCenter)
         self.logo.setStyleSheet("background: transparent; border: none;")
         left_layout.addWidget(self.logo, alignment=Qt.AlignHCenter)
-        
-        
+
+        # Botones del menú
         self.button1 = QPushButton("Registrar", self)
         self.button2 = QPushButton("Consultar", self)
         self.button3 = QPushButton("Mantenimiento", self)
         self.button4 = QPushButton("Creditos", self)
         self.button5 = QPushButton("Salir", self)
+
+        # Establecer estilos para los botones
         for btn in [self.button1, self.button2, self.button3, self.button4, self.button5]:
             btn.setStyleSheet("""
                 QPushButton {
@@ -58,12 +60,15 @@ class MenuWindow(QMainWindow):
                 }
             """)
             left_layout.addWidget(btn)
+
+        # Conectar botones a funciones
         self.button1.clicked.connect(self.rg)
         self.button2.clicked.connect(self.Csl)
         self.button3.clicked.connect(self.Opt)
         self.button4.clicked.connect(self.Crdt)
         self.button5.clicked.connect(self.Exit)
-        
+
+        # Establecer estilos para el panel izquierdo
         left_widget.setStyleSheet("""
             background-color: rgba(26,35,126,0.75);
             border-top-left-radius: 30px;
@@ -115,6 +120,7 @@ class MenuWindow(QMainWindow):
         overlay_widget.setLayout(overlay_layout)
         stacked.addWidget(overlay_widget)
 
+        # Contenedor principal
         container = QWidget()
         container.setLayout(stacked)
         self.setCentralWidget(container)
@@ -134,22 +140,32 @@ class MenuWindow(QMainWindow):
             QWidget.resizeEvent(self.background_label, event)
         self.background_label.resizeEvent = resize_background
 
+    # Funcion Actualizar fecha y hora
     def update_date_time(self):
         current = QDateTime.currentDateTime()
         # Formato 12 horas con AM/PM
         self.date_time_label.setText(current.toString("dd/MM/yyyy hh:mm:ss AP"))
 
+    # Función para abrir el formulario de registro
     def rg (self):
         self.rg_Window = FormsStudend()
         self.rg_Window.show()
+
+    # Función para abrir la ventana de consulta
     def Csl (self):
         self.Csl_Window = ConsultWindow()
         self.Csl_Window.show()
+
+    # Función para abrir la ventana de opciones
     def Opt (self):
         self.Opt_Window = Options()
         self.Opt_Window.show()
+
+    # Función para abrir la ventana de créditos
     def Crdt(self):
         self.Crdt_Window = CreditosWindow()
         self.Crdt_Window.show()
+
+    # Función para salir de la aplicación
     def Exit(self):
         self.close()

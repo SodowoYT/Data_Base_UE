@@ -15,10 +15,11 @@ class LoginWindow(QMainWindow):
         super().__init__()
         self.db = database()  # Inicializamos conexión con SQLite
 
+        # Configuración de la ventana
         self.setWindowTitle("Login")
         self.setWindowIcon(QIcon("utilities/resources/imgs/ico/IconApp.ico"))
-        self.setGeometry(100, 100, 500, 300)
-        self.setFixedSize(500, 300)
+        self.setGeometry(100, 100, 650, 400)
+        self.setFixedSize(650, 400)
         self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint | Qt.WindowMinimizeButtonHint)
 
         # Imagen de fondo
@@ -37,7 +38,7 @@ class LoginWindow(QMainWindow):
         right_widget = QWidget()
         right_layout = QVBoxLayout()
 
-        # Logo
+        # Logo de la aplicación
         self.logo = QLabel()
         self.logo.setMinimumHeight(140)
         self.logo.setMinimumWidth(140)
@@ -82,6 +83,7 @@ class LoginWindow(QMainWindow):
         self.inputusername.returnPressed.connect(self.handle_login)
         self.inputpassword.returnPressed.connect(self.handle_login)
 
+    # Función para manejar el inicio de sesión
     def handle_login(self):
         username = self.inputusername.text().strip()
         password = self.inputpassword.text()
@@ -103,10 +105,12 @@ class LoginWindow(QMainWindow):
             self.inputpassword.clear()
             self.inputpassword.setFocus()
 
+    # Función para manejar el evento de redimensionar
     def resizeEvent(self, event):
         self.update_background()
         super().resizeEvent(event)
 
+    # Función para actualizar el fondo
     def update_background(self):
         if not self.background_pixmap.isNull():
             scaled = self.background_pixmap.scaled(

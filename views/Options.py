@@ -1,5 +1,5 @@
 import os.path
-from PySide6.QtWidgets import QPushButton, QMainWindow, QVBoxLayout, QWidget, QFileDialog, QMessageBox, QLabel
+from PySide6.QtWidgets import QPushButton, QMainWindow, QVBoxLayout, QWidget, QFileDialog, QMessageBox, QLabel, QStackedLayout
 from PySide6.QtGui import QPixmap, QIcon
 from PySide6.QtCore import Qt
 import shutil
@@ -12,9 +12,8 @@ class Options(QMainWindow):
         self.setWindowIcon(QIcon("utilities/resources/imgs/ico/IconApp.ico"))
         self.setGeometry(100, 100, 950, 650)
         self.setFixedSize(950, 650)
-        
-        from PySide6.QtWidgets import QStackedLayout
-        from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy
+
+        # declarar layout
         self.layout = QVBoxLayout()
 
         # Fondo de la ventana con QLabel
@@ -56,7 +55,7 @@ class Options(QMainWindow):
         self.Option3.clicked.connect(self.register_user)
 
         # Apilar los botones en columna, centrados en la parte inferior
-        # Hacer que todos los botones tengan el mismo tamaño
+        ## Hacer que todos los botones tengan el mismo tamaño
         button_width = 220
         button_height = 48
         for btn in [self.Option1, self.Option2, self.Option3]:
@@ -83,10 +82,12 @@ class Options(QMainWindow):
         stacked.addWidget(logo_container)
         stacked.addWidget(buttons_container)
 
+        # Contenedor principal
         container = QWidget()
         container.setLayout(stacked)
         self.setCentralWidget(container)
 
+        # Establecer estilos para los botones
         self.Option1.setStyleSheet("""
 QPushButton {
     background-color: #0c3f67;
@@ -102,7 +103,9 @@ QPushButton:hover {
 """)
         self.Option2.setStyleSheet(self.Option1.styleSheet())
         self.Option3.setStyleSheet(self.Option1.styleSheet())
-        
+
+
+    # Función para realizar el backup
     def backup(self):
         origen = os.path.join("utilities", "db", "DataBaseUE.db")
         destino, _ = QFileDialog.getSaveFileName(self, "Guardar respaldo", "DataBaseUE_backup.db", "Archivos DB (*.db)")
@@ -112,7 +115,8 @@ QPushButton:hover {
                 QMessageBox.information(self, "Backup", f"Respaldo guardado en: {destino}")
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"Error al guardar el respaldo: {e}")
-
+    
+    # Función para restaurar el backup
     def restore(self):
         origen, _ = QFileDialog.getOpenFileName(self, "Seleccionar archivo de respaldo", "", "Archivos DB (*.db)")
         destino = os.path.join("utilities", "db", "DataBaseUE.db")
@@ -122,7 +126,8 @@ QPushButton:hover {
                 QMessageBox.information(self, "Restaurar Respaldo", f"Respaldo restaurado desde: {origen}")
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"Error al restaurar el respaldo: {e}")
-                
+    
+    # Función para registrar un nuevo usuario
     def register_user(self):
         self.rg_Window = RgtrUser()
         self.rg_Window.show()

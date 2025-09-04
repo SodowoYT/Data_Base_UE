@@ -9,7 +9,7 @@ from PySide6.QtCore import Qt
 import os
 
 from services.Connection import database
-
+from views.Modify import ModifyData
 
 # --- Clase para el fondo ---
 class BgWidget(QWidget):
@@ -69,7 +69,7 @@ class ConsultWindow(QMainWindow):
                 border: 1px solid #ccc;
                 border-radius: 8px;
                 font-size: 14px;
-                background: rgba(255,255,255,0.9);
+                background: rgba(255,255,255,0.6); /* Más translúcido */
                 color: black;
             }
         """)
@@ -84,7 +84,7 @@ class ConsultWindow(QMainWindow):
         self.table_view = QTableView(self)
         self.table_view.setStyleSheet("""
             QTableView {
-                background: rgba(255,255,255,0.95);
+                background: rgba(255,255,255,0.50); /* Más translúcido */
                 border: 1px solid #ccc;
                 border-radius: 8px;
                 gridline-color: #ccc;
@@ -115,15 +115,20 @@ class ConsultWindow(QMainWindow):
         self.print_pdf_button.setStyleSheet(self.button_style())
         self.print_pdf_button.clicked.connect(self.imprimir_pdf)
 
+        self.modificar = QPushButton("Modificar", self)
+        self.modificar.setStyleSheet(self.button_style())
+        self.modificar.clicked.connect(self.modificarRegistro)  
+
         botones_layout.addStretch()
         botones_layout.addWidget(self.show_all_button)
         botones_layout.addWidget(self.print_pdf_button)
+        botones_layout.addWidget(self.modificar)
         botones_layout.addStretch()
 
         main_layout.addLayout(botones_layout)
 
         # --- Contenedor con fondo ---
-        self.bg_widget = BgWidget("utilities/resources/imgs/bg/MenuBg.png")  # Imagen de fondo
+        self.bg_widget = BgWidget("utilities/resources/imgs/bg/CsltBg.png")  # Imagen de fondo
         self.bg_widget.setLayout(main_layout)
         self.setCentralWidget(self.bg_widget)
 
@@ -221,46 +226,44 @@ class ConsultWindow(QMainWindow):
         if not indexes:
             QMessageBox.warning(self, "Advertencia", "Seleccione una fila para imprimir.")
             return
-
-        row = indexes[0].row()
-        model = self.table_view.model()
-        headers = [model.headerData(i, 1) for i in range(model.columnCount())]
-        datos = [model.index(row, i).data() for i in range(model.columnCount())]
-
-        file_path, _ = QFileDialog.getSaveFileName(
-            self, "Guardar PDF", "estudiante_seleccionado.pdf", "PDF Files (*.pdf)")
-        if not file_path:
+        
+    def modificarRegistro(self):
+        indexes = self.table_view.selectionModel().selectedRows()
+        if not indexes:
+            QMessageBox.warning(self, "Advertencia", "Seleccione una fila para modificar.")
             return
 
-        printer = QPrinter(QPrinter.HighResolution)
-        printer.setOutputFormat(QPrinter.PdfFormat)
-        printer.setOutputFileName(file_path)
+        row = indexes[0].row()
+        cedula = self.table_view.model().index(row, 3).data()  # Columna de cédula
+        cedula = str(cedula).strip()  # Elimina espacios
+        print("Cédula seleccionada para modificar:", cedula)
+        # Consulta todos los datos del estudiante usando la cédula
+        datos_completos = self.database.obtener_datos_por_cedula(cedula)
+        print("Datos completos:", datos_completos)
+        if not datos_completos:
+            QMessageBox.warning(self, "Advertencia", "No se encontraron datos completos para el estudiante.")
+            return
+        # Abre la ventana de formulario editable
+        self.Mreg_Window = ModifyData(self.database, cedula)
+        self.Mreg_Window.cargar_datos_estudiante(self.database, cedula)
+        self.Mreg_Window.show()
 
-        painter = QPainter(printer)
-        y = 100
-
-        logo_path = os.path.join("utilities", "resources", "imgs", "Bg.png")
-        if os.path.exists(logo_path):
-            logo = QPixmap(logo_path)
-            logo = logo.scaledToWidth(120)
-            page_width = printer.pageRect().width()
-            x_logo = (page_width - logo.width()) // 2
-            painter.drawPixmap(x_logo, y, logo)
-            y += logo.height() + 30
-
-        painter.drawText(100, y, "Datos del Estudiante Seleccionado:")
-        y += 40
-        for header, dato in zip(headers, datos):
-            painter.drawText(100, y, f"{header}: {dato}")
-            y += 30
-        painter.end()
-        QMessageBox.information(self, "PDF generado", f"El PDF se ha guardado como '{file_path}'.")
-
+class ImagenGrandeDialog(QDialog):
+    def __init__(self, pixmap, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Foto ampliada")
+        self.setGeometry(200, 200, 600, 600)
+        layout = QVBoxLayout(self)
+        label = QLabel(self)
+        label.setPixmap(pixmap.scaled(550, 550, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        layout.addWidget(label)
+        self.setLayout(layout)
 
 class VentanaTodos(QDialog):
     def __init__(self, database, cedula):
         super().__init__()
         self.setWindowTitle("Datos del estudiante seleccionado")
+        self.setWindowIcon(QIcon("utilities/resources/imgs/ico/IconApp.ico"))
         self.setGeometry(150, 150, 600, 600)
 
         layout = QVBoxLayout()
@@ -303,16 +306,21 @@ class VentanaTodos(QDialog):
                 if i >= len(row):
                     break
 
-                # CAMBIO: Mostrar BLOB como imagen
+                # CAMBIO: Mostrar BLOB como imagen y permitir click para ampliar
                 if header == "Vacunas":
                     blob_data = row[i]
                     if blob_data:
-                        pixmap = QPixmap()
-                        pixmap.loadFromData(blob_data)
-                        if not pixmap.isNull():
-                            pixmap = pixmap.scaledToWidth(200, Qt.SmoothTransformation)
+                        pixmap_original = QPixmap()
+                        pixmap_original.loadFromData(blob_data)
+                        if not pixmap_original.isNull():
+                            pixmap_preview = pixmap_original.scaledToWidth(200, Qt.SmoothTransformation)
                             foto_label = QLabel()
-                            foto_label.setPixmap(pixmap)
+                            foto_label.setPixmap(pixmap_preview)
+                            foto_label.setCursor(Qt.PointingHandCursor)
+                            def mostrar_grande(event, pixmap=pixmap_original):
+                                dlg = ImagenGrandeDialog(pixmap, self)
+                                dlg.exec()
+                            foto_label.mousePressEvent = mostrar_grande
                             form_layout.addRow(QLabel(f"<b>{header}:</b>"), foto_label)
                         else:
                             form_layout.addRow(QLabel(f"<b>{header}:</b>"), QLabel("Sin imagen"))

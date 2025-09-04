@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QMainWindow, QLabel, QVBoxLayout, QWidget, QPushButton, QTableView
+from PySide6.QtWidgets import QMainWindow, QLabel, QVBoxLayout, QWidget, QPushButton, QTableView, QFrame, QHBoxLayout, QScrollArea, QStackedLayout
 from PySide6.QtGui import QPixmap, QIcon
 from PySide6.QtCore import Qt
 
@@ -10,7 +10,7 @@ class CreditosWindow(QMainWindow):
         self.setGeometry(100, 100, 870, 650)
         self.setFixedSize(870, 650)
 
-        # Fondo
+        # Fondo de la ventana
         self.background_label = QLabel()
         pixmap = QPixmap("utilities/resources/imgs/bg/MenuBg.png")
         self.background_label.setPixmap(pixmap)
@@ -24,12 +24,12 @@ class CreditosWindow(QMainWindow):
         layout.setSpacing(18)
 
         # Logo y título integrados en un solo bloque
-        from PySide6.QtWidgets import QHBoxLayout, QFrame
         logo_label = QLabel()
         logo_pixmap = QPixmap("utilities/resources/LogoBG.png")
         logo_label.setPixmap(logo_pixmap.scaled(90, 90, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         logo_label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
 
+        # Título de Créditos
         title = QLabel("Créditos del Proyecto")
         title.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
         title.setStyleSheet("font-size: 38px; font-weight: bold; color: #0c3f67; background: transparent; padding-left: 10px;")
@@ -45,7 +45,7 @@ class CreditosWindow(QMainWindow):
         title_logo_frame.setLayout(title_logo_layout)
         layout.addWidget(title_logo_frame, alignment=Qt.AlignHCenter)
 
-        from PySide6.QtWidgets import QScrollArea
+        # Contenido de Ventana Creditos
         autores = QLabel("""
 Desarrollado por:
 
@@ -63,6 +63,8 @@ Desarrollado por:
 
 Gracias por usar nuestra aplicación.
         """)
+
+        # Ajustar el texto de los autores
         autores.setAlignment(Qt.AlignCenter)
         autores.setWordWrap(True)
         autores.setMinimumHeight(320)
@@ -74,21 +76,23 @@ Gracias por usar nuestra aplicación.
         scroll_area.setStyleSheet("QScrollArea { border: none; background: transparent; } QScrollBar:vertical { background: rgba(12,63,103,0.18); width: 16px; margin: 4px 0 4px 0; border-radius: 8px; } QScrollBar::handle:vertical { background: #0c3f67; min-height: 32px; border-radius: 8px; } QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { background: none; height: 0px; } QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical { background: none; } QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: none; }")
         layout.addWidget(scroll_area)
 
+        # Botón de cerrar
         btn_cerrar = QPushButton("Cerrar")
         btn_cerrar.setStyleSheet("background-color: #0c3f67; color: white; border-radius: 12px; padding: 8px 32px; font-size: 16px;")
         btn_cerrar.clicked.connect(self.close)
         layout.addWidget(btn_cerrar, alignment=Qt.AlignCenter)
 
+        # Ajustar el tamaño de la ventana
         content.setLayout(layout)
         content.setAttribute(Qt.WA_TranslucentBackground)
 
         # Superponer fondo y contenido
-        from PySide6.QtWidgets import QStackedLayout
         stacked = QStackedLayout()
         stacked.setStackingMode(QStackedLayout.StackAll)
         stacked.addWidget(self.background_label)
         stacked.addWidget(content)
 
+        # Contenedor principal
         container = QWidget()
         container.setLayout(stacked)
         self.setCentralWidget(container)

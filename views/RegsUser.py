@@ -22,7 +22,7 @@ class RgtrUser(QMainWindow):
         central_widget = QWidget(self)
         self.setCentralWidget(central_widget)
 
-        # Fondo
+        # Fondo de la Ventana
         self.background_label = QLabel(central_widget)
         self.background_pixmap = QPixmap("utilities/resources/imgs/bg/RgtrBg.png")
         self.background_label.setAlignment(Qt.AlignCenter)
@@ -33,7 +33,7 @@ class RgtrUser(QMainWindow):
         form_layout.setSpacing(10)
         form_layout.setContentsMargins(40, 40, 40, 40)
 
-        # Entradas
+        # Entradas de texto
         self.Username = QLineEdit()
         self.Username.setPlaceholderText("Nombre de Usuario")
         self.Username.setMinimumHeight(38)
@@ -82,7 +82,7 @@ class RgtrUser(QMainWindow):
         """)
         self.button.clicked.connect(self.register_user)  # Conectar al método
 
-        # Logo
+        # Logo de la aplicación
         self.logo_pixmap = QPixmap("utilities/resources/imgs/ico/IconApp.ico")
         self.logo_label = QLabel()
         self.logo_label.setAlignment(Qt.AlignCenter)
@@ -98,6 +98,7 @@ class RgtrUser(QMainWindow):
         form_layout.addWidget(self.Post)
         form_layout.addWidget(self.button)
 
+        # Widget del formulario
         form_widget = QWidget()
         form_widget.setLayout(form_layout)
         form_widget.setAttribute(Qt.WA_TranslucentBackground)
@@ -108,6 +109,7 @@ class RgtrUser(QMainWindow):
         grid.addWidget(self.background_label, 0, 0)
         grid.addWidget(form_widget, 0, 0, alignment=Qt.AlignCenter)
 
+    # Redimensionar el fondo de la Ventana
     def resizeEvent(self, event):
         if not self.background_pixmap.isNull():
             self.background_label.setPixmap(

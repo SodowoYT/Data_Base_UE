@@ -1,5 +1,5 @@
 class Estudend:
-  def __init__(self, nombre="", apellido="", cedulaEscolar="", edad="", genero="", fechaDNacimiento="", lateralidad="", nacionalidad="", estado="", municipio="", direccionActual="", puntoDReferencia="", altura="", peso="", tallaZapatos="", tallaCamisa="", tallaPantalon="", numeroDHermanos="", autorizadoPRetirarANiño="", alergicoA="", algunaDificultad="", especificarDificultad="", correoElectronico="", telefonoDHabitacion="", cartonVacunas="", tipoDSangre="", examenDHeces=""):
+  def __init__(self, nombre="", apellido="", cedulaEscolar="", edad="", genero="", fechaDNacimiento="", lateralidad="", nacionalidad="", estado="", municipio="", direccionActual="", puntoDReferencia="", altura="", peso="", tallaZapatos="", tallaCamisa="", tallaPantalon="", numeroDHermanos="", autorizadoPRetirarANiño="", alergicoA="", algunaDificultad="", especificarDificultad="", correoElectronico="", telefonoDHabitacion="", cartonVacunas="", tipoDSangre="", examenDHeces="", observaciones=""):
     
     # Datos Estudiante
     self.nombre = nombre
@@ -29,3 +29,4 @@ class Estudend:
     self.cartonVacunas = cartonVacunas
     self.tipoDSangre = tipoDSangre
     self.examenDHeces = examenDHeces
+    self.observaciones = observaciones
