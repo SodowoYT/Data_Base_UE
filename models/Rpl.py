@@ -1,11 +1,12 @@
 class Rpl:
-  def __init__(self, NombreR="", ApellidoR="", CedulaR="", FechaDeNacimientoR="", EdadR="", EstadoCivil="", NacionalidadR="", Afinidad="", ProfesionR="", OcupacionR="", EmpresaDTrabajaR="", DireccionR="", TelefonoMovilR="", TelefonoHabitacionR="", TelefonoFamiliarR="", CorreoElectronicoR="", RifR="", PlanillaSigeR="", CodigoPatriaR=None, SerialPatriaR=None):
+  def __init__(self, NombreR="", ApellidoR="", CedulaR="", FechaDeNacimientoR="", rpstIMG="", EdadR="", EstadoCivil="", NacionalidadR="", Afinidad="", ProfesionR="", OcupacionR="", EmpresaDTrabajaR="", DireccionR="", TelefonoMovilR="", TelefonoHabitacionR="", TelefonoFamiliarR="", CorreoElectronicoR="", RifR="", PlanillaSigeR="", CodigoPatriaR=None, SerialPatriaR=None):
 
     # Datos del representante
     self.NombreR = NombreR
     self.ApellidoR = ApellidoR
     self.CedulaR = CedulaR
     self.FechaDeNacimientoR = FechaDeNacimientoR
+    self.rpstIMG = rpstIMG
     self.EdadR = EdadR
     self.EstadoCivil = EstadoCivil
     self.NacionalidadR = NacionalidadR

@@ -1,33 +1,36 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QLabel, QLineEdit, QTextEdit, QPushButton, QVBoxLayout, QHBoxLayout, QRadioButton, QMessageBox, QButtonGroup, QMainWindow, QStackedWidget, QGridLayout, QGroupBox, QSizePolicy, QSpacerItem, QFileDialog
-from viewmodels.ModifyW import ModifyViewModel
+from viewmodels.FormsW import EstudendViewModel
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap, QPainter, QIcon
 from PySide6.QtWidgets import QDateEdit
 from PySide6.QtCore import QDate
 import sqlite3
 
+# Clase para el widget de fondo
 class BgWidget(QWidget):
     def __init__(self, image_path):
         super().__init__()
         self.image = QPixmap(image_path)
 
+    # Función para pintar el fondo
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.drawPixmap(self.rect(), self.image)
 
 class ModifyData(QMainWindow):
-    def __init__(self, database, cedula):
+    def __init__(self):
         super().__init__()
-        self.database = database
-        self.cedula = cedula
-        self.viewmodel = ModifyViewModel()
+
+        # Inicializar el ViewModel
+        self.viewmodel = EstudendViewModel()  
 
         # Propiedades de la ventana
         self.setWindowTitle("Datos del Estudiante")
         self.setWindowIcon(QIcon("utilities/resources/imgs/ico/IconApp.ico"))
         self.setGeometry(100, 100, 1000, 600)
         # Establecer imagen de fondo
+        ## Establecer el estilo de la ventana
         self.setStyleSheet("""
             .tituloz {
                 color: white;
@@ -93,12 +96,12 @@ class ModifyData(QMainWindow):
             
         """)
 
-        
 
         # Crear el widget de fondo
-        self.bg_widget = BgWidget("utilities/resources/imgs/bg/BgModify.png")
+        self.bg_widget = BgWidget("utilities/resources/imgs/bg/BlueBgI.png")
         self.setCentralWidget(self.bg_widget)
 
+        # Layout principal
         self.main_layout = QVBoxLayout(self.bg_widget)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
 
@@ -144,7 +147,7 @@ class ModifyData(QMainWindow):
         # Fila 1: Grids principales
         self.grid1 = QGridLayout()
         self.nameS = QLineEdit(self)
-
+        self.nameS.setPlaceholderText("Nombres")
         self.grid1.addWidget(self.nameS, 1, 0)
         self.ageS = QLineEdit(self)
         self.ageS.setPlaceholderText("Edad")
@@ -186,7 +189,18 @@ class ModifyData(QMainWindow):
         self.grid1.addWidget(self.authorizeRC, 3, 2)
         self.layoutP1.addLayout(self.grid1, 1, 0, Qt.AlignTop)
         
-        # Fila 1: Título de Datos Médicos
+        # Variable para la imagen del Estudiante
+        self.EIMG = None
+        self.PushbuttonEIMG = QPushButton("Subir Imagen de Estudiante", self)
+        self.PushbuttonEIMG.clicked.connect(self.upload_estudiante_image)
+        self.grid1.addWidget(self.PushbuttonEIMG, 4, 0,)
+
+        self.estudianteIMG = QLabel(self)
+        self.estudianteIMG.setFixedSize(100, 100)
+        self.estudianteIMG.setScaledContents(True)
+        self.grid1.addWidget(self.estudianteIMG, 4, 1 )
+        
+        # Fila 2: Título de Datos Médicos
         self.grid2 = QGridLayout()
         self.ala = QLineEdit(self)
         self.ala.setPlaceholderText("Alergico a")
@@ -202,7 +216,7 @@ class ModifyData(QMainWindow):
         self.grid2.addWidget(self.gbad, 2, 0)
         self.epdf = QLineEdit(self)
         self.epdf.setPlaceholderText("Especificar Dificultad")
-        self.grid2.addWidget(self.epdf, 3, 0)
+        self.grid2.addWidget(self.epdf, 2, 1)
         self.tds = QLineEdit(self)
         self.tds.setPlaceholderText("Tipo de Sangre")
         self.grid2.addWidget(self.tds, 1, 1)
@@ -211,12 +225,12 @@ class ModifyData(QMainWindow):
         self.vacunaIMGpath = None
         self.PushbuttonVacuna = QPushButton("Subir Imagen de Vacuna", self)
         self.PushbuttonVacuna.clicked.connect(self.upload_vacuna_image)
-        self.grid2.addWidget(self.PushbuttonVacuna, 2, 1)
+        self.grid2.addWidget(self.PushbuttonVacuna, 4, 1)
         
         self.vacunaIMG = QLabel(self)
         self.vacunaIMG.setFixedSize(100, 100)
         self.vacunaIMG.setScaledContents(True)
-        self.grid2.addWidget(self.vacunaIMG, 2, 2)
+        self.grid2.addWidget(self.vacunaIMG, 4, 0, Qt.AlignRight)
 
         
         self.exdh = QLineEdit(self)
@@ -224,14 +238,14 @@ class ModifyData(QMainWindow):
         self.grid2.addWidget(self.exdh, 3, 1)
         self.layoutP1.addLayout(self.grid2, 1, 2, Qt.AlignTop)
 
-        # Fila 2: Título de Datos de Contacto
+        # Fila 3: Título de Datos de Contacto
         self.dclabel = QLabel("Datos de Contacto", self)
         self.dclabel.setProperty("class", "tituloz")
         self.dclabel.setFixedSize(300, 45)
         self.dclabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.layoutP1.addWidget(self.dclabel, 2, 0, Qt.AlignLeft)
 
-        # Fila 3: Grid de Datos de Contacto
+        # Fila 4 Grid de Datos de Contacto
         self.grid3 = QGridLayout()
         self.email = QLineEdit(self)
         self.email.setPlaceholderText("Correo Electrónico")
@@ -244,14 +258,14 @@ class ModifyData(QMainWindow):
         self.grid3.addWidget(self.tfh, 1, 1)
         self.layoutP1.addLayout(self.grid3, 3, 0, Qt.AlignTop)
 
-        # Fila 4: Título de Tallas
+        # Fila 5: Título de Tallas
         self.tlabel = QLabel("Tallas", self)
         self.tlabel.setProperty("class", "tituloz")
         self.tlabel.setFixedSize(300, 45)
         self.tlabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.layoutP1.addWidget(self.tlabel, 4, 0, Qt.AlignLeft)
 
-        # Fila 5: Grid de Tallas
+        # Fila 6: Grid de Tallas
         self.grid5 = QGridLayout()
         self.alt = QLineEdit(self)
         self.alt.setPlaceholderText("Altura")
@@ -270,7 +284,7 @@ class ModifyData(QMainWindow):
         self.grid5.addWidget(self.tca, 2, 1)
         self.layoutP1.addLayout(self.grid5, 5, 0, Qt.AlignTop)
 
-        # Fila 6: Título de Ubicación
+        # Fila 7: Título de Ubicación
         self.ulabel = QLabel("Ubicación", self)
         self.ulabel.setProperty("class", "titulod")
         self.ulabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
@@ -278,7 +292,7 @@ class ModifyData(QMainWindow):
         self.ulabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.layoutP1.addWidget(self.ulabel, 2, 2, Qt.AlignRight)
 
-        # Fila 7: Grid de Ubicación
+        # Fila 8: Grid de Ubicación
         self.grid4 = QGridLayout()
         self.ncl = QLineEdit(self)
         self.ncl.setPlaceholderText("Nacionalidad")
@@ -294,7 +308,7 @@ class ModifyData(QMainWindow):
         self.grid4.addWidget(self.pdr, 1, 0)
         self.layoutP1.addLayout(self.grid4, 3, 2, Qt.AlignTop)
         
-        # Fila 8: Titulo Observaciones
+        # Fila 9: Titulo Observaciones
         self.olabel = QLabel("Observaciones", self)
         self.olabel.setProperty("class", "titulod")
         self.olabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
@@ -302,7 +316,7 @@ class ModifyData(QMainWindow):
         self.olabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.layoutP1.addWidget(self.olabel, 4, 2, Qt.AlignRight)
         
-        # Fila 9: Grid de Observaciones
+        # Fila 10: Grid de Observaciones
         self.grid15 = QGridLayout()
         self.obs1 = QTextEdit(self)
         self.obs1.setPlaceholderText("Observaciones")
@@ -312,7 +326,7 @@ class ModifyData(QMainWindow):
 
         # Boton de Next a la Pagina 2
         self.NextP = QPushButton("Siguiente Pagina")
-        self.NextP.clicked.connect(self.ModifyPage2)
+        self.NextP.clicked.connect(self.RegisterPage2)
         self.layoutP1.addWidget(self.NextP, 9, 1)
         self.page1.setLayout(self.layoutP1)
 
@@ -323,8 +337,8 @@ class ModifyData(QMainWindow):
         self.page1.setLayout(self.layoutP1)
         self.Sc_Widget.addWidget(self.page1)
 
-        
-        # Crear la segundasel página
+
+        # Crear la segunda página
         self.page2 = QWidget()
         self.layoutP2 = QGridLayout()
         
@@ -379,6 +393,18 @@ class ModifyData(QMainWindow):
         self.dateofbirthR.setDate(QDate.currentDate())
         self.grid6.addWidget(self.dateofbirthR, 2, 2)
 
+        #### FOTO DEL REPRESENTANTE ####
+
+        self.rpstIMGpath = None
+        self.Pushbuttonrpst = QPushButton("Subir foto de representante", self)
+        self.Pushbuttonrpst.clicked.connect(self.upload_representante_image)
+        self.grid6.addWidget(self.Pushbuttonrpst, 5, 0)
+
+        self.rpstIMG = QLabel(self)
+        self.rpstIMG.setFixedSize(100, 100)
+        self.rpstIMG.setScaledContents(True)
+        self.grid6.addWidget(self.rpstIMG, 5, 1)
+
         # Boton Marital Status
         self.MaritalStatus = QGroupBox("Estado Civil", self)
         self.QrBS = QRadioButton("Soltero", self)
@@ -410,9 +436,8 @@ class ModifyData(QMainWindow):
         self.QvbSheet.addWidget(self.QrBNo)
         self.Sheet.setLayout(self.QvbSheet)
         self.grid6.addWidget(self.Sheet, 3, 1)
-        # Final del Boton Planilla Sige
         self.layoutP2.addLayout(self.grid6, 1, 0, Qt.AlignTop)
-        
+        # Final del Boton Planilla Sige
         
         # Fila 2: Grid 7 Datos de Contacto Representante
         self.grid7 = QGridLayout()
@@ -443,7 +468,7 @@ class ModifyData(QMainWindow):
         self.layoutP2.addLayout(self.grid7, 1, 2, Qt.AlignTop)
         
         # Fila 3: Grid 8 Datos de Profesión
-        # Titulo Grid 8
+        ## Titulo Grid 8
         self.Rplabel = QLabel("Datos de Profesión")
         self.Rplabel.setProperty("class", "tituloz")
         self.Rplabel.setFixedSize(300, 45)
@@ -465,17 +490,15 @@ class ModifyData(QMainWindow):
         
         # Boton de Back a la Pagina 1
         self.backBt = QPushButton("Pagina Anterior")
-        self.backBt.clicked.connect(self.ModifyPage1)
+        self.backBt.clicked.connect(self.RegisterPage1)
         self.layoutP2.addWidget(self.backBt, 5, 1)  # Agrega el botón después de crearlo
         self.page2.setLayout(self.layoutP2)
         
-        # Boton de Next a la Pagina 3
+        # Boton de Next a la Pagina 2
         self.NextP3 = QPushButton("Siguiente Pagina")
-        self.NextP3.clicked.connect(self.ModifyPage3)
+        self.NextP3.clicked.connect(self.RegisterPage3)
         self.layoutP2.addWidget(self.NextP3, 4, 1)
         self.page2.setLayout(self.layoutP2)
-        
-        
         
         # Espaciador entre columnas 
         self.layoutP2.addItem(QSpacerItem(200, 20, QSizePolicy.Minimum, QSizePolicy.Expanding), 0, 1, 5, 1)
@@ -484,12 +507,11 @@ class ModifyData(QMainWindow):
         self.page2.setLayout(self.layoutP2)
         self.Sc_Widget.addWidget(self.page2)
         
-        
         # Crear La Tercera Pagina
         self.page3 = QWidget()
         self.layoutP3 = QGridLayout()
         
-        # Título centrado
+        # Título centrado 
         self.title_label3 = QLabel("Datos del Padre", self.page3)
         self.title_label3.setAlignment(Qt.AlignCenter)
         self.title_label3.setStyleSheet("""
@@ -506,7 +528,7 @@ class ModifyData(QMainWindow):
         """)
         self.layoutP3.addWidget(self.title_label3, 0, 0, 1, 3, Qt.AlignCenter)  # Ocupa 3 columnas
         
-        #Fila 0: Titutlos Tabla Datos del Padre.
+        # Fila 0: Titulos Tabla Datos del Padre.
         self.dpLabel = QLabel("Datos Personales", self)
         self.dpLabel.setProperty("class", "tituloz")
         self.dpLabel.setFixedSize(300, 45)
@@ -566,14 +588,14 @@ class ModifyData(QMainWindow):
         self.grid10.addWidget(self.Dcp, 2, 0)
         self.layoutP3.addLayout(self.grid10, 1, 2, Qt.AlignTop)
         
-        #Fila 3: Titulo Datos de Profesion
+        # Fila 3: Titulo Datos de Profesion
         self.Plabel = QLabel("Datos de Profesión")
         self.Plabel.setProperty("class", "tituloz")
         self.Plabel.setFixedSize(300, 45)
         self.Plabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.layoutP3.addWidget(self.Plabel, 2, 0, Qt.AlignLeft)
         
-        # Fila 3:Grid 11 Datos de Profesion
+        # Fila 3: Grid 11 Datos de Profesion
         self.grid11 = QGridLayout()
         self.Empdt = QLineEdit(self)
         self.Empdt.setPlaceholderText("Emprensa donde Trabaja")
@@ -583,23 +605,22 @@ class ModifyData(QMainWindow):
         self.grid11.addWidget(self.Ted, 2, 0)
         self.layoutP3.addLayout(self.grid11, 3, 0, Qt.AlignTop)
         
-        #Boton de Back a la Pagina 2
+        # Boton de Back a la Pagina 2
         self.backP2 = QPushButton("Pagina Anterior")
-        self.backP2.clicked.connect(self.ModifyPage2)
+        self.backP2.clicked.connect(self.RegisterPage2)
         self.layoutP3.addWidget(self.backP2, 6, 1)
         self.page3.setLayout(self.layoutP3)
-
+        
         # Boton de Next a la Pagina 4
         self.NextP4 = QPushButton("Siguiente Pagina")
-        self.NextP4.clicked.connect(self.ModifyPage4)
+        self.NextP4.clicked.connect(self.RegisterPage4)
         self.layoutP3.addWidget(self.NextP4, 5, 1)
         self.page3.setLayout(self.layoutP3)
-        
         
         # Espaciador entre columnas
         self.layoutP3.addItem(QSpacerItem(200, 20, QSizePolicy.Minimum, QSizePolicy.Expanding), 0, 1, 6, 1)
         
-        #Muestra los Items en la Ventana 3
+        # Muestra los Items en la Ventana 3
         self.page3.setLayout(self.layoutP3)
         self.Sc_Widget.addWidget(self.page3)
         
@@ -624,7 +645,7 @@ class ModifyData(QMainWindow):
             text-shadow: 2px 2px 8px #0c3f67, 0 2px 12px #000;
         """)
         self.layoutP4.addWidget(self.title_label4, 0, 0, 1, 3, Qt.AlignCenter)  # Ocupa 3 columnas
-        #Fila 0: Titutlos Tabla Datos del Madre.
+        # Fila 0: Titutlos Tabla Datos del Madre.
         self.dpLabel = QLabel("Datos Personales", self)
         self.dpLabel.setProperty("class", "tituloz")
         self.dpLabel.setFixedSize(300, 45)
@@ -684,15 +705,15 @@ class ModifyData(QMainWindow):
         self.DcpM.setPlaceholderText("Dirección")
         self.grid13.addWidget(self.DcpM, 2, 0)
         self.layoutP4.addLayout(self.grid13, 1, 2, Qt.AlignTop)
-        
-        #Fila 3: Titulo Datos de Profesion
+
+        # Fila 3: Titulo Datos de Profesion
         self.Mlabel = QLabel("Datos de Profesión")
         self.Mlabel.setProperty("class", "tituloz")
         self.Mlabel.setFixedSize(300, 45)
         self.Mlabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.layoutP4.addWidget(self.Mlabel, 2, 0, Qt.AlignLeft)
         
-        # Fila 3:Grid 14 Datos de Profesion
+        # Fila 3: Grid 14 Datos de Profesion
         self.grid14 = QGridLayout()
         self.EmpdtM = QLineEdit(self)
         self.EmpdtM.setPlaceholderText("Emprensa donde Trabaja")
@@ -702,45 +723,46 @@ class ModifyData(QMainWindow):
         self.grid14.addWidget(self.TedM, 2, 0)
         self.layoutP4.addLayout(self.grid14, 3, 0, Qt.AlignTop)
         
-        #Boton de Back a la Pagina 3
+        # Boton de Back a la Pagina 3
         self.backP3 = QPushButton("Pagina Anterior")
-        self.backP3.clicked.connect(self.ModifyPage3)
+        self.backP3.clicked.connect(self.RegisterPage3)
         self.layoutP4.addWidget(self.backP3, 6, 1)
         self.page4.setLayout(self.layoutP4)
         
-        # Boton de Modificar Final
-        self.MdfyBton = QPushButton("Finalizar Modificación")
-        self.MdfyBton.clicked.connect(self.Modify_estudend)
-        self.layoutP4.addWidget(self.MdfyBton, 5, 1)
-
+        # Boton de Registro Final
+        self.registerBton = QPushButton("Finalizar Registro")
+        self.registerBton.clicked.connect(self.register_estudend)
+        self.layoutP4.addWidget(self.registerBton, 5, 1)
+        
         # Espaciador entre columnas
         self.layoutP4.addItem(QSpacerItem(200, 20, QSizePolicy.Minimum, QSizePolicy.Expanding), 0, 1, 6, 1)
         
-        #Muestra los Items en la Ventana 3
+        # Muestra los Items en la Ventana 3
         self.page4.setLayout(self.layoutP4)
         self.Sc_Widget.addWidget(self.page4)
         
-        # Def de Pagina 1
-        ## Comando Funcion de Modificar en la Pagina 1
-    def ModifyPage1(self):
+    # Def de Pagina 1
+    ## Comando Funcion de Registro en la Pagina 1
+    def RegisterPage1(self):
         self.Sc_Widget.setCurrentIndex(0)
         
-        # Def de Pagina 2
-        ## Comando Funcion de Modificar en la Pagina 2
-    def ModifyPage2(self):
+    # Def de Pagina 2
+    ## Comando Funcion de Registro en la Pagina 2
+    def RegisterPage2(self):
         self.Sc_Widget.setCurrentIndex(1)
         
-        # Def de Pagina 3
-        ## Comando Funcion de Modificar en la Pagina 3
-    def ModifyPage3(self):
+    # Def de Pagina 3
+    ## Comando Funcion de Registro en la Pagina 3
+    def RegisterPage3(self):
         self.Sc_Widget.setCurrentIndex(2)
         
-        # Def de Pagina 4
-        ## Comando Funcion de Modificar en la Pagina 4
-    def ModifyPage4(self):
+    # Def de Pagina 4
+    ## Comando Funcion de Registro en la Pagina 4
+    def RegisterPage4(self):
         self.Sc_Widget.setCurrentIndex(3)
     
-    def Modify_estudend(self):
+    # Funcion para registrar estudiante
+    def register_estudend(self):
         # Inicio Pagina Estudiante Pagina 1
         nombre = self.nameS.text()
         apellido = self.lastNS.text()
@@ -766,6 +788,10 @@ class ModifyData(QMainWindow):
         especificarDificultad = self.epdf.text() 
         correoElectronico = self.email.text()
         telefonoDHabitacion = self.tfh.text()
+        estIMG = None
+        if self.estudianteIMGpath:
+            with open(self.estudianteIMGpath, 'rb') as f:
+                estIMG = f.read()
         cartonVacunas = None
         if self.vacunaIMGpath:
             with open(self.vacunaIMGpath, 'rb') as f:
@@ -781,6 +807,10 @@ class ModifyData(QMainWindow):
         EdadR = self.ageR.text()
         CedulaR = self.dniR.text()
         FechaDeNacimientoR = self.dateofbirthR.date().toString("dd/MM/yyyy")
+        rpstIMG = None
+        if self.rpstIMGpath:
+            with open(self.rpstIMGpath, 'rb') as f:
+                rpstIMG = f.read()
         EstadoCivil = "Soltero" if self.QrBS.isChecked() else "Casado" if self.QrBC.isChecked() else "Divorciado"
         Afinidad = self.Affi.text()
         RifR = self.Rif.text()
@@ -825,34 +855,67 @@ class ModifyData(QMainWindow):
         TipoEmpleoqDesempeñaM = self.TedM.text()
         DireccionM = self.DcpM.text()
         TelefonoMovilM = self.PhoneMM.text()
+    
         # Final Pagina Madre Pagina 4
         
 
-
-        if nombre and apellido and cedulaEscolar and edad and fechaDNacimiento and lateralidad and nacionalidad and estado and municipio and direccionActual and puntoDReferencia and altura and peso and tallaZapatos and tallaCamisa and tallaPantalon and numeroDHermanos and autorizadoPRetirarANiño and alergicoA and algunaDificultad and especificarDificultad and correoElectronico and telefonoDHabitacion and cartonVacunas and tipoDSangre and examenDHeces and observaciones \
-        and NombreR and ApellidoR and EdadR and CedulaR and FechaDeNacimientoR and EstadoCivil and Afinidad and RifR and PlanillaSigeR and TelefonoMovilR and TelefonoHabitacionR and CorreoElectronicoR and TelefonoFamiliarR and NacionalidadR and DireccionR and CodigoPatriaR and SerialPatriaR \
+        # Validar campos
+        if nombre and apellido and cedulaEscolar and edad and fechaDNacimiento and lateralidad and nacionalidad and estado and municipio and direccionActual and puntoDReferencia and altura and peso and tallaZapatos and tallaCamisa and tallaPantalon and numeroDHermanos and autorizadoPRetirarANiño and alergicoA and algunaDificultad and especificarDificultad and correoElectronico and telefonoDHabitacion and estIMG and cartonVacunas and tipoDSangre and examenDHeces and observaciones \
+        and NombreR and ApellidoR and EdadR and CedulaR and FechaDeNacimientoR and rpstIMG and EstadoCivil and Afinidad and RifR and PlanillaSigeR and TelefonoMovilR and TelefonoHabitacionR and CorreoElectronicoR and TelefonoFamiliarR and NacionalidadR and DireccionR and CodigoPatriaR and SerialPatriaR \
             and NombreP and ApellidoP and EdadP and CedulaP and FechaDNacimientoP and ViveConElNiñoP and CausaPNoViveP and EmpresaDTrabajaP and TipoEmpleoqDesempeñaP and TelefonoMovilP and DireccionP  \
                 and NombreM and ApellidoM and CedulaM and FechaDNacimientoM and EdadM and TipoEmpleoqDesempeñaM and EmpresaDTrabajaM and ViveConElNiñoM and CausaPNoViveM and DireccionM and TelefonoMovilM:
 
-            self.viewmodel.modificar_estudiante(
-            nombre, apellido, cedulaEscolar, edad, genero, fechaDNacimiento, lateralidad, nacionalidad, estado, municipio, direccionActual, puntoDReferencia, altura, peso, tallaZapatos, tallaCamisa, tallaPantalon, numeroDHermanos, autorizadoPRetirarANiño, alergicoA, algunaDificultad, especificarDificultad, correoElectronico, telefonoDHabitacion, cartonVacunas, tipoDSangre, examenDHeces, observaciones
-            )
-            self.viewmodel.modificar_representante(
-            NombreR, ApellidoR, CedulaR, FechaDeNacimientoR, EdadR, EstadoCivil, NacionalidadR, Afinidad, ProfesionR, OcupacionR, EmpresaDTrabajaR, DireccionR, TelefonoMovilR, TelefonoHabitacionR, TelefonoFamiliarR, CorreoElectronicoR, RifR, PlanillaSigeR, CodigoPatriaR, SerialPatriaR
-
-            )
-            self.viewmodel.modificar_padre(
-                NombreP, ApellidoP, CedulaP, FechaDNacimientoP, EdadP, TipoEmpleoqDesempeñaP, EmpresaDTrabajaP,  ViveConElNiñoP, CausaPNoViveP, DireccionP, TelefonoMovilP
-            )
-            self.viewmodel.modificar_madre(
+            # Registrar datos completos con vinculación automática
+            resultado = self.viewmodel.registrar_estudiante_completo(
+                # Datos del estudiante
+                nombre, apellido, cedulaEscolar, edad, genero, fechaDNacimiento, lateralidad, nacionalidad, estado, municipio, direccionActual, puntoDReferencia, altura, peso, tallaZapatos, tallaCamisa, tallaPantalon, numeroDHermanos, autorizadoPRetirarANiño, alergicoA, algunaDificultad, especificarDificultad, correoElectronico, telefonoDHabitacion, estIMG, cartonVacunas, tipoDSangre, examenDHeces, observaciones,
+                # Datos del representante
+                NombreR, ApellidoR, CedulaR, FechaDeNacimientoR, rpstIMG, EdadR, EstadoCivil, NacionalidadR, Afinidad, ProfesionR, OcupacionR, EmpresaDTrabajaR, DireccionR, TelefonoMovilR, TelefonoHabitacionR, TelefonoFamiliarR, CorreoElectronicoR, RifR, PlanillaSigeR, CodigoPatriaR, SerialPatriaR,
+                # Datos del padre
+                NombreP, ApellidoP, CedulaP, FechaDNacimientoP, EdadP, TipoEmpleoqDesempeñaP, EmpresaDTrabajaP, ViveConElNiñoP, CausaPNoViveP, DireccionP, TelefonoMovilP,
+                # Datos de la madre
                 NombreM, ApellidoM, CedulaM, FechaDNacimientoM, EdadM, TipoEmpleoqDesempeñaM, EmpresaDTrabajaM, ViveConElNiñoM, CausaPNoViveM, DireccionM, TelefonoMovilM
             )
-            QMessageBox.information(self, "Registro Exitoso", "El estudiante ha sido registrado exitosamente.")
+            
+            if resultado['success']:
+                # Mostrar mensaje de éxito con información de vinculación
+                mensaje = "Todos Los Datos Han Sido Registrados Exitosamente."
+                
+                QMessageBox.information(self, "Registro Exitoso", mensaje)
+            else:
+                # Mostrar mensaje de error
+                QMessageBox.critical(self, "Error de Registro", f"Error al registrar el estudiante: {resultado['error']}")
+                return
             
             self.close()
         else:
+            # Mostrar mensaje de advertencia
             QMessageBox.warning(self, "Campos Vacíos", "Por favor, complete todos los campos obligatorios.")
     
+    
+    ## Funcinamiento correcto     
+    # Función para subir la imagen del estudiante
+    def upload_estudiante_image(self):
+        file_est = QFileDialog(self)
+        file_est.setNameFilter("Images (*.png *.jpg *.jpeg *.bmp)")
+        if file_est.exec():
+            filepath = file_est.selectedFiles()[0]
+            self.estudianteIMGpath = filepath
+            pixmap = QPixmap(filepath)
+            self.estudianteIMG.setPixmap(pixmap.scaled(self.estudianteIMG.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
+
+    # Función para subir la imagen del representante
+    def upload_representante_image(self):
+        file_name_rpst = QFileDialog(self)
+        file_name_rpst.setNameFilter("Images (*.png *.jpg *.jpeg *.bmp)")
+        if file_name_rpst.exec():
+            filepathrpst = file_name_rpst.selectedFiles()[0]
+            self.rpstIMGpath = filepathrpst
+            pixmaprpst = QPixmap(filepathrpst)
+            self.rpstIMG.setPixmap(pixmaprpst.scaled(self.rpstIMG.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
+
+
+    # Función para subir la imagen de la vacuna
     def upload_vacuna_image(self):
         file_name = QFileDialog(self)
         file_name.setNameFilter("Images (*.png *.jpg *.jpeg *.bmp)")
@@ -887,6 +950,8 @@ class ModifyData(QMainWindow):
             self.authorizeRC.setText(str(self.datos.get('autorizadoPRetirarANiño', '')))
             self.ala.setText(str(self.datos.get('alergicoA', '')))
             self.epdf.setText(str(self.datos.get('especificarDificultad', '')))
+            # self.estIMG.setText(str(self.datos.get('estIMG', '')))  # Elimina o comenta esta línea
+            # self.vacunaIMG.setText(str(self.datos.get('cartonVacunas', '')))  # Elimina o comenta esta línea
             self.tds.setText(str(self.datos.get('tipoDSangre', '')))
             self.exdh.setText(str(self.datos.get('examenDHeces', '')))
             self.email.setText(str(self.datos.get('correoElectronico', '')))
@@ -915,6 +980,8 @@ class ModifyData(QMainWindow):
             # Página 2 (Representante)
             self.nameR.setText(str(self.datos.get('nombreR', '')))
             self.lastNR.setText(str(self.datos.get('apellidoR', '')))
+            self.dateofbirthR.setDate(QDate.fromString(self.datos.get('fechaDeNacimientoR', ''), "dd/MM/yyyy"))
+            self.rpstIMG.setText(str(self.datos.get('rpstIMG', '')))
             self.ageR.setText(str(self.datos.get('edadR', '')))
             self.dniR.setText(str(self.datos.get('cedulaR', '')))
             self.Affi.setText(str(self.datos.get('afinidad', '')))
@@ -985,7 +1052,6 @@ class ModifyData(QMainWindow):
         else:
             QMessageBox.warning(self, "Error", "No se encontraron datos para la cédula seleccionada.")
 
-
     def guardar_cambios(self):
         # Recoge los datos editados de todos los QLineEdit
         datos_editados = {
@@ -1007,6 +1073,8 @@ class ModifyData(QMainWindow):
             'autorizadoPRetirarANiño': self.authorizeRC.text(),
             'alergicoA': self.ala.text(),
             'especificarDificultad': self.epdf.text(),
+            'estIMG': self.estudianteIMG.text(),
+            'cartonVacunas': self.vacunaIMG.text(),
             'tipoDSangre': self.tds.text(),
             'examenDHeces': self.exdh.text(),
             'correoElectronico': self.email.text(),
@@ -1016,6 +1084,7 @@ class ModifyData(QMainWindow):
             'nombreR': self.nameR.text(),
             'apellidoR': self.lastNR.text(),
             'edadR': self.ageR.text(),
+            'rpstIMG': self.rpstIMG.text(),
             'cedulaR': self.dniR.text(),
             'afinidad': self.Affi.text(),
             'rifR': self.Rif.text(),
@@ -1058,7 +1127,7 @@ class ModifyData(QMainWindow):
                 datos_editados['direccionActual'], datos_editados['puntoDReferencia'], datos_editados['altura'], datos_editados['peso'],
                 datos_editados['tallaZapatos'], datos_editados['tallaCamisa'], datos_editados['tallaPantalon'], datos_editados['numeroDHermanos'],
                 datos_editados['autorizadoPRetirarANiño'], datos_editados['alergicoA'], '', datos_editados['especificarDificultad'],
-                datos_editados['correoElectronico'], datos_editados['telefonoDHabitacion'], '', datos_editados['tipoDSangre'], datos_editados['examenDHeces']
+                datos_editados['correoElectronico'], datos_editados['telefonoDHabitacion'], '', datos_editados['estIMG'], datos_editados['cartonVacunas'], datos_editados['tipoDSangre'], datos_editados['examenDHeces']
             )
             self.database.ModifyRpl(
                 datos_editados['nombreR'], datos_editados['apellidoR'], datos_editados['cedulaR'], '', datos_editados['edadR'], '', datos_editados['nacionalidadR'], datos_editados['afinidad'], datos_editados['profesionR'], datos_editados['ocupacionR'], datos_editados['empresaDTrabajaR'], datos_editados['direccionR'], datos_editados['telefonoMovilR'], datos_editados['telefonoHabitacionR'], datos_editados['telefonoFamiliarR'], datos_editados['correoElectronicoR'], datos_editados['rifR'], '', datos_editados['codigoPatriaR'], datos_editados['serialPatriaR']

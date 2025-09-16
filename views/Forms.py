@@ -189,6 +189,17 @@ class FormsStudend(QMainWindow):
         self.grid1.addWidget(self.authorizeRC, 3, 2)
         self.layoutP1.addLayout(self.grid1, 1, 0, Qt.AlignTop)
         
+        # Variable para la imagen del Estudiante
+        self.EIMG = None
+        self.PushbuttonEIMG = QPushButton("Subir Imagen de Estudiante", self)
+        self.PushbuttonEIMG.clicked.connect(self.upload_estudiante_image)
+        self.grid1.addWidget(self.PushbuttonEIMG, 4, 0,)
+
+        self.estudianteIMG = QLabel(self)
+        self.estudianteIMG.setFixedSize(100, 100)
+        self.estudianteIMG.setScaledContents(True)
+        self.grid1.addWidget(self.estudianteIMG, 4, 1 )
+        
         # Fila 2: Título de Datos Médicos
         self.grid2 = QGridLayout()
         self.ala = QLineEdit(self)
@@ -205,7 +216,7 @@ class FormsStudend(QMainWindow):
         self.grid2.addWidget(self.gbad, 2, 0)
         self.epdf = QLineEdit(self)
         self.epdf.setPlaceholderText("Especificar Dificultad")
-        self.grid2.addWidget(self.epdf, 3, 0)
+        self.grid2.addWidget(self.epdf, 2, 1)
         self.tds = QLineEdit(self)
         self.tds.setPlaceholderText("Tipo de Sangre")
         self.grid2.addWidget(self.tds, 1, 1)
@@ -214,12 +225,12 @@ class FormsStudend(QMainWindow):
         self.vacunaIMGpath = None
         self.PushbuttonVacuna = QPushButton("Subir Imagen de Vacuna", self)
         self.PushbuttonVacuna.clicked.connect(self.upload_vacuna_image)
-        self.grid2.addWidget(self.PushbuttonVacuna, 2, 1)
+        self.grid2.addWidget(self.PushbuttonVacuna, 4, 1)
         
         self.vacunaIMG = QLabel(self)
         self.vacunaIMG.setFixedSize(100, 100)
         self.vacunaIMG.setScaledContents(True)
-        self.grid2.addWidget(self.vacunaIMG, 2, 2)
+        self.grid2.addWidget(self.vacunaIMG, 4, 0, Qt.AlignRight)
 
         
         self.exdh = QLineEdit(self)
@@ -381,6 +392,18 @@ class FormsStudend(QMainWindow):
         self.dateofbirthR.setDisplayFormat("dd/MM/yyyy")
         self.dateofbirthR.setDate(QDate.currentDate())
         self.grid6.addWidget(self.dateofbirthR, 2, 2)
+
+        #### FOTO DEL REPRESENTANTE ####
+
+        self.rpstIMGpath = None
+        self.Pushbuttonrpst = QPushButton("Subir foto de representante", self)
+        self.Pushbuttonrpst.clicked.connect(self.upload_representante_image)
+        self.grid6.addWidget(self.Pushbuttonrpst, 5, 0)
+
+        self.rpstIMG = QLabel(self)
+        self.rpstIMG.setFixedSize(100, 100)
+        self.rpstIMG.setScaledContents(True)
+        self.grid6.addWidget(self.rpstIMG, 5, 1)
 
         # Boton Marital Status
         self.MaritalStatus = QGroupBox("Estado Civil", self)
@@ -765,6 +788,10 @@ class FormsStudend(QMainWindow):
         especificarDificultad = self.epdf.text() 
         correoElectronico = self.email.text()
         telefonoDHabitacion = self.tfh.text()
+        estIMG = None
+        if self.estudianteIMGpath:
+            with open(self.estudianteIMGpath, 'rb') as f:
+                estIMG = f.read()
         cartonVacunas = None
         if self.vacunaIMGpath:
             with open(self.vacunaIMGpath, 'rb') as f:
@@ -780,6 +807,10 @@ class FormsStudend(QMainWindow):
         EdadR = self.ageR.text()
         CedulaR = self.dniR.text()
         FechaDeNacimientoR = self.dateofbirthR.date().toString("dd/MM/yyyy")
+        rpstIMG = None
+        if self.rpstIMGpath:
+            with open(self.rpstIMGpath, 'rb') as f:
+                rpstIMG = f.read()
         EstadoCivil = "Soltero" if self.QrBS.isChecked() else "Casado" if self.QrBC.isChecked() else "Divorciado"
         Afinidad = self.Affi.text()
         RifR = self.Rif.text()
@@ -829,36 +860,60 @@ class FormsStudend(QMainWindow):
         
 
         # Validar campos
-        if nombre and apellido and cedulaEscolar and edad and fechaDNacimiento and lateralidad and nacionalidad and estado and municipio and direccionActual and puntoDReferencia and altura and peso and tallaZapatos and tallaCamisa and tallaPantalon and numeroDHermanos and autorizadoPRetirarANiño and alergicoA and algunaDificultad and especificarDificultad and correoElectronico and telefonoDHabitacion and cartonVacunas and tipoDSangre and examenDHeces and observaciones \
-        and NombreR and ApellidoR and EdadR and CedulaR and FechaDeNacimientoR and EstadoCivil and Afinidad and RifR and PlanillaSigeR and TelefonoMovilR and TelefonoHabitacionR and CorreoElectronicoR and TelefonoFamiliarR and NacionalidadR and DireccionR and CodigoPatriaR and SerialPatriaR \
+        if nombre and apellido and cedulaEscolar and edad and fechaDNacimiento and lateralidad and nacionalidad and estado and municipio and direccionActual and puntoDReferencia and altura and peso and tallaZapatos and tallaCamisa and tallaPantalon and numeroDHermanos and autorizadoPRetirarANiño and alergicoA and algunaDificultad and especificarDificultad and correoElectronico and telefonoDHabitacion and estIMG and cartonVacunas and tipoDSangre and examenDHeces and observaciones \
+        and NombreR and ApellidoR and EdadR and CedulaR and FechaDeNacimientoR and rpstIMG and EstadoCivil and Afinidad and RifR and PlanillaSigeR and TelefonoMovilR and TelefonoHabitacionR and CorreoElectronicoR and TelefonoFamiliarR and NacionalidadR and DireccionR and CodigoPatriaR and SerialPatriaR \
             and NombreP and ApellidoP and EdadP and CedulaP and FechaDNacimientoP and ViveConElNiñoP and CausaPNoViveP and EmpresaDTrabajaP and TipoEmpleoqDesempeñaP and TelefonoMovilP and DireccionP  \
                 and NombreM and ApellidoM and CedulaM and FechaDNacimientoM and EdadM and TipoEmpleoqDesempeñaM and EmpresaDTrabajaM and ViveConElNiñoM and CausaPNoViveM and DireccionM and TelefonoMovilM:
 
-            # Registrar datos
-            ## Estudiante
-            self.viewmodel.registrar_estudiante(
-            nombre, apellido, cedulaEscolar, edad, genero, fechaDNacimiento, lateralidad, nacionalidad, estado, municipio, direccionActual, puntoDReferencia, altura, peso, tallaZapatos, tallaCamisa, tallaPantalon, numeroDHermanos, autorizadoPRetirarANiño, alergicoA, algunaDificultad, especificarDificultad, correoElectronico, telefonoDHabitacion, cartonVacunas, tipoDSangre, examenDHeces, observaciones
-            )
-            ## Representante
-            self.viewmodel.registrar_representante(
-            NombreR, ApellidoR, CedulaR, FechaDeNacimientoR, EdadR, EstadoCivil, NacionalidadR, Afinidad, ProfesionR, OcupacionR, EmpresaDTrabajaR, DireccionR, TelefonoMovilR, TelefonoHabitacionR, TelefonoFamiliarR, CorreoElectronicoR, RifR, PlanillaSigeR, CodigoPatriaR, SerialPatriaR
-
-            )
-            ## Padre
-            self.viewmodel.registrar_padre(
-                NombreP, ApellidoP, CedulaP, FechaDNacimientoP, EdadP, TipoEmpleoqDesempeñaP, EmpresaDTrabajaP,  ViveConElNiñoP, CausaPNoViveP, DireccionP, TelefonoMovilP
-            )
-            ## Madre
-            self.viewmodel.registrar_madre(
+            # Registrar datos completos con vinculación automática
+            resultado = self.viewmodel.registrar_estudiante_completo(
+                # Datos del estudiante
+                nombre, apellido, cedulaEscolar, edad, genero, fechaDNacimiento, lateralidad, nacionalidad, estado, municipio, direccionActual, puntoDReferencia, altura, peso, tallaZapatos, tallaCamisa, tallaPantalon, numeroDHermanos, autorizadoPRetirarANiño, alergicoA, algunaDificultad, especificarDificultad, correoElectronico, telefonoDHabitacion, estIMG, cartonVacunas, tipoDSangre, examenDHeces, observaciones,
+                # Datos del representante
+                NombreR, ApellidoR, CedulaR, FechaDeNacimientoR, rpstIMG, EdadR, EstadoCivil, NacionalidadR, Afinidad, ProfesionR, OcupacionR, EmpresaDTrabajaR, DireccionR, TelefonoMovilR, TelefonoHabitacionR, TelefonoFamiliarR, CorreoElectronicoR, RifR, PlanillaSigeR, CodigoPatriaR, SerialPatriaR,
+                # Datos del padre
+                NombreP, ApellidoP, CedulaP, FechaDNacimientoP, EdadP, TipoEmpleoqDesempeñaP, EmpresaDTrabajaP, ViveConElNiñoP, CausaPNoViveP, DireccionP, TelefonoMovilP,
+                # Datos de la madre
                 NombreM, ApellidoM, CedulaM, FechaDNacimientoM, EdadM, TipoEmpleoqDesempeñaM, EmpresaDTrabajaM, ViveConElNiñoM, CausaPNoViveM, DireccionM, TelefonoMovilM
             )
-            # Mostrar mensaje de éxito
-            QMessageBox.information(self, "Registro Exitoso", "El estudiante ha sido registrado exitosamente.")
+            
+            if resultado['success']:
+                # Mostrar mensaje de éxito con información de vinculación
+                mensaje = "Todos Los Datos Han Sido Registrados Exitosamente."
+                
+                QMessageBox.information(self, "Registro Exitoso", mensaje)
+            else:
+                # Mostrar mensaje de error
+                QMessageBox.critical(self, "Error de Registro", f"Error al registrar el estudiante: {resultado['error']}")
+                return
             
             self.close()
         else:
             # Mostrar mensaje de advertencia
             QMessageBox.warning(self, "Campos Vacíos", "Por favor, complete todos los campos obligatorios.")
+    
+    
+    ## Funcinamiento correcto     
+    # Función para subir la imagen del estudiante
+    def upload_estudiante_image(self):
+        file_est = QFileDialog(self)
+        file_est.setNameFilter("Images (*.png *.jpg *.jpeg *.bmp)")
+        if file_est.exec():
+            filepath = file_est.selectedFiles()[0]
+            self.estudianteIMGpath = filepath
+            pixmap = QPixmap(filepath)
+            self.estudianteIMG.setPixmap(pixmap.scaled(self.estudianteIMG.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
+
+    # Función para subir la imagen del representante
+    def upload_representante_image(self):
+        file_name_rpst = QFileDialog(self)
+        file_name_rpst.setNameFilter("Images (*.png *.jpg *.jpeg *.bmp)")
+        if file_name_rpst.exec():
+            filepathrpst = file_name_rpst.selectedFiles()[0]
+            self.rpstIMGpath = filepathrpst
+            pixmaprpst = QPixmap(filepathrpst)
+            self.rpstIMG.setPixmap(pixmaprpst.scaled(self.rpstIMG.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
+
 
     # Función para subir la imagen de la vacuna
     def upload_vacuna_image(self):
@@ -869,3 +924,4 @@ class FormsStudend(QMainWindow):
             self.vacunaIMGpath = filepath
             pixmap = QPixmap(filepath)
             self.vacunaIMG.setPixmap(pixmap.scaled(self.vacunaIMG.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
+

@@ -75,28 +75,31 @@ class database:
     # -----------------------------------
 
     ## Registro de Estudiante
-    def insertEstudend(self, Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces, observaciones):
+    def insertEstudend(self, Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, estIMG, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces, observaciones):
         self.cursor.execute('''
-            INSERT INTO Estudend (Nombre, Apellido, CedulaEscolar, Edad, Genero, FN, Lateralidad,  Nacionalidad, Estado, Municipio, DA, PTR, Altura, Peso, Zapatos, Camisa, Pantalon, NDH, APRN, AlergicoA, AlgunaDificultad, EspecifiqueDificultad, CorreoElectronico, TelefonoHabitacion, CartonVacunas, TipodeSangre, EDH, observaciones)
-            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces, observaciones))
+            INSERT INTO Estudend (Nombre, Apellido, CedulaEscolar, Edad, Genero, FN, Lateralidad,  Nacionalidad, Estado, Municipio, DA, PTR, Altura, Peso, Zapatos, Camisa, Pantalon, NDH, APRN, AlergicoA, AlgunaDificultad, EspecifiqueDificultad, CorreoElectronico, TelefonoHabitacion, estIMG, CartonVacunas, TipodeSangre, EDH, observaciones)
+            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, estIMG, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces, observaciones))
         self.connection.commit()
+        return self.cursor.lastrowid
 
     ## Registro de Representante
-    def insertRpl(self, nombre, apellido, cedula, fecha_nacimiento, edad, estado_civil, nacionalidad, afinidad, profesion, ocupacion, empresaDTrabaja, direccion, telefonoMovil, telefonoHabitacion, telefonoFamiliar, correoElectronico, rif, planillaSige, codigoPatria, serialPatria):
+    def insertRpl(self, nombre, apellido, cedula, fecha_nacimiento, rpstIMG, edad, estado_civil, nacionalidad, afinidad, profesion, ocupacion, empresaDTrabaja, direccion, telefonoMovil, telefonoHabitacion, telefonoFamiliar, correoElectronico, rif, planillaSige, codigoPatria, serialPatria):
         self.cursor.execute('''
-            INSERT INTO REPL (Nombre, Apellido, Cedula, FN, Edad, EC, Nacionalidad, Afinidad,  Profesion, Ocupacion, EMPDT,  Direccion, TelefonoMovil, TelefonoHabitacion, TelefonoDFamiliar, CorreoElectronico, RIF, PlanillaSige, CodigoPatria, SerialPatria)
-            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (nombre, apellido, cedula, fecha_nacimiento, edad, estado_civil, nacionalidad, afinidad, profesion, ocupacion, empresaDTrabaja, direccion, telefonoMovil, telefonoHabitacion, telefonoFamiliar, correoElectronico, rif, planillaSige, codigoPatria, serialPatria))
+            INSERT INTO REPL (Nombre, Apellido, Cedula, FN, rpstIMG, Edad, EC, Nacionalidad, Afinidad,  Profesion, Ocupacion, EMPDT,  Direccion, TelefonoMovil, TelefonoHabitacion, TelefonoDFamiliar, CorreoElectronico, RIF, PlanillaSige, CodigoPatria, SerialPatria)
+            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (nombre, apellido, cedula, fecha_nacimiento, rpstIMG, edad, estado_civil, nacionalidad, afinidad, profesion, ocupacion, empresaDTrabaja, direccion, telefonoMovil, telefonoHabitacion, telefonoFamiliar, correoElectronico, rif, planillaSige, codigoPatria, serialPatria))
         self.connection.commit()
+        return self.cursor.lastrowid
 
-    ## Registro de Datos del Padre y Madre
+    ## Registro de Datos del Padre
     def insertDTP (self,  NombreP, ApellidoP, CedulaP, FechaDNacimientoP, EdadP, TipoEmpleoqDesempeñaP, EmpresaDTrabajaP,  ViveConElNiñoP, CausaPNoViveP, DireccionP, TelefonoMovilP):
         self.cursor.execute('''
             INSERT INTO DTP (NombreP, ApellidoP, CedulaP, FNP, EdadP, TEDP, EMDTP, VCNP, CPNVCNP, DireccionP, TelefonoMovilP)
             VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (NombreP, ApellidoP, CedulaP, FechaDNacimientoP, EdadP, TipoEmpleoqDesempeñaP, EmpresaDTrabajaP,  ViveConElNiñoP, CausaPNoViveP, DireccionP, TelefonoMovilP))
         self.connection.commit()
+        return self.cursor.lastrowid
 
     ## Registro de Datos de la Madre
     def insertDTM (self, NombreM, ApellidoM, CedulaM, FechaDNacimientoM, EdadM, TipoEmpleoqDesempeñaM, EmpresaDTrabajaM, ViveConElNiñoM, CausaPNoViveM, DireccionM, TelefonoMovilM):
@@ -105,26 +108,37 @@ class database:
             VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (NombreM, ApellidoM, CedulaM, FechaDNacimientoM, EdadM, TipoEmpleoqDesempeñaM, EmpresaDTrabajaM, ViveConElNiñoM, CausaPNoViveM, DireccionM, TelefonoMovilM))
         self.connection.commit()
+        return self.cursor.lastrowid
+
+    ## Actualizar claves foráneas del estudiante
+    def updateEstudendForeignKeys(self, estudiante_id, representante_id, padre_id, madre_id):
+        """Actualiza las claves foráneas de un estudiante para vincularlo con su representante, padre y madre."""
+        self.cursor.execute('''
+            UPDATE Estudend 
+            SET IDRPL = ?, IDP = ?, IDM = ?
+            WHERE IDEST = ?
+        ''', (representante_id, padre_id, madre_id, estudiante_id))
+        self.connection.commit()
 
     # -----------------------------------
     # Métodos de Modificaciones
     # -----------------------------------
 
     ## Modificación de Estudiante
-    def ModifyEstudend (self, Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces):
+    def ModifyEstudend (self, Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, estIMG,  Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces):
         self.cursor.execute('''
-            UPDATE Estudend SET Nombre=?, Apellido=?, CedulaEscolar=?, Edad=?, Genero=?, FN=?, Lateralidad=?, Nacionalidad=?, Estado=?, Municipio=?, DA=?, PTR=?, Altura=?, Peso=?, Zapatos=?, Camisa=?, Pantalon=?, NDH=?, APRN=?, AlergicoA=?, AlgunaDificultad=?, EspecifiqueDificultad=?, CorreoElectronico=?, TelefonoHabitacion=?, CartonVacunas=?, TipodeSangre=?, EDH=? WHERE CedulaEscolar=?
-        ''', (Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces))
+            UPDATE Estudend SET Nombre=?, Apellido=?, CedulaEscolar=?, Edad=?, Genero=?, FN=?, Lateralidad=?, Nacionalidad=?, Estado=?, Municipio=?, DA=?, PTR=?, Altura=?, Peso=?, Zapatos=?, Camisa=?, Pantalon=?, NDH=?, APRN=?, AlergicoA=?, AlgunaDificultad=?, EspecifiqueDificultad=?, CorreoElectronico=?, TelefonoHabitacion=?, estIMG=?, CartonVacunas=?, TipodeSangre=?, EDH=? WHERE CedulaEscolar=?
+        ''', (Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, estIMG, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces))
         self.connection.commit()
 
     ## Modificación de Representante
-    def ModifyRpl (self, nombre, apellido, cedula, fecha_nacimiento, edad, estado_civil, nacionalidad, afinidad, profesion, ocupacion, empresaDTrabaja, direccion, telefonoMovil, telefonoHabitacion, telefonoFamiliar, correoElectronico, rif, planillaSige, codigoPatria, serialPatria):
+    def ModifyRpl (self, nombre, apellido, cedula, fecha_nacimiento, rpstIMG, edad, estado_civil, nacionalidad, afinidad, profesion, ocupacion, empresaDTrabaja, direccion, telefonoMovil, telefonoHabitacion, telefonoFamiliar, correoElectronico, rif, planillaSige, codigoPatria, serialPatria):
         self.cursor.execute('''
-            UPDATE REPL SET Nombre=?, Apellido=?, Cedula=?, FN=?, Edad=?, EC=?, Nacionalidad=?, Afinidad=?, Profesion=?, Ocupacion=?, EMPDT=?, Direccion=?, TelefonoMovil=?, TelefonoHabitacion=?, TelefonoDFamiliar=?, CorreoElectronico=?, RIF=?, PlanillaSige=?, CodigoPatria=?, SerialPatria=? WHERE Cedula=?
-        ''', (nombre, apellido, cedula, fecha_nacimiento, edad, estado_civil, nacionalidad, afinidad, profesion, ocupacion, empresaDTrabaja, direccion, telefonoMovil, telefonoHabitacion, telefonoFamiliar, correoElectronico, rif, planillaSige, codigoPatria, serialPatria, cedula))
+            UPDATE REPL SET Nombre=?, Apellido=?, Cedula=?, FN=?, rpstIMG=?, Edad=?, EC=?, Nacionalidad=?, Afinidad=?, Profesion=?, Ocupacion=?, EMPDT=?, Direccion=?, TelefonoMovil=?, TelefonoHabitacion=?, TelefonoDFamiliar=?, CorreoElectronico=?, RIF=?, PlanillaSige=?, CodigoPatria=?, SerialPatria=? WHERE Cedula=?
+        ''', (nombre, apellido, cedula, fecha_nacimiento, rpstIMG, edad, estado_civil, nacionalidad, afinidad, profesion, ocupacion, empresaDTrabaja, direccion, telefonoMovil, telefonoHabitacion, telefonoFamiliar, correoElectronico, rif, planillaSige, codigoPatria, serialPatria, cedula))
         self.connection.commit()
 
-    ## Modificación de Datos del Padre y Madre
+    ## Modificación de Datos de la Madre
     def ModifyDTM (self, NombreM, ApellidoM, CedulaM, FechaDNacimientoM, EdadM, TipoEmpleoqDesempeñaM, EmpresaDTrabajaM, ViveConElNiñoM, CausaPNoViveM, DireccionM, TelefonoMovilM):
         self.cursor.execute('''
             UPDATE DTM SET NombreM=?, ApellidoM=?, CedulaM=?, FNM=?, EdadM=?, TEDM=?, EMDTM=?, VCNM=?, CPNVCNM=?, DireccionM=?, TelefonoMovilM=? WHERE CedulaM=?
@@ -197,7 +211,7 @@ class database:
                 'lateralidad', 'nacionalidad', 'estado', 'municipio', 'direccionActual', 'puntoDReferencia', 
                 'altura', 'peso', 'tallaZapatos', 'tallaCamisa', 'tallaPantalon', 'numeroDHermanos', 
                 'autorizadoPRetirarANiño', 'alergicoA', 'algunaDificultad', 'especificarDificultad', 
-                'correoElectronico', 'telefonoDHabitacion', 'cartonVacunas', 'tipoDSangre', 'examenDHeces', 'observaciones'
+                'correoElectronico', 'telefonoDHabitacion', 'estIMG', 'cartonVacunas', 'tipoDSangre', 'examenDHeces', 'observaciones'
             ]
             for i, key in enumerate(estudiante_keys):
                 if i < len(estudiante):
@@ -206,7 +220,7 @@ class database:
         # Datos del representante
         if representante:
             representante_keys = [
-                'idR', 'nombreR', 'apellidoR', 'cedulaR', 'fechaNacimientoR', 'edadR', 'estadoCivilR', 
+                'idR', 'nombreR', 'apellidoR', 'cedulaR', 'fechaNacimientoR', 'rpstIMG', 'edadR', 'estadoCivilR', 
                 'nacionalidadR', 'afinidad', 'profesionR', 'ocupacionR', 'empresaDTrabajaR', 'direccionR', 
                 'telefonoMovilR', 'telefonoHabitacionR', 'telefonoFamiliarR', 'correoElectronicoR', 
                 'rifR', 'planillaSigeR', 'codigoPatriaR', 'serialPatriaR'
@@ -236,3 +250,53 @@ class database:
                     datos[key] = madre[i]
         
         return datos
+
+    # -----------------------------------
+    # Métodos de Estadísticas para Dashboard
+    # -----------------------------------
+
+    ## Contar estudiantes registrados
+    def count_estudiantes(self):
+        """Retorna el número total de estudiantes registrados."""
+        try:
+            self.cursor.execute("SELECT COUNT(*) FROM Estudend")
+            return self.cursor.fetchone()[0]
+        except:
+            return 0
+
+    ## Contar representantes registrados
+    def count_representantes(self):
+        """Retorna el número total de representantes registrados."""
+        try:
+            self.cursor.execute("SELECT COUNT(*) FROM REPL")
+            return self.cursor.fetchone()[0]
+        except:
+            return 0
+
+    ## Contar padres registrados
+    def count_padres(self):
+        """Retorna el número total de padres registrados."""
+        try:
+            self.cursor.execute("SELECT COUNT(*) FROM DTP")
+            return self.cursor.fetchone()[0]
+        except:
+            return 0
+
+    ## Contar madres registradas
+    def count_madres(self):
+        """Retorna el número total de madres registradas."""
+        try:
+            self.cursor.execute("SELECT COUNT(*) FROM DTM")
+            return self.cursor.fetchone()[0]
+        except:
+            return 0
+
+    ## Obtener todas las estadísticas
+    def get_dashboard_stats(self):
+        """Retorna un diccionario con todas las estadísticas del dashboard."""
+        return {
+            'estudiantes': self.count_estudiantes(),
+            'representantes': self.count_representantes(),
+            'padres': self.count_padres(),
+            'madres': self.count_madres()
+        }

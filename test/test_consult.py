@@ -9,4 +9,3 @@ if __name__ == "__main__":
     ventana = ConsultWindow()
     ventana.show()
     sys.exit(app.exec())
- 
