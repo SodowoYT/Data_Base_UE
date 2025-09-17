@@ -159,7 +159,7 @@ class MenuWindow(QMainWindow):
         self.right_title.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
         self.right_title.setStyleSheet("""
             QLabel {
-                margin-top: 10px;
+                margin-top: 38px;
                 margin-bottom: 0px;
                 background: transparent;
             }
@@ -168,12 +168,12 @@ class MenuWindow(QMainWindow):
 
         # Logo superior derecho
         self.right_logo = QLabel()
-        self.right_logo.setMinimumSize(240, 240)
-        self.right_logo.setMaximumSize(240, 240)
+        self.right_logo.setMinimumSize(260, 260)
+        self.right_logo.setMaximumSize(260, 260)
         right_logo_pixmap = QPixmap("utilities/resources/LgAERJ.png")
-        self.right_logo.setPixmap(right_logo_pixmap.scaled(240, 240, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        self.right_logo.setPixmap(right_logo_pixmap.scaled(260, 260, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         self.right_logo.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
-        self.right_logo.setStyleSheet("background: transparent; border: none; margin-bottom: 10px;")
+        self.right_logo.setStyleSheet("background: transparent; border: none; margin-top: 05px; margin-bottom: 05px;")
         right_layout.addWidget(self.right_logo, alignment=Qt.AlignHCenter | Qt.AlignTop)
         main_right_layout.addWidget(center_container, stretch=1)
         

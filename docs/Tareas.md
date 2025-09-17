@@ -9,8 +9,7 @@
 * Configurar Print
 * Anexar 100 datos padre y madre (Pendiente)
 * Añadir Metodo de Borrar Registro. 
-* Anexar Logo de Angel Emiro Araujo a la ventana menu 
-* Crear titulo con nombre de la institucion centrado
+
 
 
 ## Medio
