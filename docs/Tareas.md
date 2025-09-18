@@ -7,8 +7,7 @@
 ## Importante
 * Configurar Print
 * Anexar 100 datos padre y madre (Pendiente)
-* Añadir Metodo de Borrar Registro. 
-* Añadir Campo de Grado (Es decir a que grado pertenece el estudiante)
+* Añadir Campo de Grado (Falta Configurarlo)
 * Que al selecionar un estudiante para modificar este arroje la fecha en la que fue inscrito en el sistema.
 
 ## Medio
