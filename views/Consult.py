@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import (
     QPushButton, QMainWindow, QVBoxLayout, QWidget, QTableView, QLineEdit,
-    QMessageBox, QHBoxLayout, QDialog, QLabel, QScrollArea, QFormLayout, QFileDialog,
-    QHeaderView
+    QMessageBox, QHBoxLayout, QDialog, QLabel, QScrollArea, QFormLayout, QFileDialog, QApplication,
+    QHeaderView, QGroupBox
 )
 from PySide6.QtGui import QStandardItemModel, QStandardItem, QPixmap, QIcon, QPainter
 from PySide6.QtPrintSupport import QPrinter
@@ -56,40 +56,40 @@ def generar_planilla_inscripcion_pdf(
     y -= 18
     c.setFont("Helvetica", 9)
     c.drawString(45, y, f"Nombres: {datos.get('NombreS', '')}")
-    c.drawString(250, y, f"Apellidos: {datos.get('apellido', '')}")
-    c.drawString(450, y, f"Cédula Escolar: {datos.get('cedulaEscolar', '')}")
+    c.drawString(250, y, f"Apellidos: {datos.get('apellido', '') or ''}")
+    c.drawString(450, y, f"Cédula Escolar: {datos.get('cedulaEscolar', '') or ''}")
     y -= 14
-    c.drawString(45, y, f"F.N.: {datos.get('fechaNacimiento', '')}")
-    c.drawString(120, y, f"Edad: {datos.get('edad', '')}")
-    c.drawString(180, y, f"Género: {datos.get('genero', '')}")
-    c.drawString(250, y, f"Lateralidad: {datos.get('lateralidad', '')}")
-    c.drawString(350, y, f"Nacionalidad: {datos.get('nacionalidad', '')}")
-    c.drawString(470, y, f"Estado: {datos.get('estado', '')}")
+    c.drawString(45, y, f"F.N.: {datos.get('fechaNacimiento', '') or ''}")
+    c.drawString(120, y, f"Edad: {datos.get('edad', '') or ''}")
+    c.drawString(180, y, f"Género: {datos.get('genero', '') or ''}")
+    c.drawString(250, y, f"Lateralidad: {datos.get('lateralidad', '') or ''}")
+    c.drawString(350, y, f"Nacionalidad: {datos.get('nacionalidad', '') or ''}")
+    c.drawString(470, y, f"Estado: {datos.get('estado', '') or ''}")
     y -= 14
-    c.drawString(45, y, f"Municipio: {datos.get('municipio', '')}")
-    c.drawString(200, y, f"Dirección Actual: {datos.get('direccionActual', '')}")
+    c.drawString(45, y, f"Municipio: {datos.get('municipio', '') or ''}")
+    c.drawString(200, y, f"Dirección Actual: {datos.get('direccionActual', '') or ''}")
     y -= 14
-    c.drawString(45, y, f"Punto de Referencia: {datos.get('puntoDReferencia', '')}")
+    c.drawString(45, y, f"Punto de Referencia: {datos.get('puntoDReferencia', '') or ''}")
     y -= 14
-    c.drawString(45, y, f"Altura: {datos.get('altura', '')}")
-    c.drawString(120, y, f"Peso: {datos.get('peso', '')}")
-    c.drawString(180, y, f"Zapatos: {datos.get('tallaZapatos', '')}")
-    c.drawString(250, y, f"Camisa: {datos.get('tallaCamisa', '')}")
-    c.drawString(320, y, f"Pantalón: {datos.get('tallaPantalon', '')}")
-    c.drawString(400, y, f"N° de Hermanos: {datos.get('numeroDHermanos', '')}")
+    c.drawString(45, y, f"Altura: {datos.get('altura', '') or ''}")
+    c.drawString(120, y, f"Peso: {datos.get('peso', '') or ''}")
+    c.drawString(180, y, f"Zapatos: {datos.get('tallaZapatos', '') or ''}")
+    c.drawString(250, y, f"Camisa: {datos.get('tallaCamisa', '') or ''}")
+    c.drawString(320, y, f"Pantalón: {datos.get('tallaPantalon', '') or ''}")
+    c.drawString(400, y, f"N° de Hermanos: {datos.get('numeroDHermanos', '') or ''}")
     y -= 14
-    c.drawString(45, y, f"Autorizado para retirar al niño(a): {datos.get('autorizadoPRetirarANiño', '')}")
-    c.drawString(250, y, f"Alérgico a: {datos.get('alergicoA', '')}")
+    c.drawString(45, y, f"Autorizado para retirar al niño(a): {datos.get('autorizadoPRetirarANiño', '') or ''}")
+    c.drawString(250, y, f"Alérgico a: {datos.get('alergicoA', '') or ''}")
     y -= 14
-    c.drawString(45, y, f"Alguna Dificultad: {datos.get('algunaDificultad', '')}")
-    c.drawString(200, y, f"Especifique: {datos.get('especificarDificultad', '')}")
+    c.drawString(45, y, f"Alguna Dificultad: {datos.get('algunaDificultad', '') or ''}")
+    c.drawString(200, y, f"Especifique: {datos.get('especificarDificultad', '') or ''}")
     y -= 14
-    c.drawString(45, y, f"Correo Electrónico: {datos.get('correoElectronico', '')}")
-    c.drawString(250, y, f"Teléfono de Habitación: {datos.get('telefonoDHabitacion', '')}")
+    c.drawString(45, y, f"Correo Electrónico: {datos.get('correoElectronico', '') or ''}")
+    c.drawString(250, y, f"Teléfono de Habitación: {datos.get('telefonoDHabitacion', '') or ''}")
     y -= 14
-    c.drawString(45, y, f"Cartón de Vacunas: {datos.get('cartonVacunas', '')}")
-    c.drawString(200, y, f"Tipo de Sangre: {datos.get('tipoDSangre', '')}")
-    c.drawString(320, y, f"Examen de Heces: {datos.get('examenDHeces', '')}")
+    c.drawString(45, y, f"Cartón de Vacunas: {'Presentado' if datos.get('cartonVacunas') else 'No presentado'}")
+    c.drawString(200, y, f"Tipo de Sangre: {datos.get('tipoDSangre', '') or ''}")
+    c.drawString(320, y, f"Examen de Heces: {datos.get('examenDHeces', '') or ''}")
 
     # --- Salto de página si es necesario ---
     if y < 120:
@@ -102,30 +102,30 @@ def generar_planilla_inscripcion_pdf(
     c.drawString(40, y, "Datos del Representante Legal:")
     y -= 18
     c.setFont("Helvetica", 9)
-    c.drawString(45, y, f"Nombre y Apellido: {datos.get('nombreR', '')} {datos.get('apellidoR', '')}")
-    c.drawString(250, y, f"Cédula: {datos.get('cedulaR', '')}")
-    c.drawString(350, y, f"F.N.: {datos.get('fechaNacimientoR', '')}")
-    c.drawString(420, y, f"Edad: {datos.get('edadR', '')}")
+    c.drawString(45, y, f"Nombre y Apellido: {datos.get('nombreR', '') or ''} {datos.get('apellidoR', '') or ''}")
+    c.drawString(250, y, f"Cédula: {datos.get('cedulaR', '') or ''}")
+    c.drawString(350, y, f"F.N.: {datos.get('fechaNacimientoR', '') or ''}")
+    c.drawString(420, y, f"Edad: {datos.get('edadR', '') or ''}")
     y -= 14
-    c.drawString(45, y, f"Estado Civil: {datos.get('estadoCivilR', '')}")
-    c.drawString(150, y, f"Nacionalidad: {datos.get('nacionalidadR', '')}")
-    c.drawString(250, y, f"Afinidad: {datos.get('afinidad', '')}")
-    c.drawString(350, y, f"Profesión: {datos.get('profesionR', '')}")
-    c.drawString(450, y, f"Ocupación: {datos.get('ocupacionR', '')}")
+    c.drawString(45, y, f"Estado Civil: {datos.get('estadoCivilR', '') or ''}")
+    c.drawString(150, y, f"Nacionalidad: {datos.get('nacionalidadR', '') or ''}")
+    c.drawString(250, y, f"Afinidad: {datos.get('afinidad', '') or ''}")
+    c.drawString(350, y, f"Profesión: {datos.get('profesionR', '') or ''}")
+    c.drawString(450, y, f"Ocupación: {datos.get('ocupacionR', '') or ''}")
     y -= 14
-    c.drawString(45, y, f"Empresa donde Trabaja: {datos.get('empresaDTrabajaR', '')}")
-    c.drawString(250, y, f"Dirección: {datos.get('direccionR', '')}")
+    c.drawString(45, y, f"Empresa donde Trabaja: {datos.get('empresaDTrabajaR', '') or ''}")
+    c.drawString(250, y, f"Dirección: {datos.get('direccionR', '') or ''}")
     y -= 14
-    c.drawString(45, y, f"Teléfono Móvil: {datos.get('telefonoMovilR', '')}")
-    c.drawString(200, y, f"Teléfono Habitación: {datos.get('telefonoHabitacionR', '')}")
-    c.drawString(350, y, f"Teléfono Familiar: {datos.get('telefonoFamiliarR', '')}")
+    c.drawString(45, y, f"Teléfono Móvil: {datos.get('telefonoMovilR', '') or ''}")
+    c.drawString(200, y, f"Teléfono Habitación: {datos.get('telefonoHabitacionR', '') or ''}")
+    c.drawString(350, y, f"Teléfono Familiar: {datos.get('telefonoFamiliarR', '') or ''}")
     y -= 14
-    c.drawString(45, y, f"Correo Electrónico: {datos.get('correoElectronicoR', '')}")
-    c.drawString(250, y, f"Rif: {datos.get('rifR', '')}")
-    c.drawString(350, y, f"Planilla Sige: {datos.get('planillaSigeR', '')}")
+    c.drawString(45, y, f"Correo Electrónico: {datos.get('correoElectronicoR', '') or ''}")
+    c.drawString(250, y, f"Rif: {datos.get('rifR', '') or ''}")
+    c.drawString(350, y, f"Planilla Sige: {datos.get('planillaSigeR', '') or ''}")
     y -= 14
-    c.drawString(45, y, f"Código de la patria: {datos.get('codigoPatriaR', '')}")
-    c.drawString(200, y, f"Serial de la patria: {datos.get('serialPatriaR', '')}")
+    c.drawString(45, y, f"Código de la patria: {datos.get('codigoPatriaR', '') or ''}")
+    c.drawString(200, y, f"Serial de la patria: {datos.get('serialPatriaR', '') or ''}")
 
     if y < 120:
         c.showPage()
@@ -137,18 +137,18 @@ def generar_planilla_inscripcion_pdf(
     c.drawString(40, y, "Datos del Padre:")
     y -= 18
     c.setFont("Helvetica", 9)
-    c.drawString(45, y, f"Nombre y Apellido: {datos.get('nombreP', '')} {datos.get('apellidoP', '')}")
-    c.drawString(250, y, f"Cédula: {datos.get('cedulaP', '')}")
-    c.drawString(350, y, f"F.N.: {datos.get('fechaNacimientoP', '')}")
-    c.drawString(420, y, f"Edad: {datos.get('edadP', '')}")
+    c.drawString(45, y, f"Nombre y Apellido: {datos.get('nombreP', '') or ''} {datos.get('apellidoP', '') or ''}")
+    c.drawString(250, y, f"Cédula: {datos.get('cedulaP', '') or ''}")
+    c.drawString(350, y, f"F.N.: {datos.get('fechaNacimientoP', '') or ''}")
+    c.drawString(420, y, f"Edad: {datos.get('edadP', '') or ''}")
     y -= 14
-    c.drawString(45, y, f"Tipo de Empleo: {datos.get('tipoEmpleoP', '')}")
-    c.drawString(200, y, f"Empresa donde Trabaja: {datos.get('empresaDTrabajaP', '')}")
+    c.drawString(45, y, f"Tipo de Empleo: {datos.get('tipoEmpleoP', '') or ''}")
+    c.drawString(200, y, f"Empresa donde Trabaja: {datos.get('empresaDTrabajaP', '') or ''}")
     y -= 14
-    c.drawString(45, y, f"¿Vive con el niño(a)?: {datos.get('viveConNinoP', '')}")
-    c.drawString(200, y, f"Causa: {datos.get('causaPNoViveP', '')}")
-    c.drawString(350, y, f"Dirección: {datos.get('direccionP', '')}")
-    c.drawString(500, y, f"Teléfono Móvil: {datos.get('telefonoMovilP', '')}")
+    c.drawString(45, y, f"¿Vive con el niño(a)?: {datos.get('viveConNinoP', '') or ''}")
+    c.drawString(200, y, f"Causa: {datos.get('causaPNoViveP', '') or ''}")
+    c.drawString(350, y, f"Dirección: {datos.get('direccionP', '') or ''}")
+    c.drawString(500, y, f"Teléfono Móvil: {datos.get('telefonoMovilP', '') or ''}")
 
     if y < 120:
         c.showPage()
@@ -160,18 +160,18 @@ def generar_planilla_inscripcion_pdf(
     c.drawString(40, y, "Datos de la Madre en caso de no ser la Representante:")
     y -= 18
     c.setFont("Helvetica", 9)
-    c.drawString(45, y, f"Nombre y Apellido: {datos.get('nombreM', '')} {datos.get('apellidoM', '')}")
-    c.drawString(250, y, f"Cédula: {datos.get('cedulaM', '')}")
-    c.drawString(350, y, f"F.N.: {datos.get('fechaNacimientoM', '')}")
-    c.drawString(420, y, f"Edad: {datos.get('edadM', '')}")
+    c.drawString(45, y, f"Nombre y Apellido: {datos.get('nombreM', '') or ''} {datos.get('apellidoM', '') or ''}")
+    c.drawString(250, y, f"Cédula: {datos.get('cedulaM', '') or ''}")
+    c.drawString(350, y, f"F.N.: {datos.get('fechaNacimientoM', '') or ''}")
+    c.drawString(420, y, f"Edad: {datos.get('edadM', '') or ''}")
     y -= 14
-    c.drawString(45, y, f"Tipo de Empleo: {datos.get('tipoEmpleoM', '')}")
-    c.drawString(200, y, f"Empresa donde Trabaja: {datos.get('empresaDTrabajaM', '')}")
+    c.drawString(45, y, f"Tipo de Empleo: {datos.get('tipoEmpleoM', '') or ''}")
+    c.drawString(200, y, f"Empresa donde Trabaja: {datos.get('empresaDTrabajaM', '') or ''}")
     y -= 14
-    c.drawString(45, y, f"¿Vive con el niño(a)?: {datos.get('viveConNinoM', '')}")
-    c.drawString(200, y, f"Causa: {datos.get('causaPNoViveM', '')}")
-    c.drawString(350, y, f"Dirección: {datos.get('direccionM', '')}")
-    c.drawString(500, y, f"Teléfono Móvil: {datos.get('telefonoMovilM', '')}")
+    c.drawString(45, y, f"¿Vive con el niño(a)?: {datos.get('viveConNinoM', '') or ''}")
+    c.drawString(200, y, f"Causa: {datos.get('causaPNoViveM', '') or ''}")
+    c.drawString(350, y, f"Dirección: {datos.get('direccionM', '') or ''}")
+    c.drawString(500, y, f"Teléfono Móvil: {datos.get('telefonoMovilM', '') or ''}")
 
     if y < 120:
         c.showPage()
@@ -183,7 +183,7 @@ def generar_planilla_inscripcion_pdf(
     c.drawString(40, y, "OBSERVACIONES:")
     y -= 18
     c.setFont("Helvetica", 9)
-    obs = datos.get('observaciones', '').split('\n')
+    obs = (datos.get('observaciones', '') or '').split('\n')
     c.drawString(45, y, f"I SALA: {obs[0] if len(obs) > 0 else ''}")
     y -= 14
     c.drawString(45, y, f"II SALA: {obs[1] if len(obs) > 1 else ''}")
@@ -222,6 +222,7 @@ class ConsultWindow(QMainWindow):
         self.setWindowTitle("Consulta de Estudiantes")
         self.setWindowIcon(QIcon("utilities/resources/imgs/ico/IconApp.ico"))
         self.resize(900, 600)
+
 
         # --- Layout principal ---
         main_layout = QVBoxLayout()
@@ -319,11 +320,16 @@ class ConsultWindow(QMainWindow):
         self.modificar = QPushButton("Modificar", self)
         self.modificar.setStyleSheet(self.button_style())
         self.modificar.clicked.connect(self.modificarRegistro)  
+        
+        self.eliminar = QPushButton("Eliminar", self)
+        self.eliminar.setStyleSheet(self.button_style())
+        self.eliminar.clicked.connect(self.eliminarRegistro)  # Por implementar
 
         botones_layout.addStretch()
         botones_layout.addWidget(self.show_all_button)
         botones_layout.addWidget(self.print_pdf_button)
         botones_layout.addWidget(self.modificar)
+        botones_layout.addWidget(self.eliminar)
         botones_layout.addStretch()
 
         main_layout.addLayout(botones_layout)
@@ -480,7 +486,7 @@ class ConsultWindow(QMainWindow):
         row = indexes[0].row()
         cedula = self.table_view.model().index(row, 3).data()  # La cédula está en la columna 3
 
-        self.ventana_todos = VentanaTodos(self.database, cedula)
+        self.ventana_todos = VentanaTodos(self.database, cedula, parent=self)
         self.ventana_todos.show()
 
     def imprimir_pdf(self):
@@ -513,7 +519,13 @@ class ConsultWindow(QMainWindow):
         if not indexes:
             QMessageBox.warning(self, "Advertencia", "Seleccione una fila para modificar.")
             return
-
+        
+    def eliminarRegistro(self):
+        indexes = self.table_view.selectionModel().selectedRows()
+        if not indexes:
+            QMessageBox.warning(self, "Advertencia", "Seleccione una fila para eliminar.")
+            return
+        
         row = indexes[0].row()
         cedula = self.table_view.model().index(row, 3).data()  # Columna de cédula
         cedula = str(cedula).strip()  # Elimina espacios
@@ -529,6 +541,7 @@ class ConsultWindow(QMainWindow):
         self.Mreg_Window.cargar_datos_estudiante(self.database, cedula)
         self.Mreg_Window.show()
 
+
 class ImagenGrandeDialog(QDialog):
     def __init__(self, pixmap, parent=None):
         super().__init__(parent)
@@ -541,80 +554,262 @@ class ImagenGrandeDialog(QDialog):
         self.setLayout(layout)
 
 class VentanaTodos(QDialog):
-    def __init__(self, database, cedula):
-        super().__init__()
-        self.setWindowTitle("Datos del estudiante seleccionado")
-        self.setWindowIcon(QIcon("utilities/resources/imgs/ico/IconApp.ico"))
-        self.setGeometry(150, 150, 600, 600)
-
-        layout = QVBoxLayout()
-        scroll = QScrollArea(self)
-        scroll.setWidgetResizable(True)
-
-        content = QWidget()
-        form_layout = QFormLayout(content)
-
-        # Filtrar por la cédula recibida
-        data = database.SelectEstudend()
-        data = [row for row in data if str(row[3]).strip() == str(cedula)]
-
-        headers = [
-            "ID", "Nombre", "Apellido", "Cédula Escolar", "Edad", "Género", "Fecha Nac.",
-            "Lateralidad", "Nacionalidad", "Estado", "Municipio", "Dirección", "Punto Ref.",
-            "Altura", "Peso", "Zapatos", "Camisa", "Pantalón", "Hermanos", "Autorizado Retiro",
-            "Alergias", "Dificultad", "Detalle Dificultad", "Correo", "Teléfono", "Vacunas",
-            "Tipo Sangre", "Examen Heces"
-        ]
-
-        # Fondo oscuro y texto blanco en toda la ventana
+    def __init__(self, database, cedula, parent=None):
+        super().__init__(parent)
+        self.bg_image = QPixmap("utilities/resources/imgs/bg/CsltBg.png")
         self.setStyleSheet("""
-            QWidget {
-                background-color: #0c3f67;
+            QDialog {
+                background-color: #0c3f67; /* Fallback color */
+            }
+            QGroupBox {
+                background: rgba(0, 0, 0, 0.85 ); /* Fondo negro más oscuro y translúcido */
+                border: 1px solid #0d7acf;
+                border-radius: 8px;
+                margin-top: 10px;
+                font-weight: bold;
+                padding-top: 25px; /* Espacio entre el título y el contenido */
+            }
+            QGroupBox::title {
                 color: white;
-                font-size: 14px;
+                font-weight: bold;
+                font-size: 16px;
+                font-family: 'Segoe UI', Arial, sans-serif;
+                subcontrol-origin: margin;
+                subcontrol-position: top left;
+                padding: 4px 10px;
+                background-color: #1a237e;
+                border-top-left-radius: 8px;
+                border-bottom-right-radius: 8px;
             }
             QLabel {
+                color: #e0e0e0; /* Un blanco más suave */
+                font-size: 14px;
+                font-weight: bold;
+                background: transparent;
+            }
+            QLabel#valor {
+                font-weight: bold;
+                color: #ffffff;
+            }
+            QLabel#foto {
+                border: 2px solid #c0d0e0;
+                border-radius: 4px;
+                background-color: transparent;
+            }
+            QLabel#titulo_principal {
+                font-family: 'Georgia', serif;
+                font-size: 28px;
+                font-weight: bold;
+                color: #fff;
+                padding: 10px;
+            }
+            QPushButton {
+                background-color: #0c3f67;
                 color: white;
+                border-radius: 8px;
+                padding: 6px 12px;
+                font-size: 14px;
             }
         """)
+        
+        # Obtener todos los datos usando el método mejorado
+        self.datos = database.obtener_datos_por_cedula(cedula)
+        
+        nombre_estudiante = self.datos.get('NombreS', 'Desconocido') if self.datos else 'Desconocido'
+        self.setWindowTitle(f"Detalles Completos de: {nombre_estudiante}")
+        self.setWindowIcon(QIcon("utilities/resources/imgs/ico/IconApp.ico"))
+        self.setGeometry(100, 100, 1100, 800) # Ventana más grande
 
-        for row in data:
-            encabezado = f"--- Estudiante: {row[1]} {row[2]} ({row[3]}) ---"
-            encabezado_label = QLabel(f"<b>{encabezado}</b>")
-            form_layout.addRow(encabezado_label, QLabel(""))
+        # Layout para botones de la ventana
+        top_layout = QHBoxLayout()
+        self.fullscreen_button = QPushButton("Pantalla Completa")
+        self.fullscreen_button.clicked.connect(self.toggle_fullscreen)
+        top_layout.addStretch()
+        top_layout.addWidget(self.fullscreen_button, alignment=Qt.AlignTop | Qt.AlignRight)
+        
+        # Layout principal y área de scroll
+        main_layout = QVBoxLayout(self)
+        main_layout.addLayout(top_layout)
 
-            for i, header in enumerate(headers):
-                if i >= len(row):
-                    break
+        # --- Título principal con logo ---
+        title_area_layout = QHBoxLayout()
+        title_area_layout.setAlignment(Qt.AlignCenter)
+        title_area_layout.setContentsMargins(0, 10, 0, 10)
 
-                # CAMBIO: Mostrar BLOB como imagen y permitir click para ampliar
-                if header == "Vacunas":
-                    blob_data = row[i]
-                    if blob_data:
-                        pixmap_original = QPixmap()
-                        pixmap_original.loadFromData(blob_data)
-                        if not pixmap_original.isNull():
-                            pixmap_preview = pixmap_original.scaledToWidth(200, Qt.SmoothTransformation)
-                            foto_label = QLabel()
-                            foto_label.setPixmap(pixmap_preview)
-                            foto_label.setCursor(Qt.PointingHandCursor)
-                            def mostrar_grande(event, pixmap=pixmap_original):
-                                dlg = ImagenGrandeDialog(pixmap, self)
-                                dlg.exec()
-                            foto_label.mousePressEvent = mostrar_grande
-                            form_layout.addRow(QLabel(f"<b>{header}:</b>"), foto_label)
-                        else:
-                            form_layout.addRow(QLabel(f"<b>{header}:</b>"), QLabel("Sin imagen"))
-                    else:
-                        form_layout.addRow(QLabel(f"<b>{header}:</b>"), QLabel("Sin imagen"))
-                else:
-                    form_layout.addRow(
-                        QLabel(f"<b>{header}:</b>"),
-                        QLabel(f"{str(row[i])}")
-                    )
+        # Logo
+        logo_label = QLabel()
+        logo_pixmap = QPixmap("utilities/resources/LogoBG.png").scaled(100, 100, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        logo_label.setPixmap(logo_pixmap)
 
-        content.setLayout(form_layout)
-        scroll.setWidget(content)
-        layout.addWidget(scroll)
-        self.setLayout(layout)
+        # Título
+        title_label = QLabel("Detalles del Registro")
+        title_label.setObjectName("titulo_principal")
 
+        title_area_layout.addWidget(logo_label)
+        title_area_layout.addSpacing(15)
+        title_area_layout.addWidget(title_label)
+        main_layout.addLayout(title_area_layout)
+
+        scroll = QScrollArea(self)
+        scroll.setStyleSheet("background: transparent; border: none;")
+        scroll.setWidgetResizable(True)
+        main_layout.addWidget(scroll)
+
+        # Contenedor para todos los datos
+        container_widget = QWidget()
+        container_layout = QVBoxLayout(container_widget)
+        scroll.setWidget(container_widget)
+
+        if not self.datos:
+            container_layout.addWidget(QLabel("No se encontraron datos para la cédula proporcionada."))
+            return
+
+        # --- SECCIÓN ESTUDIANTE ---
+        self.crear_seccion_estudiante(container_layout, self.datos)
+
+        # --- SECCIÓN REPRESENTANTE ---
+        self.crear_seccion_representante(container_layout, self.datos)
+
+        # --- SECCIÓN PADRE ---
+        self.crear_seccion_padre(container_layout, self.datos)
+
+        # --- SECCIÓN MADRE ---
+        self.crear_seccion_madre(container_layout, self.datos)
+
+    def crear_campo(self, layout, etiqueta, valor_key, datos, es_imagen=False):
+        """Función auxiliar para crear un campo de etiqueta y valor."""
+        valor = str(datos.get(valor_key, 'N/A'))
+        etiqueta_label = QLabel(f"{etiqueta}:")
+        valor_label = QLabel(valor)
+        valor_label.setObjectName("valor")
+        valor_label.setWordWrap(True)
+        layout.addRow(etiqueta_label, valor_label)
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        if not self.bg_image.isNull():
+            painter.drawPixmap(self.rect(), self.bg_image)
+
+    def toggle_fullscreen(self):
+        if self.isFullScreen():
+            self.showNormal()
+            self.fullscreen_button.setText("Pantalla Completa")
+        else:
+            self.showFullScreen()
+            self.fullscreen_button.setText("Salir de Pantalla Completa")
+
+    def crear_seccion_estudiante(self, parent_layout, datos):
+        group_box = QGroupBox("Datos del Estudiante")
+        layout = QHBoxLayout(group_box)
+        
+        form_layout = QFormLayout() # Layout para los campos de texto
+        
+        estudiante_keys = [
+            ('ID', 'IDEST'), ('Nombre', 'NombreS'), ('Apellido', 'apellido'), ('Cédula Escolar', 'cedulaEscolar'),
+            ('Edad', 'edad'), ('Género', 'genero'), ('Fecha Nacimiento', 'fechaNacimiento'), ('Lateralidad', 'lateralidad'),
+            ('Nacionalidad', 'nacionalidad'), ('Estado', 'estado'), ('Municipio', 'municipio'), ('Dirección', 'direccionActual'),
+            ('Punto de Referencia', 'puntoDReferencia'), ('Altura', 'altura'), ('Peso', 'peso'), ('Talla Zapatos', 'tallaZapatos'),
+            ('Talla Camisa', 'tallaCamisa'), ('Talla Pantalón', 'tallaPantalon'), ('N° Hermanos', 'numeroDHermanos'),
+            ('Autorizado para Retirar', 'autorizadoPRetirarANiño'), ('Alérgico a', 'alergicoA'), ('Alguna Dificultad', 'algunaDificultad'),
+            ('Especificar Dificultad', 'especificarDificultad'), ('Correo', 'correoElectronico'),
+            ('Teléfono Habitación', 'telefonoDHabitacion'), ('Tipo de Sangre', 'tipoDSangre'),
+            ('Examen de Heces', 'examenDHeces'), ('Observaciones', 'observaciones')
+        ]
+
+        for etiqueta, clave in estudiante_keys:
+            self.crear_campo(form_layout, etiqueta, clave, datos)
+
+        # Layout para las imágenes
+        fotos_layout = QVBoxLayout()
+        fotos_layout.setAlignment(Qt.AlignTop)
+
+        # Foto del Estudiante
+        self.crear_campo_imagen(fotos_layout, "Foto del Estudiante", 'estIMG', datos)
+        
+        # Cartón de Vacunas
+        self.crear_campo_imagen(fotos_layout, "Cartón de Vacunas", 'cartonVacunas', datos)
+        
+        layout.addLayout(form_layout, 3)
+        layout.addLayout(fotos_layout, 1)
+        parent_layout.addWidget(group_box)
+
+    def crear_campo_imagen(self, layout, titulo, clave_datos, datos):
+        """Función auxiliar para crear un campo de imagen con título."""
+        # Título de la imagen
+        titulo_label = QLabel(titulo) 
+        titulo_label.setStyleSheet("font-weight: bold; color: white; font-size: 14px; margin-top: 10px;")
+        titulo_label.setAlignment(Qt.AlignCenter)
+        
+        # Contenedor de la imagen
+        foto_label = QLabel()
+        foto_label.setObjectName("foto")
+        foto_label.setFixedSize(150, 150)
+        foto_label.setAlignment(Qt.AlignCenter)
+        
+        foto_data = datos.get(clave_datos)
+        if foto_data:
+            pixmap = QPixmap()
+            pixmap.loadFromData(foto_data)
+            foto_label.setPixmap(pixmap.scaled(150, 150, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        else:
+            foto_label.setText("Sin Imagen")
+        
+        layout.addWidget(titulo_label)
+        layout.addWidget(foto_label)
+
+    def crear_seccion_representante(self, parent_layout, datos):
+        group_box = QGroupBox("Datos del Representante Legal")
+        layout = QHBoxLayout(group_box)
+
+        form_layout = QFormLayout()
+        
+        representante_keys = [
+            ('ID', 'IDRPL'), ('Nombre', 'nombreR'), ('Apellido', 'apellidoR'), ('Cédula', 'cedulaR'),
+            ('Fecha Nacimiento', 'fechaNacimientoR'), ('Edad', 'edadR'), ('Estado Civil', 'estadoCivilR'),
+            ('Nacionalidad', 'nacionalidadR'), ('Afinidad', 'afinidad'), ('Profesión', 'profesionR'),
+            ('Ocupación', 'ocupacionR'), ('Empresa donde Trabaja', 'empresaDTrabajaR'), ('Dirección', 'direccionR'),
+            ('Teléfono Móvil', 'telefonoMovilR'), ('Teléfono Habitación', 'telefonoHabitacionR'),
+            ('Teléfono Familiar', 'telefonoFamiliarR'), ('Correo', 'correoElectronicoR'), ('RIF', 'rifR'),
+            ('Planilla Sige', 'planillaSigeR'), ('Código Patria', 'codigoPatriaR'), ('Serial Patria', 'serialPatriaR')
+        ]
+        for etiqueta, clave in representante_keys:
+            self.crear_campo(form_layout, etiqueta, clave, datos)
+
+        # Layout para la imagen del representante
+        foto_layout = QVBoxLayout()
+        foto_layout.setAlignment(Qt.AlignTop)
+        self.crear_campo_imagen(foto_layout, "Foto del Representante", 'rpstIMG', datos)
+
+        layout.addLayout(form_layout, 3)
+        layout.addLayout(foto_layout, 1)
+        parent_layout.addWidget(group_box)
+
+    def crear_seccion_padre(self, parent_layout, datos):
+        group_box = QGroupBox("Datos del Padre")
+        form_layout = QFormLayout(group_box)
+        
+        padre_keys = [
+            ('ID', 'IDP'), ('Nombre', 'nombreP'), ('Apellido', 'apellidoP'), ('Cédula', 'cedulaP'),
+            ('Fecha Nacimiento', 'fechaNacimientoP'), ('Edad', 'edadP'), ('Tipo de Empleo', 'tipoEmpleoP'),
+            ('Empresa donde Trabaja', 'empresaDTrabajaP'), ('Vive con el niño(a)', 'viveConNinoP'),
+            ('Causa si no vive', 'causaPNoViveP'), ('Dirección', 'direccionP'), ('Teléfono Móvil', 'telefonoMovilP')
+        ]
+        for etiqueta, clave in padre_keys:
+            self.crear_campo(form_layout, etiqueta, clave, datos)
+            
+        parent_layout.addWidget(group_box)
+
+    def crear_seccion_madre(self, parent_layout, datos):
+        group_box = QGroupBox("Datos de la Madre")
+        form_layout = QFormLayout(group_box)
+        
+        madre_keys = [
+            ('ID', 'IDM'), ('Nombre', 'nombreM'), ('Apellido', 'apellidoM'), ('Cédula', 'cedulaM'),
+            ('Fecha Nacimiento', 'fechaNacimientoM'), ('Edad', 'edadM'), ('Tipo de Empleo', 'tipoEmpleoM'),
+            ('Empresa donde Trabaja', 'empresaDTrabajaM'), ('Vive con el niño(a)', 'viveConNinoM'),
+            ('Causa si no vive', 'causaPNoViveM'), ('Dirección', 'direccionM'), ('Teléfono Móvil', 'telefonoMovilM')
+        ]
+        for etiqueta, clave in madre_keys:
+            self.crear_campo(form_layout, etiqueta, clave, datos)
+            
+        parent_layout.addWidget(group_box)

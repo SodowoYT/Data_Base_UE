@@ -1,6 +1,6 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QLabel, QLineEdit, QTextEdit, QPushButton, QVBoxLayout, QHBoxLayout, QRadioButton, QMessageBox, QButtonGroup, QMainWindow, QStackedWidget, QGridLayout, QGroupBox, QSizePolicy, QSpacerItem, QFileDialog
-from viewmodels.FormsW import EstudendViewModel
+from viewmodels.ModifyW import ModifyViewModel
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap, QPainter, QIcon
 from PySide6.QtWidgets import QDateEdit
@@ -23,7 +23,15 @@ class ModifyData(QMainWindow):
         super().__init__()
 
         # Inicializar el ViewModel
-        self.viewmodel = EstudendViewModel()  
+        self.viewmodel = ModifyViewModel()
+
+        # Inicializar atributos de imagen para evitar AttributeError
+        self.estudianteIMGpath = None
+        self.vacunaIMGpath = None
+        self.rpstIMGpath = None
+        self.estudianteIMGdata = None
+        self.vacunaIMGdata = None
+        self.rpstIMGdata = None
 
         # Propiedades de la ventana
         self.setWindowTitle("Datos del Estudiante")
@@ -788,14 +796,23 @@ class ModifyData(QMainWindow):
         especificarDificultad = self.epdf.text() 
         correoElectronico = self.email.text()
         telefonoDHabitacion = self.tfh.text()
-        estIMG = None
+        
+        # Priorizar nueva imagen si existe, si no, usar la existente
+        estIMG = self.estudianteIMGdata
         if self.estudianteIMGpath:
             with open(self.estudianteIMGpath, 'rb') as f:
                 estIMG = f.read()
-        cartonVacunas = None
+
+        cartonVacunas = self.vacunaIMGdata
         if self.vacunaIMGpath:
             with open(self.vacunaIMGpath, 'rb') as f:
                 cartonVacunas = f.read()
+
+        rpstIMG = self.rpstIMGdata
+        if self.rpstIMGpath:
+            with open(self.rpstIMGpath, 'rb') as f:
+                rpstIMG = f.read()
+
         tipoDSangre = self.tds.text()
         examenDHeces = self.exdh.text()
         observaciones = self.obs1.toPlainText()
@@ -807,10 +824,6 @@ class ModifyData(QMainWindow):
         EdadR = self.ageR.text()
         CedulaR = self.dniR.text()
         FechaDeNacimientoR = self.dateofbirthR.date().toString("dd/MM/yyyy")
-        rpstIMG = None
-        if self.rpstIMGpath:
-            with open(self.rpstIMGpath, 'rb') as f:
-                rpstIMG = f.read()
         EstadoCivil = "Soltero" if self.QrBS.isChecked() else "Casado" if self.QrBC.isChecked() else "Divorciado"
         Afinidad = self.Affi.text()
         RifR = self.Rif.text()
@@ -865,31 +878,28 @@ class ModifyData(QMainWindow):
             and NombreP and ApellidoP and EdadP and CedulaP and FechaDNacimientoP and ViveConElNiñoP and CausaPNoViveP and EmpresaDTrabajaP and TipoEmpleoqDesempeñaP and TelefonoMovilP and DireccionP  \
                 and NombreM and ApellidoM and CedulaM and FechaDNacimientoM and EdadM and TipoEmpleoqDesempeñaM and EmpresaDTrabajaM and ViveConElNiñoM and CausaPNoViveM and DireccionM and TelefonoMovilM:
 
-            # Registrar datos completos con vinculación automática
-            resultado = self.viewmodel.registrar_estudiante_completo(
-                # Datos del estudiante
-                nombre, apellido, cedulaEscolar, edad, genero, fechaDNacimiento, lateralidad, nacionalidad, estado, municipio, direccionActual, puntoDReferencia, altura, peso, tallaZapatos, tallaCamisa, tallaPantalon, numeroDHermanos, autorizadoPRetirarANiño, alergicoA, algunaDificultad, especificarDificultad, correoElectronico, telefonoDHabitacion, estIMG, cartonVacunas, tipoDSangre, examenDHeces, observaciones,
-                # Datos del representante
-                NombreR, ApellidoR, CedulaR, FechaDeNacimientoR, rpstIMG, EdadR, EstadoCivil, NacionalidadR, Afinidad, ProfesionR, OcupacionR, EmpresaDTrabajaR, DireccionR, TelefonoMovilR, TelefonoHabitacionR, TelefonoFamiliarR, CorreoElectronicoR, RifR, PlanillaSigeR, CodigoPatriaR, SerialPatriaR,
-                # Datos del padre
-                NombreP, ApellidoP, CedulaP, FechaDNacimientoP, EdadP, TipoEmpleoqDesempeñaP, EmpresaDTrabajaP, ViveConElNiñoP, CausaPNoViveP, DireccionP, TelefonoMovilP,
-                # Datos de la madre
-                NombreM, ApellidoM, CedulaM, FechaDNacimientoM, EdadM, TipoEmpleoqDesempeñaM, EmpresaDTrabajaM, ViveConElNiñoM, CausaPNoViveM, DireccionM, TelefonoMovilM
-            )
-            
-            if resultado['success']:
-                # Mostrar mensaje de éxito con información de vinculación
-                mensaje = "Todos Los Datos Han Sido Registrados Exitosamente."
-                
-                QMessageBox.information(self, "Registro Exitoso", mensaje)
-            else:
-                # Mostrar mensaje de error
-                QMessageBox.critical(self, "Error de Registro", f"Error al registrar el estudiante: {resultado['error']}")
-                return
-            
-            self.close()
+            try:
+                # Modificar estudiante
+                self.viewmodel.modificar_estudiante(
+                    nombre, apellido, cedulaEscolar, edad, genero, fechaDNacimiento, lateralidad, nacionalidad, estado, municipio, direccionActual, puntoDReferencia, altura, peso, tallaZapatos, tallaCamisa, tallaPantalon, numeroDHermanos, autorizadoPRetirarANiño, alergicoA, algunaDificultad, especificarDificultad, correoElectronico, telefonoDHabitacion, estIMG, cartonVacunas, tipoDSangre, examenDHeces, observaciones
+                )
+                # Modificar representante
+                self.viewmodel.modificar_representante(
+                    NombreR, ApellidoR, CedulaR, FechaDeNacimientoR, rpstIMG, EdadR, EstadoCivil, NacionalidadR, Afinidad, ProfesionR, OcupacionR, EmpresaDTrabajaR, DireccionR, TelefonoMovilR, TelefonoHabitacionR, TelefonoFamiliarR, CorreoElectronicoR, RifR, PlanillaSigeR, CodigoPatriaR, SerialPatriaR
+                )
+                # Modificar padre
+                self.viewmodel.modificar_padre(
+                    NombreP, ApellidoP, CedulaP, FechaDNacimientoP, EdadP, TipoEmpleoqDesempeñaP, EmpresaDTrabajaP, ViveConElNiñoP, CausaPNoViveP, DireccionP, TelefonoMovilP
+                )
+                # Modificar madre
+                self.viewmodel.modificar_madre(
+                    NombreM, ApellidoM, CedulaM, FechaDNacimientoM, EdadM, TipoEmpleoqDesempeñaM, EmpresaDTrabajaM, ViveConElNiñoM, CausaPNoViveM, DireccionM, TelefonoMovilM
+                )
+                QMessageBox.information(self, "Éxito", "Datos modificados correctamente.")
+                self.close()
+            except Exception as e:
+                QMessageBox.critical(self, "Error", f"No se pudo guardar: {e}")
         else:
-            # Mostrar mensaje de advertencia
             QMessageBox.warning(self, "Campos Vacíos", "Por favor, complete todos los campos obligatorios.")
     
     
@@ -950,8 +960,35 @@ class ModifyData(QMainWindow):
             self.authorizeRC.setText(str(self.datos.get('autorizadoPRetirarANiño', '')))
             self.ala.setText(str(self.datos.get('alergicoA', '')))
             self.epdf.setText(str(self.datos.get('especificarDificultad', '')))
-            # self.estIMG.setText(str(self.datos.get('estIMG', '')))  # Elimina o comenta esta línea
-            # self.vacunaIMG.setText(str(self.datos.get('cartonVacunas', '')))  # Elimina o comenta esta línea
+            # Cargar imagen del estudiante
+            est_img_data = self.datos.get('estIMG', None)
+            if est_img_data:
+                pixmap = QPixmap()
+                pixmap.loadFromData(est_img_data)
+                self.estudianteIMG.setPixmap(pixmap)
+                self.estudianteIMGdata = est_img_data
+            else:
+                self.estudianteIMGdata = None
+
+            # Cargar imagen de la vacuna
+            vacuna_img_data = self.datos.get('cartonVacunas', None)
+            if vacuna_img_data:
+                pixmap = QPixmap()
+                pixmap.loadFromData(vacuna_img_data)
+                self.vacunaIMG.setPixmap(pixmap)
+                self.vacunaIMGdata = vacuna_img_data
+            else:
+                self.vacunaIMGdata = None
+
+            # Cargar imagen del representante
+            rpst_img_data = self.datos.get('rpstIMG', None)
+            if rpst_img_data:
+                pixmap = QPixmap()
+                pixmap.loadFromData(rpst_img_data)
+                self.rpstIMG.setPixmap(pixmap)
+                self.rpstIMGdata = rpst_img_data
+            else:
+                self.rpstIMGdata = None
             self.tds.setText(str(self.datos.get('tipoDSangre', '')))
             self.exdh.setText(str(self.datos.get('examenDHeces', '')))
             self.email.setText(str(self.datos.get('correoElectronico', '')))

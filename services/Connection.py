@@ -127,8 +127,8 @@ class database:
     ## Modificación de Estudiante
     def ModifyEstudend (self, Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, estIMG,  Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces):
         self.cursor.execute('''
-            UPDATE Estudend SET Nombre=?, Apellido=?, CedulaEscolar=?, Edad=?, Genero=?, FN=?, Lateralidad=?, Nacionalidad=?, Estado=?, Municipio=?, DA=?, PTR=?, Altura=?, Peso=?, Zapatos=?, Camisa=?, Pantalon=?, NDH=?, APRN=?, AlergicoA=?, AlgunaDificultad=?, EspecifiqueDificultad=?, CorreoElectronico=?, TelefonoHabitacion=?, estIMG=?, CartonVacunas=?, TipodeSangre=?, EDH=? WHERE CedulaEscolar=?
-        ''', (Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, estIMG, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces))
+    UPDATE Estudend SET Nombre=?, Apellido=?, CedulaEscolar=?, Edad=?, Genero=?, FN=?, Lateralidad=?, Nacionalidad=?, Estado=?, Municipio=?, DA=?, PTR=?, Altura=?, Peso=?, Zapatos=?, Camisa=?, Pantalon=?, NDH=?, APRN=?, AlergicoA=?, AlgunaDificultad=?, EspecifiqueDificultad=?, CorreoElectronico=?, TelefonoHabitacion=?, estIMG=?, CartonVacunas=?, TipodeSangre=?, EDH=? WHERE CedulaEscolar=?
+    ''', (Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, estIMG, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces, Cedula_Escolar))
         self.connection.commit()
 
     ## Modificación de Representante
@@ -137,6 +137,7 @@ class database:
             UPDATE REPL SET Nombre=?, Apellido=?, Cedula=?, FN=?, rpstIMG=?, Edad=?, EC=?, Nacionalidad=?, Afinidad=?, Profesion=?, Ocupacion=?, EMPDT=?, Direccion=?, TelefonoMovil=?, TelefonoHabitacion=?, TelefonoDFamiliar=?, CorreoElectronico=?, RIF=?, PlanillaSige=?, CodigoPatria=?, SerialPatria=? WHERE Cedula=?
         ''', (nombre, apellido, cedula, fecha_nacimiento, rpstIMG, edad, estado_civil, nacionalidad, afinidad, profesion, ocupacion, empresaDTrabaja, direccion, telefonoMovil, telefonoHabitacion, telefonoFamiliar, correoElectronico, rif, planillaSige, codigoPatria, serialPatria, cedula))
         self.connection.commit()
+        
 
     ## Modificación de Datos de la Madre
     def ModifyDTM (self, NombreM, ApellidoM, CedulaM, FechaDNacimientoM, EdadM, TipoEmpleoqDesempeñaM, EmpresaDTrabajaM, ViveConElNiñoM, CausaPNoViveM, DireccionM, TelefonoMovilM):
@@ -148,7 +149,7 @@ class database:
     ## Modificación de Datos del Padre
     def ModifyDTP (self, NombreP, ApellidoP, CedulaP, FechaDNacimientoP, EdadP, TipoEmpleoqDesempeñaP, EmpresaDTrabajaP, ViveConElNiñoP, CausaPNoViveP, DireccionP, TelefonoMovilP):
         self.cursor.execute('''
-            UPDATE DTP SET NombreP=?, ApellidoP=?, CedulaP=?, FNP=?, EdadP=?, TEP=?, EMPDTP=?, VCNTP=?, CPNVCNT=?, DireccionP=?, TelefonoMovilP=? WHERE CedulaP=?
+            UPDATE DTP SET NombreP=?, ApellidoP=?, CedulaP=?, FNP=?, EdadP=?, TEDP=?, EMDTP=?, VCNP=?, CPNVCNP=?, DireccionP=?, TelefonoMovilP=? WHERE CedulaP=?
         ''', (NombreP, ApellidoP, CedulaP, FechaDNacimientoP, EdadP, TipoEmpleoqDesempeñaP, EmpresaDTrabajaP, ViveConElNiñoP, CausaPNoViveP, DireccionP, TelefonoMovilP, CedulaP))
         self.connection.commit()
 
@@ -161,44 +162,38 @@ class database:
         self.cursor.execute('''
           SELECT * FROM Estudend
         ''')
-        return self.cursor.fetchall()
+        return self.cursor.fetchall() # Considera usar fetchone() si solo esperas un resultado
 
     def obtener_datos_por_cedula(self, cedula):
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
         # Obtener datos del estudiante
-        cursor.execute("""
-            SELECT *
-            FROM Estudend WHERE TRIM(CedulaEscolar)=?
-        """, (cedula.strip(),))
+        cursor.execute("SELECT * FROM Estudend WHERE TRIM(CedulaEscolar)=?", (cedula.strip(),))
         estudiante = cursor.fetchone()
         
         if not estudiante:
             conn.close()
             return None
-            
-        # Obtener datos del representante (asumiendo que hay una relación por cédula)
-        cursor.execute("""
-            SELECT *
-            FROM REPL WHERE TRIM(Cedula)=?
-        """, (cedula.strip(),))
+
+        # Obtener IDs de la familia desde el registro del estudiante
+        # Asumiendo que las FKs están al final de la tabla Estudend
+        # IDEST(0), ..., IDRPL(30), IDP(31), IDM(32)
+        id_representante = estudiante[30] if len(estudiante) > 30 else None
+        id_padre = estudiante[31] if len(estudiante) > 31 else None
+        id_madre = estudiante[32] if len(estudiante) > 32 else None
+
+        # Obtener datos del representante, padre y madre usando sus IDs
+        cursor.execute("SELECT * FROM REPL WHERE IDRPL=?", (id_representante,))
         representante = cursor.fetchone()
-        
-        # Obtener datos del padre (asumiendo que hay una relación por cédula)
-        cursor.execute("""
-            SELECT *
-            FROM DTP WHERE TRIM(CedulaP)=?
-        """, (cedula.strip(),))
+
+        cursor.execute("SELECT * FROM DTP WHERE IDP=?", (id_padre,))
         padre = cursor.fetchone()
-        
-        # Obtener datos de la madre (asumiendo que hay una relación por cédula)
-        cursor.execute("""
-            SELECT *
-            FROM DTM WHERE TRIM(CedulaM)=?
-        """, (cedula.strip(),))
+
+        cursor.execute("SELECT * FROM DTM WHERE IDM=?", (id_madre,))
         madre = cursor.fetchone()
-        
+
+        # Obtener datos del padre (asumiendo que hay una relación por cédula)
         conn.close()
         
         # Crear diccionario con todos los datos
@@ -206,12 +201,13 @@ class database:
         
         # Datos del estudiante (primeros 28 campos)
         if estudiante:
-            estudiante_keys = [
-                'id', 'NombreS', 'apellido', 'cedulaEscolar', 'edad', 'genero', 'fechaNacimiento', 
+            estudiante_keys = [ # Asegúrate que el orden y cantidad coincida con tu tabla
+                'IDEST', 'NombreS', 'apellido', 'cedulaEscolar', 'edad', 'genero', 'fechaNacimiento', 
                 'lateralidad', 'nacionalidad', 'estado', 'municipio', 'direccionActual', 'puntoDReferencia', 
                 'altura', 'peso', 'tallaZapatos', 'tallaCamisa', 'tallaPantalon', 'numeroDHermanos', 
                 'autorizadoPRetirarANiño', 'alergicoA', 'algunaDificultad', 'especificarDificultad', 
-                'correoElectronico', 'telefonoDHabitacion', 'estIMG', 'cartonVacunas', 'tipoDSangre', 'examenDHeces', 'observaciones'
+                'correoElectronico', 'telefonoDHabitacion', 'estIMG', 'cartonVacunas', 'tipoDSangre', 
+                'examenDHeces', 'observaciones'
             ]
             for i, key in enumerate(estudiante_keys):
                 if i < len(estudiante):
@@ -219,8 +215,8 @@ class database:
         
         # Datos del representante
         if representante:
-            representante_keys = [
-                'idR', 'nombreR', 'apellidoR', 'cedulaR', 'fechaNacimientoR', 'rpstIMG', 'edadR', 'estadoCivilR', 
+            representante_keys = [ # Asegúrate que el orden y cantidad coincida con tu tabla
+                'IDRPL', 'nombreR', 'apellidoR', 'cedulaR', 'fechaNacimientoR', 'rpstIMG', 'edadR', 'estadoCivilR', 
                 'nacionalidadR', 'afinidad', 'profesionR', 'ocupacionR', 'empresaDTrabajaR', 'direccionR', 
                 'telefonoMovilR', 'telefonoHabitacionR', 'telefonoFamiliarR', 'correoElectronicoR', 
                 'rifR', 'planillaSigeR', 'codigoPatriaR', 'serialPatriaR'
@@ -231,8 +227,8 @@ class database:
         
         # Datos del padre
         if padre:
-            padre_keys = [
-                'idP', 'nombreP', 'apellidoP', 'cedulaP', 'fechaNacimientoP', 'edadP', 'tipoEmpleoP', 
+            padre_keys = [ # Asegúrate que el orden y cantidad coincida con tu tabla
+                'IDP', 'nombreP', 'apellidoP', 'cedulaP', 'fechaNacimientoP', 'edadP', 'tipoEmpleoP', 
                 'empresaDTrabajaP', 'viveConNinoP', 'causaPNoViveP', 'direccionP', 'telefonoMovilP'
             ]
             for i, key in enumerate(padre_keys):
@@ -242,7 +238,7 @@ class database:
         # Datos de la madre
         if madre:
             madre_keys = [
-                'idM', 'nombreM', 'apellidoM', 'cedulaM', 'fechaNacimientoM', 'edadM', 'tipoEmpleoM', 
+                'IDM', 'nombreM', 'apellidoM', 'cedulaM', 'fechaNacimientoM', 'edadM', 'tipoEmpleoM', 
                 'empresaDTrabajaM', 'viveConNinoM', 'causaPNoViveM', 'direccionM', 'telefonoMovilM'
             ]
             for i, key in enumerate(madre_keys):
