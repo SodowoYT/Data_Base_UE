@@ -187,19 +187,42 @@ class FormsStudend(QMainWindow):
         self.authorizeRC = QLineEdit(self)
         self.authorizeRC.setPlaceholderText("Autorizado para retirar al niño/a")
         self.grid1.addWidget(self.authorizeRC, 3, 2)
+        self.gradobtn = QGroupBox("Grado que cursa", self) # Boton Grado que cursa
+        self.QrPlvl1 = QRadioButton("Pre-Escolar Nivel 1", self)        # Radio Button Nivel 1
+        self.QrPlvl2 = QRadioButton("Pre-Escolar Nivel 2", self)        # Radio Button Nivel 2
+        self.QrPlvl3 = QRadioButton("Pre-Escolar Nivel 3", self)        # Radio Button Nivel 3
+        self.QrBPri = QRadioButton("1 Grado", self)        # Radio Button 1 Grado
+        self.QrBSeg = QRadioButton("2 Grado", self)        # Radio Button 2 Grado
+        self.QrBTer = QRadioButton("3 Grado", self)        # Radio Button 3 Grado
+        self.QrBCua = QRadioButton("4 Grado", self)       # Radio Button 4 Grado
+        self.QrBQui = QRadioButton("5 Grado", self)       # Radio Button 5 Grado
+        self.QrBSex = QRadioButton("6 Grado", self)       # Radio Button 6 Grado
+        self.QrBPri.setChecked(True)
+        self.QhbGrado = QVBoxLayout()
+        self.QhbGrado.addWidget(self.QrPlvl1)
+        self.QhbGrado.addWidget(self.QrPlvl2)
+        self.QhbGrado.addWidget(self.QrPlvl3)
+        self.QhbGrado.addWidget(self.QrBPri)
+        self.QhbGrado.addWidget(self.QrBSeg)
+        self.QhbGrado.addWidget(self.QrBTer)
+        self.QhbGrado.addWidget(self.QrBCua)
+        self.QhbGrado.addWidget(self.QrBQui)
+        self.QhbGrado.addWidget(self.QrBSex)
+        self.gradobtn.setLayout(self.QhbGrado)
+        self.grid1.addWidget(self.gradobtn, 4, 0)
         self.layoutP1.addLayout(self.grid1, 1, 0, Qt.AlignTop)
         
         # Variable para la imagen del Estudiante
         self.EIMG = None
         self.PushbuttonEIMG = QPushButton("Subir Imagen de Estudiante", self)
         self.PushbuttonEIMG.clicked.connect(self.upload_estudiante_image)
-        self.grid1.addWidget(self.PushbuttonEIMG, 4, 0,)
+        self.grid1.addWidget(self.PushbuttonEIMG, 4, 1, Qt.AlignTop)
 
         self.estudianteIMG = QLabel(self)
-        self.estudianteIMG.setFixedSize(100, 100)
+        self.estudianteIMG.setFixedSize(150, 150)
         self.estudianteIMG.setScaledContents(True)
-        self.grid1.addWidget(self.estudianteIMG, 4, 1 )
-        
+        self.grid1.addWidget(self.estudianteIMG, 4, 1, Qt.AlignCenter)
+
         # Fila 2: Título de Datos Médicos
         self.grid2 = QGridLayout()
         self.ala = QLineEdit(self)
@@ -225,10 +248,10 @@ class FormsStudend(QMainWindow):
         self.vacunaIMGpath = None
         self.PushbuttonVacuna = QPushButton("Subir Imagen de Vacuna", self)
         self.PushbuttonVacuna.clicked.connect(self.upload_vacuna_image)
-        self.grid2.addWidget(self.PushbuttonVacuna, 4, 1)
+        self.grid2.addWidget(self.PushbuttonVacuna, 4, 1 , Qt.AlignTop)
         
         self.vacunaIMG = QLabel(self)
-        self.vacunaIMG.setFixedSize(100, 100)
+        self.vacunaIMG.setFixedSize(130, 130)
         self.vacunaIMG.setScaledContents(True)
         self.grid2.addWidget(self.vacunaIMG, 4, 0, Qt.AlignRight)
 

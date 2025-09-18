@@ -296,3 +296,31 @@ class database:
             'padres': self.count_padres(),
             'madres': self.count_madres()
         }
+
+    # -----------------------------------
+    # Métodos de Eliminación
+    # -----------------------------------
+
+    def delete_student_full(self, id_estudiante, id_representante, id_padre, id_madre):
+        """
+        Elimina un estudiante y sus familiares asociados (representante, padre, madre).
+        El orden de eliminación es importante para evitar problemas de claves foráneas.
+        """
+        try:
+            # 1. Eliminar el estudiante. Esto rompe la relación.
+            if id_estudiante:
+                self.cursor.execute("DELETE FROM Estudend WHERE IDEST = ?", (id_estudiante,))
+
+            # 2. Eliminar los familiares asociados.
+            if id_representante:
+                self.cursor.execute("DELETE FROM REPL WHERE IDRPL = ?", (id_representante,))
+            if id_padre:
+                self.cursor.execute("DELETE FROM DTP WHERE IDP = ?", (id_padre,))
+            if id_madre:
+                self.cursor.execute("DELETE FROM DTM WHERE IDM = ?", (id_madre,))
+
+            self.connection.commit()
+            return True, "Registro eliminado exitosamente."
+        except Exception as e:
+            self.connection.rollback()
+            return False, f"Error al eliminar el registro: {e}"

@@ -520,26 +520,56 @@ class ConsultWindow(QMainWindow):
             QMessageBox.warning(self, "Advertencia", "Seleccione una fila para modificar.")
             return
         
+        row = indexes[0].row()
+        cedula = self.table_view.model().index(row, 3).data()
+        cedula = str(cedula).strip()
+
+        # Abre la ventana de formulario editable
+        self.Mreg_Window = ModifyData()
+        self.Mreg_Window.cargar_datos_estudiante(self.database, cedula)
+        self.Mreg_Window.show()
+
     def eliminarRegistro(self):
         indexes = self.table_view.selectionModel().selectedRows()
         if not indexes:
             QMessageBox.warning(self, "Advertencia", "Seleccione una fila para eliminar.")
             return
-        
+
         row = indexes[0].row()
-        cedula = self.table_view.model().index(row, 3).data()  # Columna de cédula
-        cedula = str(cedula).strip()  # Elimina espacios
-        print("Cédula seleccionada para modificar:", cedula)
-        # Consulta todos los datos del estudiante usando la cédula
-        datos_completos = self.database.obtener_datos_por_cedula(cedula)
-        print("Datos completos:", datos_completos)
-        if not datos_completos:
-            QMessageBox.warning(self, "Advertencia", "No se encontraron datos completos para el estudiante.")
+        nombre = self.table_view.model().index(row, 1).data()
+        apellido = self.table_view.model().index(row, 2).data()
+        cedula = self.table_view.model().index(row, 3).data()
+        cedula = str(cedula).strip()
+
+        # Mensaje de confirmación
+        reply = QMessageBox.question(self, 'Confirmar Eliminación',
+                                     f"¿Está seguro de que desea eliminar el registro del estudiante:\n\n"
+                                     f"<b>{nombre} {apellido}</b> (C.E: {cedula})?\n\n"
+                                     "Esta acción también eliminará los datos del representante, padre y madre asociados y no se puede deshacer.",
+                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+
+        if reply != QMessageBox.Yes:
             return
-        # Abre la ventana de formulario editable
-        self.Mreg_Window = ModifyData()
-        self.Mreg_Window.cargar_datos_estudiante(self.database, cedula)
-        self.Mreg_Window.show()
+
+        # Obtener todos los IDs para eliminar
+        datos_completos = self.database.obtener_datos_por_cedula(cedula)
+        if not datos_completos:
+            QMessageBox.critical(self, "Error", "No se pudieron encontrar los datos completos para eliminar el registro.")
+            return
+
+        # Llamar al método de eliminación
+        success, message = self.database.delete_student_full(
+            datos_completos.get('IDEST'),
+            datos_completos.get('IDRPL'),
+            datos_completos.get('IDP'),
+            datos_completos.get('IDM')
+        )
+
+        if success:
+            QMessageBox.information(self, "Éxito", message)
+            self.actualizar_datos()  # Actualizar la tabla para reflejar el cambio
+        else:
+            QMessageBox.critical(self, "Error de Eliminación", message)
 
 
 class ImagenGrandeDialog(QDialog):
