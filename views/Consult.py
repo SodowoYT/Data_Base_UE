@@ -708,7 +708,14 @@ class VentanaTodos(QDialog):
 
     def crear_campo(self, layout, etiqueta, valor_key, datos, es_imagen=False):
         """Función auxiliar para crear un campo de etiqueta y valor."""
-        valor = str(datos.get(valor_key, 'N/A'))
+        valor_raw = datos.get(valor_key)
+        
+        # Si el valor es None (no existe en la DB) o es la cadena "none", mostrar "N/A"
+        if valor_raw is None or str(valor_raw).strip().lower() == 'none':
+            valor = 'N/A'
+        else:
+            valor = str(valor_raw)
+
         etiqueta_label = QLabel(f"{etiqueta}:")
         valor_label = QLabel(valor)
         valor_label.setObjectName("valor")
@@ -736,18 +743,21 @@ class VentanaTodos(QDialog):
         
         estudiante_keys = [
             ('ID', 'IDEST'), ('Nombre', 'NombreS'), ('Apellido', 'apellido'), ('Cédula Escolar', 'cedulaEscolar'),
-            ('Edad', 'edad'), ('Género', 'genero'), ('Fecha Nacimiento', 'fechaNacimiento'), ('Lateralidad', 'lateralidad'),
-            ('Nacionalidad', 'nacionalidad'), ('Estado', 'estado'), ('Municipio', 'municipio'), ('Dirección', 'direccionActual'),
-            ('Punto de Referencia', 'puntoDReferencia'), ('Altura', 'altura'), ('Peso', 'peso'), ('Talla Zapatos', 'tallaZapatos'),
-            ('Talla Camisa', 'tallaCamisa'), ('Talla Pantalón', 'tallaPantalon'), ('N° Hermanos', 'numeroDHermanos'),
-            ('Autorizado para Retirar', 'autorizadoPRetirarANiño'), ('Alérgico a', 'alergicoA'), ('Alguna Dificultad', 'algunaDificultad'),
+            ('Edad', 'edad'), ('Género', 'genero'), ('Fecha Nacimiento', 'FN'), ('Lateralidad', 'lateralidad'),
+            ('Nacionalidad', 'nacionalidad'), ('Estado', 'estado'), ('Municipio', 'municipio'), ('Dirección', 'DA'),
+            ('Punto de Referencia', 'PTR'), ('Altura', 'altura'), ('Peso', 'peso'), ('Talla Zapatos', 'Zapatos'),
+            ('Talla Camisa', 'Camisa'), ('Talla Pantalón', 'Pantalon'), ('N° Hermanos', 'NDH'),
+            ('Autorizado para Retirar', 'APRN'), ('Alérgico a', 'alergicoA'), ('Alguna Dificultad', 'algunaDificultad'),
             ('Especificar Dificultad', 'especificarDificultad'), ('Correo', 'correoElectronico'),
-            ('Teléfono Habitación', 'telefonoDHabitacion'), ('Tipo de Sangre', 'tipoDSangre'),
-            ('Examen de Heces', 'examenDHeces'), ('Observaciones', 'observaciones')
+            ('Teléfono Habitación', 'telefonoHabitacion'), ('Tipo de Sangre', 'tipoDSangre'),
+            ('Examen de Heces', 'EDH'), ('Observaciones', 'observaciones')
         ]
 
         for etiqueta, clave in estudiante_keys:
             self.crear_campo(form_layout, etiqueta, clave, datos)
+        # Grado y Turno (campos especiales) al final
+        self.crear_campo(form_layout, 'Grado', 'grado', datos)
+        self.crear_campo(form_layout, 'Turno', 'turno', datos)
 
         # Layout para las imágenes
         fotos_layout = QVBoxLayout()
@@ -795,11 +805,11 @@ class VentanaTodos(QDialog):
         
         representante_keys = [
             ('ID', 'IDRPL'), ('Nombre', 'nombreR'), ('Apellido', 'apellidoR'), ('Cédula', 'cedulaR'),
-            ('Fecha Nacimiento', 'fechaNacimientoR'), ('Edad', 'edadR'), ('Estado Civil', 'estadoCivilR'),
+            ('Fecha Nacimiento', 'FN'), ('Edad', 'edadR'), ('Estado Civil', 'EC'),
             ('Nacionalidad', 'nacionalidadR'), ('Afinidad', 'afinidad'), ('Profesión', 'profesionR'),
-            ('Ocupación', 'ocupacionR'), ('Empresa donde Trabaja', 'empresaDTrabajaR'), ('Dirección', 'direccionR'),
+            ('Ocupación', 'ocupacionR'), ('Empresa donde Trabaja', 'EMPDT'), ('Dirección', 'direccionR'),
             ('Teléfono Móvil', 'telefonoMovilR'), ('Teléfono Habitación', 'telefonoHabitacionR'),
-            ('Teléfono Familiar', 'telefonoFamiliarR'), ('Correo', 'correoElectronicoR'), ('RIF', 'rifR'),
+            ('Teléfono Familiar', 'telefonoDFamiliar'), ('Correo', 'correoElectronicoR'), ('RIF', 'RIF'),
             ('Planilla Sige', 'planillaSigeR'), ('Código Patria', 'codigoPatriaR'), ('Serial Patria', 'serialPatriaR')
         ]
         for etiqueta, clave in representante_keys:
@@ -820,9 +830,9 @@ class VentanaTodos(QDialog):
         
         padre_keys = [
             ('ID', 'IDP'), ('Nombre', 'nombreP'), ('Apellido', 'apellidoP'), ('Cédula', 'cedulaP'),
-            ('Fecha Nacimiento', 'fechaNacimientoP'), ('Edad', 'edadP'), ('Tipo de Empleo', 'tipoEmpleoP'),
-            ('Empresa donde Trabaja', 'empresaDTrabajaP'), ('Vive con el niño(a)', 'viveConNinoP'),
-            ('Causa si no vive', 'causaPNoViveP'), ('Dirección', 'direccionP'), ('Teléfono Móvil', 'telefonoMovilP')
+            ('Fecha Nacimiento', 'FNP'), ('Edad', 'edadP'), ('Tipo de Empleo', 'TEDP'),
+            ('Empresa donde Trabaja', 'EMDTP'), ('Vive con el niño(a)', 'VCNP'),
+            ('Causa si no vive', 'CPNVCNP'), ('Dirección', 'direccionP'), ('Teléfono Móvil', 'telefonoMovilP')
         ]
         for etiqueta, clave in padre_keys:
             self.crear_campo(form_layout, etiqueta, clave, datos)
@@ -835,9 +845,9 @@ class VentanaTodos(QDialog):
         
         madre_keys = [
             ('ID', 'IDM'), ('Nombre', 'nombreM'), ('Apellido', 'apellidoM'), ('Cédula', 'cedulaM'),
-            ('Fecha Nacimiento', 'fechaNacimientoM'), ('Edad', 'edadM'), ('Tipo de Empleo', 'tipoEmpleoM'),
-            ('Empresa donde Trabaja', 'empresaDTrabajaM'), ('Vive con el niño(a)', 'viveConNinoM'),
-            ('Causa si no vive', 'causaPNoViveM'), ('Dirección', 'direccionM'), ('Teléfono Móvil', 'telefonoMovilM')
+            ('Fecha Nacimiento', 'FNM'), ('Edad', 'edadM'), ('Tipo de Empleo', 'TEDM'),
+            ('Empresa donde Trabaja', 'EMDTM'), ('Vive con el niño(a)', 'VCNM'),
+            ('Causa si no vive', 'CPNVCNM'), ('Dirección', 'direccionM'), ('Teléfono Móvil', 'telefonoMovilM')
         ]
         for etiqueta, clave in madre_keys:
             self.crear_campo(form_layout, etiqueta, clave, datos)

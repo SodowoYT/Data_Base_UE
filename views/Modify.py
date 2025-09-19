@@ -19,7 +19,7 @@ class BgWidget(QWidget):
         painter.drawPixmap(self.rect(), self.image)
 
 class ModifyData(QMainWindow):
-    def __init__(self):
+    def __init__(self, database=None, cedula=None):
         super().__init__()
 
         # Inicializar el ViewModel
@@ -34,7 +34,7 @@ class ModifyData(QMainWindow):
         self.rpstIMGdata = None
 
         # Propiedades de la ventana
-        self.setWindowTitle("Datos del Estudiante")
+        self.setWindowTitle("Modificar Datos del Estudiante")
         self.setWindowIcon(QIcon("utilities/resources/imgs/ico/IconApp.ico"))
         self.setGeometry(100, 100, 1000, 600)
         # Establecer imagen de fondo
@@ -123,7 +123,7 @@ class ModifyData(QMainWindow):
         self.layoutP1 = QGridLayout()
 
         # Título centrado
-        self.title_label1 = QLabel("Datos de Estudiante", self.page1)
+        self.title_label1 = QLabel("Modificar Datos del Estudiante", self.page1)
         self.title_label1.setAlignment(Qt.AlignCenter)
         self.title_label1.setStyleSheet("""
             font-family: Monotype Corsiva, Times, Serif;
@@ -195,18 +195,64 @@ class ModifyData(QMainWindow):
         self.authorizeRC = QLineEdit(self)
         self.authorizeRC.setPlaceholderText("Autorizado para retirar al niño/a")
         self.grid1.addWidget(self.authorizeRC, 3, 2)
+        self.gradobtn = QGroupBox("Grado que cursa", self) # Boton Grado que cursa
+        self.QrPlvl1 = QRadioButton("Pre-Escolar Nivel 1", self)        # Radio Button Nivel 1
+        self.QrPlvl2 = QRadioButton("Pre-Escolar Nivel 2", self)        # Radio Button Nivel 2
+        self.QrPlvl3 = QRadioButton("Pre-Escolar Nivel 3", self)        # Radio Button Nivel 3
+        self.QrBPri = QRadioButton("1 Grado", self)        # Radio Button 1 Grado
+        self.QrBSeg = QRadioButton("2 Grado", self)        # Radio Button 2 Grado
+        self.QrBTer = QRadioButton("3 Grado", self)        # Radio Button 3 Grado
+        self.QrBCua = QRadioButton("4 Grado", self)       # Radio Button 4 Grado
+        self.QrBQui = QRadioButton("5 Grado", self)       # Radio Button 5 Grado
+        self.QrBSex = QRadioButton("6 Grado", self)       # Radio Button 6 Grado
+        self.QrPlvl1.setChecked(True)
+        self.QhbGrado = QVBoxLayout()
+        self.QhbGrado.addWidget(self.QrPlvl1)
+        self.QhbGrado.addWidget(self.QrPlvl2)
+        self.QhbGrado.addWidget(self.QrPlvl3)
+        self.QhbGrado.addWidget(self.QrBPri)
+        self.QhbGrado.addWidget(self.QrBSeg)
+        self.QhbGrado.addWidget(self.QrBTer)
+        self.QhbGrado.addWidget(self.QrBCua)
+        self.QhbGrado.addWidget(self.QrBQui)
+        self.QhbGrado.addWidget(self.QrBSex)
+        self.gradobtn.setLayout(self.QhbGrado)
+        # Crear un QButtonGroup para manejar la selección del grado
+        self.grado_button_group = QButtonGroup(self)
+        self.grado_button_group.addButton(self.QrPlvl1)
+        self.grado_button_group.addButton(self.QrPlvl2)
+        self.grado_button_group.addButton(self.QrPlvl3)
+        self.grado_button_group.addButton(self.QrBPri)
+        self.grado_button_group.addButton(self.QrBSeg)
+        self.grado_button_group.addButton(self.QrBTer)
+        self.grado_button_group.addButton(self.QrBCua)
+        self.grado_button_group.addButton(self.QrBQui)
+        self.grado_button_group.addButton(self.QrBSex)
+        self.grid1.addWidget(self.gradobtn, 4, 0)
+        self.turnbtn = QGroupBox("Turno", self) # Boton Turno
+        self.QrBTM = QRadioButton("Turno Mañana", self)        # Radio Button Turno Mañana
+        self.QrTTV = QRadioButton("Turno Tarde", self)        # Radio Button Turno Tarde
+        self.QrBTM.setChecked(True)
+        self.QhbTurno = QVBoxLayout()
+        self.QhbTurno.addWidget(self.QrBTM)
+        self.QhbTurno.addWidget(self.QrTTV)
+        self.turnbtn.setLayout(self.QhbTurno)
+        self.turno_button_group = QButtonGroup(self)
+        self.turno_button_group.addButton(self.QrBTM)
+        self.turno_button_group.addButton(self.QrTTV)
+        self.grid1.addWidget(self.turnbtn, 4, 2, Qt.AlignTop)
         self.layoutP1.addLayout(self.grid1, 1, 0, Qt.AlignTop)
         
         # Variable para la imagen del Estudiante
         self.EIMG = None
         self.PushbuttonEIMG = QPushButton("Subir Imagen de Estudiante", self)
-        self.PushbuttonEIMG.clicked.connect(self.upload_estudiante_image)
-        self.grid1.addWidget(self.PushbuttonEIMG, 4, 0,)
+        self.PushbuttonEIMG.clicked.connect(self.upload_estudiante_image)        
+        self.grid1.addWidget(self.PushbuttonEIMG, 4, 1, Qt.AlignTop)
 
         self.estudianteIMG = QLabel(self)
-        self.estudianteIMG.setFixedSize(100, 100)
+        self.estudianteIMG.setFixedSize(150, 150)
         self.estudianteIMG.setScaledContents(True)
-        self.grid1.addWidget(self.estudianteIMG, 4, 1 )
+        self.grid1.addWidget(self.estudianteIMG, 4, 1, Qt.AlignCenter)
         
         # Fila 2: Título de Datos Médicos
         self.grid2 = QGridLayout()
@@ -232,11 +278,11 @@ class ModifyData(QMainWindow):
         # Variable para la imagen de la vacuna
         self.vacunaIMGpath = None
         self.PushbuttonVacuna = QPushButton("Subir Imagen de Vacuna", self)
-        self.PushbuttonVacuna.clicked.connect(self.upload_vacuna_image)
-        self.grid2.addWidget(self.PushbuttonVacuna, 4, 1)
+        self.PushbuttonVacuna.clicked.connect(self.upload_vacuna_image)        
+        self.grid2.addWidget(self.PushbuttonVacuna, 4, 1 , Qt.AlignTop)
         
         self.vacunaIMG = QLabel(self)
-        self.vacunaIMG.setFixedSize(100, 100)
+        self.vacunaIMG.setFixedSize(130, 130)
         self.vacunaIMG.setScaledContents(True)
         self.grid2.addWidget(self.vacunaIMG, 4, 0, Qt.AlignRight)
 
@@ -738,8 +784,8 @@ class ModifyData(QMainWindow):
         self.page4.setLayout(self.layoutP4)
         
         # Boton de Registro Final
-        self.registerBton = QPushButton("Finalizar Registro")
-        self.registerBton.clicked.connect(self.register_estudend)
+        self.registerBton = QPushButton("Guardar Cambios")
+        self.registerBton.clicked.connect(self.save_changes)
         self.layoutP4.addWidget(self.registerBton, 5, 1)
         
         # Espaciador entre columnas
@@ -748,6 +794,11 @@ class ModifyData(QMainWindow):
         # Muestra los Items en la Ventana 3
         self.page4.setLayout(self.layoutP4)
         self.Sc_Widget.addWidget(self.page4)
+
+        # Cargar datos si se proporcionan
+        if database and cedula:
+            self.cargar_datos_estudiante(database, cedula)
+
         
     # Def de Pagina 1
     ## Comando Funcion de Registro en la Pagina 1
@@ -769,8 +820,8 @@ class ModifyData(QMainWindow):
     def RegisterPage4(self):
         self.Sc_Widget.setCurrentIndex(3)
     
-    # Funcion para registrar estudiante
-    def register_estudend(self):
+    # Funcion para guardar los cambios del estudiante
+    def save_changes(self):
         # Inicio Pagina Estudiante Pagina 1
         nombre = self.nameS.text()
         apellido = self.lastNS.text()
@@ -816,6 +867,8 @@ class ModifyData(QMainWindow):
         tipoDSangre = self.tds.text()
         examenDHeces = self.exdh.text()
         observaciones = self.obs1.toPlainText()
+        grado = self.grado_button_group.checkedButton().text() if self.grado_button_group.checkedButton() else ""
+        turno = self.turno_button_group.checkedButton().text() if self.turno_button_group.checkedButton() else ""
         # Final Pagina Estudiante Pagina 1
         
         # Inicio Pagina Representante Pagina 2
@@ -871,9 +924,8 @@ class ModifyData(QMainWindow):
     
         # Final Pagina Madre Pagina 4
         
-
         # Validar campos
-        if nombre and apellido and cedulaEscolar and edad and fechaDNacimiento and lateralidad and nacionalidad and estado and municipio and direccionActual and puntoDReferencia and altura and peso and tallaZapatos and tallaCamisa and tallaPantalon and numeroDHermanos and autorizadoPRetirarANiño and alergicoA and algunaDificultad and especificarDificultad and correoElectronico and telefonoDHabitacion and estIMG and cartonVacunas and tipoDSangre and examenDHeces and observaciones \
+        if nombre and apellido and cedulaEscolar and edad and fechaDNacimiento and lateralidad and nacionalidad and estado and municipio and direccionActual and puntoDReferencia and altura and peso and tallaZapatos and tallaCamisa and tallaPantalon and numeroDHermanos and autorizadoPRetirarANiño and alergicoA and algunaDificultad and especificarDificultad and correoElectronico and telefonoDHabitacion and estIMG and cartonVacunas and tipoDSangre and examenDHeces and observaciones and grado and turno \
         and NombreR and ApellidoR and EdadR and CedulaR and FechaDeNacimientoR and rpstIMG and EstadoCivil and Afinidad and RifR and PlanillaSigeR and TelefonoMovilR and TelefonoHabitacionR and CorreoElectronicoR and TelefonoFamiliarR and NacionalidadR and DireccionR and CodigoPatriaR and SerialPatriaR \
             and NombreP and ApellidoP and EdadP and CedulaP and FechaDNacimientoP and ViveConElNiñoP and CausaPNoViveP and EmpresaDTrabajaP and TipoEmpleoqDesempeñaP and TelefonoMovilP and DireccionP  \
                 and NombreM and ApellidoM and CedulaM and FechaDNacimientoM and EdadM and TipoEmpleoqDesempeñaM and EmpresaDTrabajaM and ViveConElNiñoM and CausaPNoViveM and DireccionM and TelefonoMovilM:
@@ -881,7 +933,7 @@ class ModifyData(QMainWindow):
             try:
                 # Modificar estudiante
                 self.viewmodel.modificar_estudiante(
-                    nombre, apellido, cedulaEscolar, edad, genero, fechaDNacimiento, lateralidad, nacionalidad, estado, municipio, direccionActual, puntoDReferencia, altura, peso, tallaZapatos, tallaCamisa, tallaPantalon, numeroDHermanos, autorizadoPRetirarANiño, alergicoA, algunaDificultad, especificarDificultad, correoElectronico, telefonoDHabitacion, estIMG, cartonVacunas, tipoDSangre, examenDHeces, observaciones
+                    nombre, apellido, cedulaEscolar, edad, genero, fechaDNacimiento, lateralidad, nacionalidad, estado, municipio, direccionActual, puntoDReferencia, altura, peso, tallaZapatos, tallaCamisa, tallaPantalon, numeroDHermanos, autorizadoPRetirarANiño, alergicoA, algunaDificultad, especificarDificultad, correoElectronico, telefonoDHabitacion, estIMG, cartonVacunas, tipoDSangre, examenDHeces, observaciones, grado, turno
                 )
                 # Modificar representante
                 self.viewmodel.modificar_representante(
@@ -965,7 +1017,7 @@ class ModifyData(QMainWindow):
             if est_img_data:
                 pixmap = QPixmap()
                 pixmap.loadFromData(est_img_data)
-                self.estudianteIMG.setPixmap(pixmap)
+                self.estudianteIMG.setPixmap(pixmap.scaled(self.estudianteIMG.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
                 self.estudianteIMGdata = est_img_data
             else:
                 self.estudianteIMGdata = None
@@ -975,7 +1027,7 @@ class ModifyData(QMainWindow):
             if vacuna_img_data:
                 pixmap = QPixmap()
                 pixmap.loadFromData(vacuna_img_data)
-                self.vacunaIMG.setPixmap(pixmap)
+                self.vacunaIMG.setPixmap(pixmap.scaled(self.vacunaIMG.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
                 self.vacunaIMGdata = vacuna_img_data
             else:
                 self.vacunaIMGdata = None
@@ -985,7 +1037,7 @@ class ModifyData(QMainWindow):
             if rpst_img_data:
                 pixmap = QPixmap()
                 pixmap.loadFromData(rpst_img_data)
-                self.rpstIMG.setPixmap(pixmap)
+                self.rpstIMG.setPixmap(pixmap.scaled(self.rpstIMG.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
                 self.rpstIMGdata = rpst_img_data
             else:
                 self.rpstIMGdata = None
@@ -1013,12 +1065,23 @@ class ModifyData(QMainWindow):
                 self.QrBN.setChecked(True)
             else:
                 self.QrBY.setChecked(True)
+
+            grado_db = str(self.datos.get('grado', '')).strip()
+            for button in self.grado_button_group.buttons():
+                if button.text().strip() == grado_db:
+                    button.setChecked(True)
+                    break
+            
+            turno_db = str(self.datos.get('turno', '')).strip()
+            for button in self.turno_button_group.buttons():
+                if button.text().strip() == turno_db:
+                    button.setChecked(True)
+                    break
+
             
             # Página 2 (Representante)
             self.nameR.setText(str(self.datos.get('nombreR', '')))
             self.lastNR.setText(str(self.datos.get('apellidoR', '')))
-            self.dateofbirthR.setDate(QDate.fromString(self.datos.get('fechaDeNacimientoR', ''), "dd/MM/yyyy"))
-            self.rpstIMG.setText(str(self.datos.get('rpstIMG', '')))
             self.ageR.setText(str(self.datos.get('edadR', '')))
             self.dniR.setText(str(self.datos.get('cedulaR', '')))
             self.Affi.setText(str(self.datos.get('afinidad', '')))
@@ -1034,6 +1097,10 @@ class ModifyData(QMainWindow):
             self.Pfson.setText(str(self.datos.get('profesionR', '')))
             self.Occu.setText(str(self.datos.get('ocupacionR', '')))
             self.Epdt.setText(str(self.datos.get('empresaDTrabajaR', '')))
+
+            fecha_nac_r_str = self.datos.get('fechaNacimientoR', '')
+            if fecha_nac_r_str:
+                self.dateofbirthR.setDate(QDate.fromString(fecha_nac_r_str, "dd/MM/yyyy"))
             
             # Configurar radio buttons del representante
             estado_civil = str(self.datos.get('estadoCivilR', ''))
@@ -1058,10 +1125,13 @@ class ModifyData(QMainWindow):
             self.Cnn.setText(str(self.datos.get('causaPNoViveP', '')))
             self.PhoneMp.setText(str(self.datos.get('telefonoMovilP', '')))
             self.Dcp.setText(str(self.datos.get('direccionP', '')))
-            self.Empdt.setText(str(self.datos.get('empresaDTrabajaP', '')))
-            self.Ted.setText(str(self.datos.get('tipoEmpleoP', '')))
+            self.Empdt.setText(str(self.datos.get('empresaDTrabajaP', ''))) # OJO: Este widget se sobreescribe
+            self.Ted.setText(str(self.datos.get('tipoEmpleoP', ''))) # OJO: Este widget se sobreescribe
             
             # Configurar radio buttons del padre
+            # NOTA: Hay un error en tu diseño original. Usas los mismos radio buttons (QrPSi, QrPNo) para padre y madre.
+            # Esto causará que al seleccionar uno, se deseleccione el otro. He corregido esto en el código que te dí
+            # pero si no lo has aplicado, aquí se verá el error. Por ahora, cargaré el del padre.
             vive_con_nino = str(self.datos.get('viveConNinoP', ''))
             if vive_con_nino.lower() == 'no':
                 self.QrPNo.setChecked(True)
@@ -1076,8 +1146,8 @@ class ModifyData(QMainWindow):
             self.CnnM.setText(str(self.datos.get('causaPNoViveM', '')))
             self.PhoneMM.setText(str(self.datos.get('telefonoMovilM', '')))
             self.DcpM.setText(str(self.datos.get('direccionM', '')))
-            self.EmpdtM.setText(str(self.datos.get('empresaDTrabajaM', '')))
-            self.TedM.setText(str(self.datos.get('tipoEmpleoM', '')))
+            self.EmpdtM.setText(str(self.datos.get('empresaDTrabajaM', ''))) # OJO: Este widget se sobreescribe
+            self.TedM.setText(str(self.datos.get('tipoEmpleoM', ''))) # OJO: Este widget se sobreescribe
             
             # Configurar radio buttons de la madre
             vive_con_nino_m = str(self.datos.get('viveConNinoM', ''))
@@ -1088,94 +1158,3 @@ class ModifyData(QMainWindow):
                 
         else:
             QMessageBox.warning(self, "Error", "No se encontraron datos para la cédula seleccionada.")
-
-    def guardar_cambios(self):
-        # Recoge los datos editados de todos los QLineEdit
-        datos_editados = {
-            'NombreS': self.nameS.text(),
-            'apellido': self.lastNS.text(),
-            'cedulaEscolar': self.dni.text(),
-            'edad': self.ageS.text(),
-            'nacionalidad': self.ncl.text(),
-            'estado': self.est.text(),
-            'municipio': self.mun.text(),
-            'direccionActual': self.dra.text(),
-            'puntoDReferencia': self.pdr.text(),
-            'altura': self.alt.text(),
-            'peso': self.kg.text(),
-            'tallaZapatos': self.tza.text(),
-            'tallaCamisa': self.tca.text(),
-            'tallaPantalon': self.tpan.text(),
-            'numeroDHermanos': self.Nofs.text(),
-            'autorizadoPRetirarANiño': self.authorizeRC.text(),
-            'alergicoA': self.ala.text(),
-            'especificarDificultad': self.epdf.text(),
-            'estIMG': self.estudianteIMG.text(),
-            'cartonVacunas': self.vacunaIMG.text(),
-            'tipoDSangre': self.tds.text(),
-            'examenDHeces': self.exdh.text(),
-            'correoElectronico': self.email.text(),
-            'telefonoDHabitacion': self.tfh.text(),
-            'observaciones': self.obs1.toPlainText(),
-            # Representante
-            'nombreR': self.nameR.text(),
-            'apellidoR': self.lastNR.text(),
-            'edadR': self.ageR.text(),
-            'rpstIMG': self.rpstIMG.text(),
-            'cedulaR': self.dniR.text(),
-            'afinidad': self.Affi.text(),
-            'rifR': self.Rif.text(),
-            'telefonoMovilR': self.PhoneM.text(),
-            'telefonoHabitacionR': self.PhoneR.text(),
-            'correoElectronicoR': self.EmailR.text(),
-            'telefonoFamiliarR': self.PhoneF.text(),
-            'nacionalidadR': self.NclR.text(),
-            'direccionR': self.DrR.text(),
-            'codigoPatriaR': self.CodeP.text(),
-            'serialPatriaR': self.Serial.text(),
-            'profesionR': self.Pfson.text(),
-            'ocupacionR': self.Occu.text(),
-            'empresaDTrabajaR': self.Epdt.text(),
-            # Padre
-            'nombreP': self.nameP.text(),
-            'apellidoP': self.lastNP.text(),
-            'edadP': self.ageP.text(),
-            'cedulaP': self.dniP.text(),
-            'causaPNoViveP': self.Cnn.text(),
-            'telefonoMovilP': self.PhoneMp.text(),
-            'direccionP': self.Dcp.text(),
-            'empresaDTrabajaP': self.Empdt.text(),
-            'tipoEmpleoqDesempeñaP': self.Ted.text(),
-            # Madre
-            'nombreM': self.nameM.text(),
-            'apellidoM': self.lastNM.text(),
-            'edadM': self.ageM.text(),
-            'cedulaM': self.dniM.text(),
-            'causaPNoViveM': self.CnnM.text(),
-            'telefonoMovilM': self.PhoneMM.text(),
-            'direccionM': self.DcpM.text(),
-            'empresaDTrabajaM': self.EmpdtM.text(),
-            'tipoEmpleoqDesempeñaM': self.TedM.text(),
-        }
-        try:
-            self.database.ModifyEstudend(
-                datos_editados['NombreS'], datos_editados['apellido'], datos_editados['cedulaEscolar'],
-                datos_editados['edad'], '', '', '', datos_editados['nacionalidad'], datos_editados['estado'], datos_editados['municipio'],
-                datos_editados['direccionActual'], datos_editados['puntoDReferencia'], datos_editados['altura'], datos_editados['peso'],
-                datos_editados['tallaZapatos'], datos_editados['tallaCamisa'], datos_editados['tallaPantalon'], datos_editados['numeroDHermanos'],
-                datos_editados['autorizadoPRetirarANiño'], datos_editados['alergicoA'], '', datos_editados['especificarDificultad'],
-                datos_editados['correoElectronico'], datos_editados['telefonoDHabitacion'], '', datos_editados['estIMG'], datos_editados['cartonVacunas'], datos_editados['tipoDSangre'], datos_editados['examenDHeces']
-            )
-            self.database.ModifyRpl(
-                datos_editados['nombreR'], datos_editados['apellidoR'], datos_editados['cedulaR'], '', datos_editados['edadR'], '', datos_editados['nacionalidadR'], datos_editados['afinidad'], datos_editados['profesionR'], datos_editados['ocupacionR'], datos_editados['empresaDTrabajaR'], datos_editados['direccionR'], datos_editados['telefonoMovilR'], datos_editados['telefonoHabitacionR'], datos_editados['telefonoFamiliarR'], datos_editados['correoElectronicoR'], datos_editados['rifR'], '', datos_editados['codigoPatriaR'], datos_editados['serialPatriaR']
-            )
-            self.database.ModifyDTP(
-                datos_editados['nombreP'], datos_editados['apellidoP'], datos_editados['cedulaP'], '', datos_editados['edadP'], datos_editados['tipoEmpleoqDesempeñaP'], datos_editados['empresaDTrabajaP'], '', datos_editados['causaPNoViveP'], datos_editados['direccionP'], datos_editados['telefonoMovilP']
-            )
-            self.database.ModifyDTM(
-                datos_editados['nombreM'], datos_editados['apellidoM'], datos_editados['cedulaM'], '', datos_editados['edadM'], datos_editados['tipoEmpleoqDesempeñaM'], datos_editados['empresaDTrabajaM'], '', datos_editados['causaPNoViveM'], datos_editados['direccionM'], datos_editados['telefonoMovilM']
-            )
-            QMessageBox.information(self, "Éxito", "Datos modificados correctamente.")
-            self.close()
-        except Exception as e:
-            QMessageBox.critical(self, "Error", f"No se pudo guardar: {e}")

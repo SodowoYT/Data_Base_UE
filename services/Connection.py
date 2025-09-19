@@ -75,11 +75,11 @@ class database:
     # -----------------------------------
 
     ## Registro de Estudiante
-    def insertEstudend(self, Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, estIMG, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces, observaciones):
+    def insertEstudend(self, Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, estIMG, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces, observaciones, grado, turno):
         self.cursor.execute('''
-            INSERT INTO Estudend (Nombre, Apellido, CedulaEscolar, Edad, Genero, FN, Lateralidad,  Nacionalidad, Estado, Municipio, DA, PTR, Altura, Peso, Zapatos, Camisa, Pantalon, NDH, APRN, AlergicoA, AlgunaDificultad, EspecifiqueDificultad, CorreoElectronico, TelefonoHabitacion, estIMG, CartonVacunas, TipodeSangre, EDH, observaciones)
-            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, estIMG, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces, observaciones))
+            INSERT INTO Estudend (Nombre, Apellido, CedulaEscolar, Edad, Genero, FN, Lateralidad,  Nacionalidad, Estado, Municipio, DA, PTR, Altura, Peso, Zapatos, Camisa, Pantalon, NDH, APRN, AlergicoA, AlgunaDificultad, EspecifiqueDificultad, CorreoElectronico, TelefonoHabitacion, estIMG, CartonVacunas, TipodeSangre, EDH, observaciones, grado, turno)
+            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, estIMG, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces, observaciones, grado, turno))
         self.connection.commit()
         return self.cursor.lastrowid
 
@@ -125,10 +125,10 @@ class database:
     # -----------------------------------
 
     ## Modificación de Estudiante
-    def ModifyEstudend (self, Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, estIMG,  Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces):
+    def ModifyEstudend (self, Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, estIMG, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces, observaciones, grado, turno):
         self.cursor.execute('''
-    UPDATE Estudend SET Nombre=?, Apellido=?, CedulaEscolar=?, Edad=?, Genero=?, FN=?, Lateralidad=?, Nacionalidad=?, Estado=?, Municipio=?, DA=?, PTR=?, Altura=?, Peso=?, Zapatos=?, Camisa=?, Pantalon=?, NDH=?, APRN=?, AlergicoA=?, AlgunaDificultad=?, EspecifiqueDificultad=?, CorreoElectronico=?, TelefonoHabitacion=?, estIMG=?, CartonVacunas=?, TipodeSangre=?, EDH=? WHERE CedulaEscolar=?
-    ''', (Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, estIMG, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces, Cedula_Escolar))
+    UPDATE Estudend SET Nombre=?, Apellido=?, CedulaEscolar=?, Edad=?, Genero=?, FN=?, Lateralidad=?, Nacionalidad=?, Estado=?, Municipio=?, DA=?, PTR=?, Altura=?, Peso=?, Zapatos=?, Camisa=?, Pantalon=?, NDH=?, APRN=?, AlergicoA=?, AlgunaDificultad=?, EspecifiqueDificultad=?, CorreoElectronico=?, TelefonoHabitacion=?, estIMG=?, CartonVacunas=?, TipodeSangre=?, EDH=?, observaciones=?, grado=?, turno=? WHERE CedulaEscolar=?
+    ''', (Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, estIMG, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces, observaciones, grado, turno, Cedula_Escolar))
         self.connection.commit()
 
     ## Modificación de Representante
@@ -178,10 +178,10 @@ class database:
 
         # Obtener IDs de la familia desde el registro del estudiante
         # Asumiendo que las FKs están al final de la tabla Estudend
-        # IDEST(0), ..., IDRPL(30), IDP(31), IDM(32)
-        id_representante = estudiante[30] if len(estudiante) > 30 else None
-        id_padre = estudiante[31] if len(estudiante) > 31 else None
-        id_madre = estudiante[32] if len(estudiante) > 32 else None
+        # IDEST(0), ..., grado(30), turno(31), IDRPL(32), IDP(33), IDM(34)
+        id_representante = estudiante[32] if len(estudiante) > 32 else None
+        id_padre = estudiante[33] if len(estudiante) > 33 else None
+        id_madre = estudiante[34] if len(estudiante) > 34 else None
 
         # Obtener datos del representante, padre y madre usando sus IDs
         cursor.execute("SELECT * FROM REPL WHERE IDRPL=?", (id_representante,))
@@ -202,12 +202,12 @@ class database:
         # Datos del estudiante (primeros 28 campos)
         if estudiante:
             estudiante_keys = [ # Asegúrate que el orden y cantidad coincida con tu tabla
-                'IDEST', 'NombreS', 'apellido', 'cedulaEscolar', 'edad', 'genero', 'fechaNacimiento', 
-                'lateralidad', 'nacionalidad', 'estado', 'municipio', 'direccionActual', 'puntoDReferencia', 
-                'altura', 'peso', 'tallaZapatos', 'tallaCamisa', 'tallaPantalon', 'numeroDHermanos', 
-                'autorizadoPRetirarANiño', 'alergicoA', 'algunaDificultad', 'especificarDificultad', 
-                'correoElectronico', 'telefonoDHabitacion', 'estIMG', 'cartonVacunas', 'tipoDSangre', 
-                'examenDHeces', 'observaciones'
+                'IDEST', 'NombreS', 'apellido', 'cedulaEscolar', 'edad', 'genero', 'FN',
+                'lateralidad', 'nacionalidad', 'estado', 'municipio', 'DA', 'PTR',
+                'altura', 'peso', 'Zapatos', 'Camisa', 'Pantalon', 'NDH',
+                'APRN', 'alergicoA', 'algunaDificultad', 'especificarDificultad',
+                'correoElectronico', 'telefonoHabitacion', 'estIMG', 'cartonVacunas', 'tipoDSangre',
+                'EDH', 'observaciones', 'grado', 'turno'
             ]
             for i, key in enumerate(estudiante_keys):
                 if i < len(estudiante):
@@ -216,10 +216,10 @@ class database:
         # Datos del representante
         if representante:
             representante_keys = [ # Asegúrate que el orden y cantidad coincida con tu tabla
-                'IDRPL', 'nombreR', 'apellidoR', 'cedulaR', 'fechaNacimientoR', 'rpstIMG', 'edadR', 'estadoCivilR', 
-                'nacionalidadR', 'afinidad', 'profesionR', 'ocupacionR', 'empresaDTrabajaR', 'direccionR', 
-                'telefonoMovilR', 'telefonoHabitacionR', 'telefonoFamiliarR', 'correoElectronicoR', 
-                'rifR', 'planillaSigeR', 'codigoPatriaR', 'serialPatriaR'
+                'IDRPL', 'nombreR', 'apellidoR', 'cedulaR', 'FN', 'rpstIMG', 'edadR', 'EC',
+                'nacionalidadR', 'afinidad', 'profesionR', 'ocupacionR', 'EMPDT', 'direccionR',
+                'telefonoMovilR', 'telefonoHabitacionR', 'telefonoDFamiliar', 'correoElectronicoR',
+                'RIF', 'planillaSigeR', 'codigoPatriaR', 'serialPatriaR'
             ]
             for i, key in enumerate(representante_keys):
                 if i < len(representante):
@@ -228,8 +228,8 @@ class database:
         # Datos del padre
         if padre:
             padre_keys = [ # Asegúrate que el orden y cantidad coincida con tu tabla
-                'IDP', 'nombreP', 'apellidoP', 'cedulaP', 'fechaNacimientoP', 'edadP', 'tipoEmpleoP', 
-                'empresaDTrabajaP', 'viveConNinoP', 'causaPNoViveP', 'direccionP', 'telefonoMovilP'
+                'IDP', 'nombreP', 'apellidoP', 'cedulaP', 'FNP', 'edadP', 'TEDP',
+                'EMDTP', 'VCNP', 'CPNVCNP', 'direccionP', 'telefonoMovilP'
             ]
             for i, key in enumerate(padre_keys):
                 if i < len(padre):
@@ -238,8 +238,8 @@ class database:
         # Datos de la madre
         if madre:
             madre_keys = [
-                'IDM', 'nombreM', 'apellidoM', 'cedulaM', 'fechaNacimientoM', 'edadM', 'tipoEmpleoM', 
-                'empresaDTrabajaM', 'viveConNinoM', 'causaPNoViveM', 'direccionM', 'telefonoMovilM'
+                'IDM', 'nombreM', 'apellidoM', 'cedulaM', 'FNM', 'edadM', 'TEDM',
+                'EMDTM', 'VCNM', 'CPNVCNM', 'direccionM', 'telefonoMovilM'
             ]
             for i, key in enumerate(madre_keys):
                 if i < len(madre):
