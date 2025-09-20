@@ -596,21 +596,21 @@ class ModifyData(QMainWindow):
         self.layoutP3.addWidget(self.dclabel, 0, 2, Qt.AlignRight)
         
         # Fila 1: Grid 9 Datos Personales
-        self.grid9 = QGridLayout()
+        self.grid9 = QGridLayout() #
         self.nameP = QLineEdit(self)
         self.nameP.setPlaceholderText("Nombres")
         self.grid9.addWidget(self.nameP, 1, 0)
         self.lastNP = QLineEdit(self)
         self.lastNP.setPlaceholderText("Apellidos")
         self.grid9.addWidget(self.lastNP, 1, 1)
-        self.ageP = QLineEdit(self)
+        self.ageP = QLineEdit(self) #
         self.ageP.setPlaceholderText("Edad")
         self.grid9.addWidget(self.ageP, 2, 0)
         self.dniP = QLineEdit(self)
         self.dniP.setPlaceholderText("Cedula")
         self.grid9.addWidget(self.dniP, 2, 1)
         self.dateofbirthP = QDateEdit(self)
-        self.dateofbirthP.setCalendarPopup(True)
+        self.dateofbirthP.setCalendarPopup(True) #
         self.dateofbirthP.setDisplayFormat("dd/MM/yyyy")
         self.dateofbirthP.setDate(QDate.currentDate())
         self.grid9.addWidget(self.dateofbirthP, 2, 2)
@@ -618,14 +618,14 @@ class ModifyData(QMainWindow):
         # Boton Vive Con el Niño
         self.lwtc = QGroupBox("¿Vive Con el Niño?")
         self.QrPSi = QRadioButton("Si")
-        self.QrPNo = QRadioButton("No")
+        self.QrPNo = QRadioButton("No") #
         self.QrPSi.setChecked(True)
         self.QvLwtc = QVBoxLayout()
         self.QvLwtc.addWidget(self.QrPSi)
         self.QvLwtc.addWidget(self.QrPNo)
         self.lwtc.setLayout(self.QvLwtc)
         self.grid9.addWidget(self.lwtc, 3, 0)
-        # Final del Boton Vive Con el Niño
+        # Final del Boton Vive Con el Niño #
         
         self.Cnn = QLineEdit(self)
         self.Cnn.setPlaceholderText("¿Causa por la que no vive con el Niño?")
@@ -650,14 +650,14 @@ class ModifyData(QMainWindow):
         self.layoutP3.addWidget(self.Plabel, 2, 0, Qt.AlignLeft)
         
         # Fila 3: Grid 11 Datos de Profesion
-        self.grid11 = QGridLayout()
-        self.Empdt = QLineEdit(self)
-        self.Empdt.setPlaceholderText("Emprensa donde Trabaja")
-        self.grid11.addWidget(self.Empdt, 1, 0)
-        self.Ted = QLineEdit(self)
-        self.Ted.setPlaceholderText("Tipo de Empleo que Desempeña")
-        self.grid11.addWidget(self.Ted, 2, 0)
-        self.layoutP3.addLayout(self.grid11, 3, 0, Qt.AlignTop)
+        self.grid11 = QGridLayout() #
+        self.EmpdtP = QLineEdit(self)
+        self.EmpdtP.setPlaceholderText("Emprensa donde Trabaja")
+        self.grid11.addWidget(self.EmpdtP, 1, 0)
+        self.TedP = QLineEdit(self)
+        self.TedP.setPlaceholderText("Tipo de Empleo que Desempeña")
+        self.grid11.addWidget(self.TedP, 2, 0)
+        self.layoutP3.addLayout(self.grid11, 3, 0, Qt.AlignTop) #
         
         # Boton de Back a la Pagina 2
         self.backP2 = QPushButton("Pagina Anterior")
@@ -734,15 +734,15 @@ class ModifyData(QMainWindow):
 
 
         # Boton Vive Con el Niño
-        self.lwtc = QGroupBox("¿Vive Con el Niño?")
-        self.QrPSi = QRadioButton("Si")
-        self.QrPNo = QRadioButton("No")
-        self.QrPSi.setChecked(True)
-        self.QvLwtc = QVBoxLayout()
-        self.QvLwtc.addWidget(self.QrPSi)
-        self.QvLwtc.addWidget(self.QrPNo)
-        self.lwtc.setLayout(self.QvLwtc)
-        self.grid12.addWidget(self.lwtc, 3, 0)
+        self.lwtcM = QGroupBox("¿Vive Con el Niño?")
+        self.QrMSi = QRadioButton("Si")
+        self.QrMNo = QRadioButton("No")
+        self.QrMSi.setChecked(True)
+        self.QvLwtcM = QVBoxLayout()
+        self.QvLwtcM.addWidget(self.QrMSi)
+        self.QvLwtcM.addWidget(self.QrMNo)
+        self.lwtcM.setLayout(self.QvLwtcM)
+        self.grid12.addWidget(self.lwtcM, 3, 0)
         # Final del Boton Vive Con el Niño
         
         self.CnnM = QLineEdit(self)
@@ -903,8 +903,8 @@ class ModifyData(QMainWindow):
         FechaDNacimientoP = self.dateofbirthP.date().toString("dd/MM/yyyy")
         ViveConElNiñoP = "Si" if self.QrPSi.isChecked() else "No"
         CausaPNoViveP = self.Cnn.text()
-        EmpresaDTrabajaP = self.Empdt.text()
-        TipoEmpleoqDesempeñaP = self.Ted.text()
+        EmpresaDTrabajaP = self.EmpdtP.text()
+        TipoEmpleoqDesempeñaP = self.TedP.text()
         TelefonoMovilP = self.PhoneMp.text()
         DireccionP = self.Dcp.text()
         # Final Pagina Padre Pagina 3
@@ -915,7 +915,7 @@ class ModifyData(QMainWindow):
         EdadM = self.ageM.text()
         CedulaM = self.dniM.text()
         FechaDNacimientoM = self.dateofbirthM.date().toString("dd/MM/yyyy")
-        ViveConElNiñoM = "Si" if self.QrPSi.isChecked() else "No"
+        ViveConElNiñoM = "Si" if self.QrMSi.isChecked() else "No"
         CausaPNoViveM = self.CnnM.text()
         EmpresaDTrabajaM = self.EmpdtM.text()
         TipoEmpleoqDesempeñaM = self.TedM.text()
@@ -1001,15 +1001,15 @@ class ModifyData(QMainWindow):
             self.ncl.setText(str(self.datos.get('nacionalidad', '')))
             self.est.setText(str(self.datos.get('estado', '')))
             self.mun.setText(str(self.datos.get('municipio', '')))
-            self.dra.setText(str(self.datos.get('direccionActual', '')))
-            self.pdr.setText(str(self.datos.get('puntoDReferencia', '')))
+            self.dra.setText(str(self.datos.get('DA', '')))
+            self.pdr.setText(str(self.datos.get('PTR', '')))
             self.alt.setText(str(self.datos.get('altura', '')))
             self.kg.setText(str(self.datos.get('peso', '')))
-            self.tza.setText(str(self.datos.get('tallaZapatos', '')))
-            self.tca.setText(str(self.datos.get('tallaCamisa', '')))
-            self.tpan.setText(str(self.datos.get('tallaPantalon', '')))
-            self.Nofs.setText(str(self.datos.get('numeroDHermanos', '')))
-            self.authorizeRC.setText(str(self.datos.get('autorizadoPRetirarANiño', '')))
+            self.tza.setText(str(self.datos.get('Zapatos', '')))
+            self.tca.setText(str(self.datos.get('Camisa', '')))
+            self.tpan.setText(str(self.datos.get('Pantalon', '')))
+            self.Nofs.setText(str(self.datos.get('NDH', '')))
+            self.authorizeRC.setText(str(self.datos.get('APRN', '')))
             self.ala.setText(str(self.datos.get('alergicoA', '')))
             self.epdf.setText(str(self.datos.get('especificarDificultad', '')))
             # Cargar imagen del estudiante
@@ -1042,9 +1042,9 @@ class ModifyData(QMainWindow):
             else:
                 self.rpstIMGdata = None
             self.tds.setText(str(self.datos.get('tipoDSangre', '')))
-            self.exdh.setText(str(self.datos.get('examenDHeces', '')))
+            self.exdh.setText(str(self.datos.get('EDH', '')))
             self.email.setText(str(self.datos.get('correoElectronico', '')))
-            self.tfh.setText(str(self.datos.get('telefonoDHabitacion', '')))
+            self.tfh.setText(str(self.datos.get('telefonoHabitacion', '')))
             self.obs1.setPlainText(str(self.datos.get('observaciones', '')))
             
             # Configurar radio buttons del estudiante
@@ -1084,26 +1084,26 @@ class ModifyData(QMainWindow):
             self.lastNR.setText(str(self.datos.get('apellidoR', '')))
             self.ageR.setText(str(self.datos.get('edadR', '')))
             self.dniR.setText(str(self.datos.get('cedulaR', '')))
-            self.Affi.setText(str(self.datos.get('afinidad', '')))
-            self.Rif.setText(str(self.datos.get('rifR', '')))
+            self.Affi.setText(str(self.datos.get('afinidad', ''))) #
+            self.Rif.setText(str(self.datos.get('RIF', '')))
             self.PhoneM.setText(str(self.datos.get('telefonoMovilR', '')))
             self.PhoneR.setText(str(self.datos.get('telefonoHabitacionR', '')))
             self.EmailR.setText(str(self.datos.get('correoElectronicoR', '')))
-            self.PhoneF.setText(str(self.datos.get('telefonoFamiliarR', '')))
+            self.PhoneF.setText(str(self.datos.get('telefonoDFamiliar', '')))
             self.NclR.setText(str(self.datos.get('nacionalidadR', '')))
             self.DrR.setText(str(self.datos.get('direccionR', '')))
             self.CodeP.setText(str(self.datos.get('codigoPatriaR', '')))
-            self.Serial.setText(str(self.datos.get('serialPatriaR', '')))
+            self.Serial.setText(str(self.datos.get('serialPatriaR', ''))) #
             self.Pfson.setText(str(self.datos.get('profesionR', '')))
             self.Occu.setText(str(self.datos.get('ocupacionR', '')))
-            self.Epdt.setText(str(self.datos.get('empresaDTrabajaR', '')))
+            self.Epdt.setText(str(self.datos.get('EMPDT', '')))
 
-            fecha_nac_r_str = self.datos.get('fechaNacimientoR', '')
+            fecha_nac_r_str = self.datos.get('FN', '')
             if fecha_nac_r_str:
                 self.dateofbirthR.setDate(QDate.fromString(fecha_nac_r_str, "dd/MM/yyyy"))
             
             # Configurar radio buttons del representante
-            estado_civil = str(self.datos.get('estadoCivilR', ''))
+            estado_civil = str(self.datos.get('EC', ''))
             if estado_civil.lower() == 'casado':
                 self.QrBC.setChecked(True)
             elif estado_civil.lower() == 'divorciado':
@@ -1111,7 +1111,7 @@ class ModifyData(QMainWindow):
             else:
                 self.QrBS.setChecked(True)
                 
-            planilla_sige = str(self.datos.get('planillaSigeR', ''))
+            planilla_sige = str(self.datos.get('planillaSigeR', '')) #
             if planilla_sige.lower() == 'no':
                 self.QrBNo.setChecked(True)
             else:
@@ -1122,39 +1122,44 @@ class ModifyData(QMainWindow):
             self.lastNP.setText(str(self.datos.get('apellidoP', '')))
             self.ageP.setText(str(self.datos.get('edadP', '')))
             self.dniP.setText(str(self.datos.get('cedulaP', '')))
-            self.Cnn.setText(str(self.datos.get('causaPNoViveP', '')))
-            self.PhoneMp.setText(str(self.datos.get('telefonoMovilP', '')))
+            self.Cnn.setText(str(self.datos.get('CPNVCNP', '')))
+            self.PhoneMp.setText(str(self.datos.get('telefonoMovilP', ''))) #
             self.Dcp.setText(str(self.datos.get('direccionP', '')))
-            self.Empdt.setText(str(self.datos.get('empresaDTrabajaP', ''))) # OJO: Este widget se sobreescribe
-            self.Ted.setText(str(self.datos.get('tipoEmpleoP', ''))) # OJO: Este widget se sobreescribe
+            self.EmpdtP.setText(str(self.datos.get('EMDTP', '')))
+            self.TedP.setText(str(self.datos.get('TEDP', '')))
             
             # Configurar radio buttons del padre
-            # NOTA: Hay un error en tu diseño original. Usas los mismos radio buttons (QrPSi, QrPNo) para padre y madre.
-            # Esto causará que al seleccionar uno, se deseleccione el otro. He corregido esto en el código que te dí
-            # pero si no lo has aplicado, aquí se verá el error. Por ahora, cargaré el del padre.
-            vive_con_nino = str(self.datos.get('viveConNinoP', ''))
+            vive_con_nino = str(self.datos.get('VCNP', ''))
             if vive_con_nino.lower() == 'no':
                 self.QrPNo.setChecked(True)
             else:
                 self.QrPSi.setChecked(True)
             
+            fecha_nac_p_str = self.datos.get('FNP', '')
+            if fecha_nac_p_str:
+                self.dateofbirthP.setDate(QDate.fromString(fecha_nac_p_str, "dd/MM/yyyy"))
+
             # Página 4 (Madre)
             self.nameM.setText(str(self.datos.get('nombreM', '')))
             self.lastNM.setText(str(self.datos.get('apellidoM', '')))
             self.ageM.setText(str(self.datos.get('edadM', '')))
             self.dniM.setText(str(self.datos.get('cedulaM', '')))
-            self.CnnM.setText(str(self.datos.get('causaPNoViveM', '')))
-            self.PhoneMM.setText(str(self.datos.get('telefonoMovilM', '')))
+            self.CnnM.setText(str(self.datos.get('CPNVCNM', '')))
+            self.PhoneMM.setText(str(self.datos.get('telefonoMovilM', ''))) #
             self.DcpM.setText(str(self.datos.get('direccionM', '')))
-            self.EmpdtM.setText(str(self.datos.get('empresaDTrabajaM', ''))) # OJO: Este widget se sobreescribe
-            self.TedM.setText(str(self.datos.get('tipoEmpleoM', ''))) # OJO: Este widget se sobreescribe
+            self.EmpdtM.setText(str(self.datos.get('EMDTM', '')))
+            self.TedM.setText(str(self.datos.get('TEDM', '')))
             
             # Configurar radio buttons de la madre
-            vive_con_nino_m = str(self.datos.get('viveConNinoM', ''))
+            vive_con_nino_m = str(self.datos.get('VCNM', ''))
             if vive_con_nino_m.lower() == 'no':
-                self.QrPNo.setChecked(True)
+                self.QrMNo.setChecked(True)
             else:
-                self.QrPSi.setChecked(True)
+                self.QrMSi.setChecked(True)
+
+            fecha_nac_m_str = self.datos.get('FNM', '')
+            if fecha_nac_m_str:
+                self.dateofbirthM.setDate(QDate.fromString(fecha_nac_m_str, "dd/MM/yyyy"))
                 
         else:
             QMessageBox.warning(self, "Error", "No se encontraron datos para la cédula seleccionada.")

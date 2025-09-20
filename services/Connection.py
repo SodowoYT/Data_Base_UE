@@ -202,11 +202,11 @@ class database:
         # Datos del estudiante (primeros 28 campos)
         if estudiante:
             estudiante_keys = [ # Asegúrate que el orden y cantidad coincida con tu tabla
-                'IDEST', 'NombreS', 'apellido', 'cedulaEscolar', 'edad', 'genero', 'FN',
-                'lateralidad', 'nacionalidad', 'estado', 'municipio', 'DA', 'PTR',
-                'altura', 'peso', 'Zapatos', 'Camisa', 'Pantalon', 'NDH',
-                'APRN', 'alergicoA', 'algunaDificultad', 'especificarDificultad',
-                'correoElectronico', 'telefonoHabitacion', 'estIMG', 'cartonVacunas', 'tipoDSangre',
+                'IDEST', 'NombreS', 'apellido', 'cedulaEscolar', 'edad', 'genero', 'FN', 'lateralidad',
+                'nacionalidad', 'estado', 'municipio', 'DA', 'PTR', 'altura', 'peso', 'Zapatos',
+                'Camisa', 'Pantalon', 'NDH', 'APRN', 'alergicoA', 'algunaDificultad',
+                'especificarDificultad', 'correoElectronico', 'telefonoHabitacion', 'estIMG',
+                'cartonVacunas', 'tipoDSangre',
                 'EDH', 'observaciones', 'grado', 'turno'
             ]
             for i, key in enumerate(estudiante_keys):
@@ -217,9 +217,9 @@ class database:
         if representante:
             representante_keys = [ # Asegúrate que el orden y cantidad coincida con tu tabla
                 'IDRPL', 'nombreR', 'apellidoR', 'cedulaR', 'FN', 'rpstIMG', 'edadR', 'EC',
-                'nacionalidadR', 'afinidad', 'profesionR', 'ocupacionR', 'EMPDT', 'direccionR',
-                'telefonoMovilR', 'telefonoHabitacionR', 'telefonoDFamiliar', 'correoElectronicoR',
-                'RIF', 'planillaSigeR', 'codigoPatriaR', 'serialPatriaR'
+                'nacionalidadR', 'afinidad', 'profesionR', 'ocupacionR', 'EMPDT', 'direccionR', 'telefonoMovilR',
+                'telefonoHabitacionR', 'telefonoDFamiliar', 'correoElectronicoR', 'RIF', 'planillaSigeR',
+                'codigoPatriaR', 'serialPatriaR'
             ]
             for i, key in enumerate(representante_keys):
                 if i < len(representante):
