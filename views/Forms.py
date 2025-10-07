@@ -233,6 +233,28 @@ class FormsStudend(QMainWindow):
         self.turno_button_group.addButton(self.QrBTM)
         self.turno_button_group.addButton(self.QrTTV)
         self.grid1.addWidget(self.turnbtn, 4, 2, Qt.AlignTop)
+        self.stTypebtn = QGroupBox("Tipo de Estudiante", self) # Boton Tipo de Estudiante
+        self.QrBNi = QRadioButton("Nuevo Ingreso", self)        # Radio Button Nuevo Ingreso
+        self.QrBReg = QRadioButton("Regular", self)        # Radio Button Regular
+        self.QrBRep = QRadioButton("Repitente", self)        # Radio Button Repitente
+        # Botones adicionales para tipos de estudiante (solucionan AttributeError en register_estudend)
+        self.QrBPro = QRadioButton("Promovido", self)      # Radio Button Promovido
+        self.QrBTra = QRadioButton("Trasladado", self)     # Radio Button Trasladado
+        self.QrBNi.setChecked(True)
+        self.QhbStType = QVBoxLayout()
+        self.QhbStType.addWidget(self.QrBNi)
+        self.QhbStType.addWidget(self.QrBReg)
+        self.QhbStType.addWidget(self.QrBRep)
+        self.QhbStType.addWidget(self.QrBPro)
+        self.QhbStType.addWidget(self.QrBTra)
+        self.stTypebtn.setLayout(self.QhbStType)
+        self.stType_button_group = QButtonGroup(self)
+        self.stType_button_group.addButton(self.QrBNi)
+        self.stType_button_group.addButton(self.QrBReg)
+        self.stType_button_group.addButton(self.QrBRep)
+        self.stType_button_group.addButton(self.QrBPro)
+        self.stType_button_group.addButton(self.QrBTra)
+        self.grid1.addWidget(self.stTypebtn, 4, 2, Qt.AlignBottom | Qt.AlignHCenter)
         self.layoutP1.addLayout(self.grid1, 1, 0, Qt.AlignTop)
         
         # Variable para la imagen del Estudiante
@@ -847,6 +869,7 @@ class FormsStudend(QMainWindow):
         observaciones = self.obs1.toPlainText() or "none"
         grado = self.grado_button_group.checkedButton().text() if self.grado_button_group.checkedButton() else ""
         turno = self.turno_button_group.checkedButton().text() if self.turno_button_group.checkedButton() else ""
+        tipoStudiante = "Regular" if self.QrBReg.isChecked() else "Repitiente" if self.QrBRep.isChecked() else "Promovido" if self.QrBPro.isChecked() else "Trasladado" if self.QrBTra.isChecked() else "none"
         # Final Pagina Estudiante Pagina 1
         
         # Inicio Pagina Representante Pagina 2
@@ -913,7 +936,7 @@ class FormsStudend(QMainWindow):
             # Registrar datos completos con vinculación automática
             resultado = self.viewmodel.registrar_estudiante_completo(
                 # Datos del estudiante
-                nombre, apellido, cedulaEscolar, edad, genero, fechaDNacimiento, lateralidad, nacionalidad, estado, municipio, direccionActual, puntoDReferencia, altura, peso, tallaZapatos, tallaCamisa, tallaPantalon, numeroDHermanos, autorizadoPRetirarANiño, alergicoA, algunaDificultad, especificarDificultad, correoElectronico, telefonoDHabitacion, estIMG, cartonVacunas, tipoDSangre, examenDHeces, observaciones, grado, turno,
+                nombre, apellido, cedulaEscolar, edad, genero, fechaDNacimiento, lateralidad, nacionalidad, estado, municipio, direccionActual, puntoDReferencia, altura, peso, tallaZapatos, tallaCamisa, tallaPantalon, numeroDHermanos, autorizadoPRetirarANiño, alergicoA, algunaDificultad, especificarDificultad, correoElectronico, telefonoDHabitacion, estIMG, cartonVacunas, tipoDSangre, examenDHeces, observaciones, grado, turno, tipoStudiante,
                 # Datos del representante
                 NombreR, ApellidoR, CedulaR, FechaDeNacimientoR, rpstIMG, EdadR, EstadoCivil, NacionalidadR, Afinidad, ProfesionR, OcupacionR, EmpresaDTrabajaR, DireccionR, TelefonoMovilR, TelefonoHabitacionR, TelefonoFamiliarR, CorreoElectronicoR, RifR, PlanillaSigeR, CodigoPatriaR, SerialPatriaR,
                 # Datos del padre

@@ -241,6 +241,28 @@ class ModifyData(QMainWindow):
         self.turno_button_group.addButton(self.QrBTM)
         self.turno_button_group.addButton(self.QrTTV)
         self.grid1.addWidget(self.turnbtn, 4, 2, Qt.AlignTop)
+        self.stTypebtn = QGroupBox("Tipo de Estudiante", self) # Boton Tipo de Estudiante
+        self.QrBNi = QRadioButton("Nuevo Ingreso", self)        # Radio Button Nuevo Ingreso
+        self.QrBReg = QRadioButton("Regular", self)        # Radio Button Regular
+        self.QrBRep = QRadioButton("Repitente", self)        # Radio Button Repitente
+        # Botones adicionales para tipos de estudiante (solucionan AttributeError en register_estudend)
+        self.QrBPro = QRadioButton("Promovido", self)      # Radio Button Promovido
+        self.QrBTra = QRadioButton("Trasladado", self)     # Radio Button Trasladado
+        self.QrBNi.setChecked(True)
+        self.QhbStType = QVBoxLayout()
+        self.QhbStType.addWidget(self.QrBNi)
+        self.QhbStType.addWidget(self.QrBReg)
+        self.QhbStType.addWidget(self.QrBRep)
+        self.QhbStType.addWidget(self.QrBPro)
+        self.QhbStType.addWidget(self.QrBTra)
+        self.stTypebtn.setLayout(self.QhbStType)
+        self.stType_button_group = QButtonGroup(self)
+        self.stType_button_group.addButton(self.QrBNi)
+        self.stType_button_group.addButton(self.QrBReg)
+        self.stType_button_group.addButton(self.QrBRep)
+        self.stType_button_group.addButton(self.QrBPro)
+        self.stType_button_group.addButton(self.QrBTra)
+        self.grid1.addWidget(self.stTypebtn, 4, 2, Qt.AlignBottom | Qt.AlignHCenter)
         self.layoutP1.addLayout(self.grid1, 1, 0, Qt.AlignTop)
         
         # Variable para la imagen del Estudiante
@@ -869,6 +891,7 @@ class ModifyData(QMainWindow):
         observaciones = self.obs1.toPlainText()
         grado = self.grado_button_group.checkedButton().text() if self.grado_button_group.checkedButton() else ""
         turno = self.turno_button_group.checkedButton().text() if self.turno_button_group.checkedButton() else ""
+        tipoStudiante = "Regular" if self.QrBReg.isChecked() else "Repitiente" if self.QrBRep.isChecked() else "Promovido" if self.QrBPro.isChecked() else "Trasladado" if self.QrBTra.isChecked() else "none"
         # Final Pagina Estudiante Pagina 1
         
         # Inicio Pagina Representante Pagina 2
@@ -925,7 +948,7 @@ class ModifyData(QMainWindow):
         # Final Pagina Madre Pagina 4
         
         # Validar campos
-        if nombre and apellido and cedulaEscolar and edad and fechaDNacimiento and lateralidad and nacionalidad and estado and municipio and direccionActual and puntoDReferencia and altura and peso and tallaZapatos and tallaCamisa and tallaPantalon and numeroDHermanos and autorizadoPRetirarANiño and alergicoA and algunaDificultad and especificarDificultad and correoElectronico and telefonoDHabitacion and estIMG and cartonVacunas and tipoDSangre and examenDHeces and observaciones and grado and turno \
+        if nombre and apellido and cedulaEscolar and edad and fechaDNacimiento and lateralidad and nacionalidad and estado and municipio and direccionActual and puntoDReferencia and altura and peso and tallaZapatos and tallaCamisa and tallaPantalon and numeroDHermanos and autorizadoPRetirarANiño and alergicoA and algunaDificultad and especificarDificultad and correoElectronico and telefonoDHabitacion and estIMG and cartonVacunas and tipoDSangre and examenDHeces and observaciones and grado and turno and tipoStudiante\
         and NombreR and ApellidoR and EdadR and CedulaR and FechaDeNacimientoR and rpstIMG and EstadoCivil and Afinidad and RifR and PlanillaSigeR and TelefonoMovilR and TelefonoHabitacionR and CorreoElectronicoR and TelefonoFamiliarR and NacionalidadR and DireccionR and CodigoPatriaR and SerialPatriaR \
             and NombreP and ApellidoP and EdadP and CedulaP and FechaDNacimientoP and ViveConElNiñoP and CausaPNoViveP and EmpresaDTrabajaP and TipoEmpleoqDesempeñaP and TelefonoMovilP and DireccionP  \
                 and NombreM and ApellidoM and CedulaM and FechaDNacimientoM and EdadM and TipoEmpleoqDesempeñaM and EmpresaDTrabajaM and ViveConElNiñoM and CausaPNoViveM and DireccionM and TelefonoMovilM:
@@ -933,7 +956,7 @@ class ModifyData(QMainWindow):
             try:
                 # Modificar estudiante
                 self.viewmodel.modificar_estudiante(
-                    nombre, apellido, cedulaEscolar, edad, genero, fechaDNacimiento, lateralidad, nacionalidad, estado, municipio, direccionActual, puntoDReferencia, altura, peso, tallaZapatos, tallaCamisa, tallaPantalon, numeroDHermanos, autorizadoPRetirarANiño, alergicoA, algunaDificultad, especificarDificultad, correoElectronico, telefonoDHabitacion, estIMG, cartonVacunas, tipoDSangre, examenDHeces, observaciones, grado, turno
+                    nombre, apellido, cedulaEscolar, edad, genero, fechaDNacimiento, lateralidad, nacionalidad, estado, municipio, direccionActual, puntoDReferencia, altura, peso, tallaZapatos, tallaCamisa, tallaPantalon, numeroDHermanos, autorizadoPRetirarANiño, alergicoA, algunaDificultad, especificarDificultad, correoElectronico, telefonoDHabitacion, estIMG, cartonVacunas, tipoDSangre, examenDHeces, observaciones, grado, turno, tipoStudiante
                 )
                 # Modificar representante
                 self.viewmodel.modificar_representante(
@@ -1077,6 +1100,19 @@ class ModifyData(QMainWindow):
                 if button.text().strip() == turno_db:
                     button.setChecked(True)
                     break
+            
+            # Cargar tipo de estudiante
+            tipo_studiante_db = str(self.datos.get('tipoStudiante', '')).strip()
+            if tipo_studiante_db.lower() == 'regular':
+                self.QrBReg.setChecked(True)
+            elif tipo_studiante_db.lower() == 'repitente':
+                self.QrBRep.setChecked(True)
+            elif tipo_studiante_db.lower() == 'promovido':
+                self.QrBPro.setChecked(True)
+            elif tipo_studiante_db.lower() == 'trasladado':
+                self.QrBTra.setChecked(True)
+            else:
+                self.QrBNi.setChecked(True)  # Por defecto "Nuevo Ingreso"
 
             
             # Página 2 (Representante)

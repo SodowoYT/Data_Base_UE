@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import (
     QPushButton, QMainWindow, QVBoxLayout, QWidget, QTableView, QLineEdit,
     QMessageBox, QHBoxLayout, QDialog, QLabel, QScrollArea, QFormLayout, QFileDialog, QApplication,
-    QHeaderView, QGroupBox
+    QHeaderView, QGroupBox, QComboBox
 )
 from PySide6.QtGui import QStandardItemModel, QStandardItem, QPixmap, QIcon, QPainter
 from PySide6.QtPrintSupport import QPrinter
@@ -11,12 +11,19 @@ import os
 from services.Connection import database
 from views.Modify import ModifyData
 
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.utils import ImageReader
-from reportlab.lib import colors  # Asegurarse de importar colors
-from reportlab.lib import colors
 import tempfile
+
+# reportlab es opcional en tiempo de ejecución. Si no está instalado,
+# marcamos HAS_REPORTLAB = False y mostramos mensajes amigables cuando
+# el usuario intente generar PDFs.
+try:
+    from reportlab.pdfgen import canvas
+    from reportlab.lib.pagesizes import letter
+    from reportlab.lib.utils import ImageReader
+    from reportlab.lib import colors
+    HAS_REPORTLAB = True
+except Exception:
+    HAS_REPORTLAB = False
 
 def generar_planilla_inscripcion_pdf(
     file_path,
@@ -26,8 +33,10 @@ def generar_planilla_inscripcion_pdf(
 ):
     print("Entrando a generar_planilla_inscripcion_pdf")
     print("Datos recibidos:", datos)
-    from reportlab.pdfgen import canvas
-    from reportlab.lib.pagesizes import letter
+    if not HAS_REPORTLAB:
+        # Si se llama directamente desde código sin GUI, lanzamos excepción clara
+        raise RuntimeError("El paquete 'reportlab' no está instalado. Instale con: python -m pip install reportlab")
+
     c = canvas.Canvas(file_path, pagesize=letter)
     width, height = letter
 
@@ -268,6 +277,20 @@ class ConsultWindow(QMainWindow):
                 color: black;
             }
         """)
+        # ComboBox para filtrar por turno
+        self.turno_combo = QComboBox(self)
+        self.turno_combo.addItems(["Todos", "Mañana", "Tarde"])
+        self.turno_combo.setStyleSheet("""
+            QComboBox {
+                padding: 6px;
+                border-radius: 8px;
+                font-size: 14px;
+                background: rgba(255,255,255,0.7);
+                color: black;
+            }
+        """)
+        self.turno_combo.currentIndexChanged.connect(self.filtrar_por_turno)
+
         self.search_button = QPushButton("Buscar", self)
         self.search_button.setStyleSheet(self.button_style())
         self.search_button.clicked.connect(self.bpCI)
@@ -278,6 +301,7 @@ class ConsultWindow(QMainWindow):
         self.refresh_button.clicked.connect(self.actualizar_datos)
         
         buscador_layout.addWidget(self.search_input)
+        buscador_layout.addWidget(self.turno_combo)
         buscador_layout.addWidget(self.search_button)
         buscador_layout.addWidget(self.refresh_button)
         main_layout.addLayout(buscador_layout)
@@ -368,39 +392,48 @@ class ConsultWindow(QMainWindow):
             }
         """
 
+    def filtrar_por_turno(self):
+        # Llama a cargarDatos con el filtro de turno seleccionado
+        self.cargarDatos(filtroBusqueda=self.search_input.text().strip())
+
     # --- Método optimizado ---
-    def cargarDatos(self, filtroCedula=None):
-        print(f"Cargando datos... Filtro: {filtroCedula}")
-        
-        # Verificar que la conexión esté disponible
+    def cargarDatos(self, filtroBusqueda=None):
+        print(f"Cargando datos... Filtro: {filtroBusqueda}")
         if not self.database:
             print("Error: No hay conexion a la base de datos")
             QMessageBox.critical(self, "Error", "No hay conexión a la base de datos")
             return
-        
-        # Crear el modelo
         model = QStandardItemModel()
         model.setHorizontalHeaderLabels([
-            "ID", "Nombre", "Apellido", "Cédula Escolar", "Edad", "Género", "Fecha Nac."
+            "ID", "Nombre", "Apellido", "Cédula Escolar", "Edad", "Género", "Fecha Nac.", "Turno"
         ])
-
-        # Obtener datos de la BD
         try:
             data = self.database.SelectEstudend()
             print(f"Datos obtenidos de la BD: {len(data)} registros")
-            
-            # Debug: mostrar información del primer registro
-            if data:
-                print(f"Primer registro: {data[0]}")
-                print(f"Tipo de datos en primer registro: {[type(col) for col in data[0]]}")
-            
-            if filtroCedula:
-                data = [row for row in data if str(row[3]).strip() == filtroCedula]
-                print(f"Despues del filtro: {len(data)} registros")
-
+            # Filtro por texto (nombre, apellido, turno, cedula)
+            if filtroBusqueda:
+                texto = filtroBusqueda.lower().strip()
+                def coincide(row):
+                    nombre = str(row[1]).lower().strip() if len(row) > 1 else ""
+                    apellido = str(row[2]).lower().strip() if len(row) > 2 else ""
+                    turno = str(row[7]).lower().strip() if len(row) > 7 else ""
+                    cedula = str(row[3]).lower().strip() if len(row) > 3 else ""
+                    return (
+                        any(texto == parte for parte in nombre.split()) or
+                        any(texto == parte for parte in apellido.split()) or
+                        texto == turno or
+                        texto == cedula
+                    )
+                data = [row for row in data if coincide(row)]
+                print(f"Despues del filtro por nombre/apellido/turno/cédula: {len(data)} registros")
+            # Filtro por turno (si no es 'Todos')
+            if hasattr(self, 'turno_combo'):
+                turno_seleccionado = self.turno_combo.currentText().lower()
+                if turno_seleccionado != "todos":
+                    data = [row for row in data if len(row) > 7 and str(row[7]).lower().strip() == turno_seleccionado]
+                    print(f"Filtrado por turno '{turno_seleccionado}': {len(data)} registros")
             if not data:
                 print("ADVERTENCIA: No se encontraron registros para mostrar")
-                QMessageBox.warning(self, "Advertencia", "No se encontraron registros.")
                 self.table_view.setModel(model)
                 return
         except Exception as e:
@@ -409,58 +442,46 @@ class ConsultWindow(QMainWindow):
             traceback.print_exc()
             QMessageBox.critical(self, "Error", f"Error al cargar datos: {e}")
             return
-
-        # Bloquear actualizaciones mientras se carga
         self.table_view.setUpdatesEnabled(False)
-
         for row in data:
             if len(row) < 8:
                 continue
-            
-            # Procesar cada campo individualmente para manejar BLOB
             processed_row = []
             for i, col in enumerate(row[:7]):
-                if i == 2 and isinstance(col, bytes):  # Campo Apellido (BLOB)
-                    # Convertir BLOB a string
+                if i == 2 and isinstance(col, bytes):
                     try:
                         col_str = col.decode('utf-8') if col else ""
                     except:
                         col_str = str(col) if col else ""
                 else:
                     col_str = str(col) if col is not None else ""
-                
                 processed_row.append(QStandardItem(col_str))
-            
+            # Agregar columna de Turno (índice 7)
+            turno = str(row[7]) if len(row) > 7 and row[7] is not None else ""
+            processed_row.append(QStandardItem(turno))
             model.appendRow(processed_row)
-
-        # Asignar el modelo una sola vez
         self.table_view.setModel(model)
-        
-        # Mostrar información de debug
         print(f"Tabla actualizada con {len(data)} registros")
-
-        # Scroll fluido
         self.table_view.setHorizontalScrollMode(QTableView.ScrollPerPixel)
         self.table_view.setVerticalScrollMode(QTableView.ScrollPerPixel)
-
-        # Anchos fijos de columnas (para evitar cálculos costosos)
         header = self.table_view.horizontalHeader()
-        header.setSectionResizeMode(QHeaderView.Fixed)  # <-- cambio corregido
-        self.table_view.setColumnWidth(0, 50)   # ID
-        self.table_view.setColumnWidth(1, 120)  # Nombre
-        self.table_view.setColumnWidth(2, 120)  # Apellido
-        self.table_view.setColumnWidth(3, 120)  # Cédula Escolar
-
-        # Reactivar actualizaciones
+        header.setSectionResizeMode(QHeaderView.Fixed)
+        self.table_view.setColumnWidth(0, 50)
+        self.table_view.setColumnWidth(1, 120)
+        self.table_view.setColumnWidth(2, 120)
+        self.table_view.setColumnWidth(3, 120)
+        self.table_view.setColumnWidth(7, 90)  # Nueva columna Turno
         self.table_view.setUpdatesEnabled(True)
-
-        # Conectar selección
         self.table_view.selectionModel().selectionChanged.connect(self.on_selection_changed)
 
+    def busqueda_automatica(self):
+        texto = self.search_input.text().strip()
+        self.cargarDatos(filtroBusqueda=texto)
+
     def bpCI(self):
-        cedula = self.search_input.text().strip()
-        self.cargarDatos(filtroCedula=cedula)
-    
+        texto = self.search_input.text().strip()
+        self.cargarDatos(filtroBusqueda=texto)
+
     def actualizar_datos(self):
         """Actualiza los datos de la tabla refrescando la conexión."""
         print("Actualizando datos...")
@@ -571,7 +592,6 @@ class ConsultWindow(QMainWindow):
         else:
             QMessageBox.critical(self, "Error de Eliminación", message)
 
-
 class ImagenGrandeDialog(QDialog):
     def __init__(self, pixmap, parent=None):
         super().__init__(parent)
@@ -582,6 +602,11 @@ class ImagenGrandeDialog(QDialog):
         label.setPixmap(pixmap.scaled(550, 550, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         layout.addWidget(label)
         self.setLayout(layout)
+        
+        
+#  <==========================>
+#     Ventana Ver Detalles
+#  <==========================>
 
 class VentanaTodos(QDialog):
     def __init__(self, database, cedula, parent=None):
@@ -758,6 +783,7 @@ class VentanaTodos(QDialog):
         # Grado y Turno (campos especiales) al final
         self.crear_campo(form_layout, 'Grado', 'grado', datos)
         self.crear_campo(form_layout, 'Turno', 'turno', datos)
+        self.crear_campo(form_layout,  'Tipo de Estudiante', 'tipoStudiante', datos)
 
         # Layout para las imágenes
         fotos_layout = QVBoxLayout()

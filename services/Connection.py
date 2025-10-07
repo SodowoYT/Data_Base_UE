@@ -14,6 +14,11 @@ class database:
 
         ## Crear tabla
         self.__create_users_table()
+        # Asegurar compatibilidad de esquema: añadir columna tipoStudiante a Estudend si falta
+        try:
+            self.__ensure_estudend_tipo_column()
+        except Exception as e:
+            print(f"Warning: no se pudo asegurar columna tipoStudiante: {e}")
 
 
     # -----------------------------
@@ -75,13 +80,30 @@ class database:
     # -----------------------------------
 
     ## Registro de Estudiante
-    def insertEstudend(self, Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, estIMG, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces, observaciones, grado, turno):
+    def insertEstudend(self, Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, estIMG, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces, observaciones, grado, turno, tipoStudiante):
         self.cursor.execute('''
-            INSERT INTO Estudend (Nombre, Apellido, CedulaEscolar, Edad, Genero, FN, Lateralidad,  Nacionalidad, Estado, Municipio, DA, PTR, Altura, Peso, Zapatos, Camisa, Pantalon, NDH, APRN, AlergicoA, AlgunaDificultad, EspecifiqueDificultad, CorreoElectronico, TelefonoHabitacion, estIMG, CartonVacunas, TipodeSangre, EDH, observaciones, grado, turno)
-            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, estIMG, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces, observaciones, grado, turno))
+            INSERT INTO Estudend (Nombre, Apellido, CedulaEscolar, Edad, Genero, FN, Lateralidad,  Nacionalidad, Estado, Municipio, DA, PTR, Altura, Peso, Zapatos, Camisa, Pantalon, NDH, APRN, AlergicoA, AlgunaDificultad, EspecifiqueDificultad, CorreoElectronico, TelefonoHabitacion, estIMG, CartonVacunas, TipodeSangre, EDH, observaciones, grado, turno, tipoStudiante)
+            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, estIMG, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces, observaciones, grado, turno, tipoStudiante))
         self.connection.commit()
         return self.cursor.lastrowid
+
+    def __ensure_estudend_tipo_column(self):
+        """Comprueba la existencia de la columna 'tipoStudiante' en la tabla Estudend
+        y la añade si no existe. Esto permite mantener compatibilidad con DB antiguas.
+        """
+        try:
+            self.cursor.execute("PRAGMA table_info(Estudend)")
+            cols = [row[1] for row in self.cursor.fetchall()]
+            if 'tipoStudiante' not in cols:
+                # ALTER TABLE ADD COLUMN es seguro en SQLite y no afecta a datos existentes
+                print("Añadiendo columna 'tipoStudiante' a la tabla Estudend...")
+                self.cursor.execute("ALTER TABLE Estudend ADD COLUMN tipoStudiante TEXT DEFAULT 'none'")
+                self.connection.commit()
+                print("Columna 'tipoStudiante' añadida correctamente.")
+        except sqlite3.OperationalError as e:
+            # Si la tabla no existe aún o hay otro error, lo reportamos pero no fallamos
+            print(f"No se pudo comprobar/añadir la columna tipoStudiante: {e}")
 
     ## Registro de Representante
     def insertRpl(self, nombre, apellido, cedula, fecha_nacimiento, rpstIMG, edad, estado_civil, nacionalidad, afinidad, profesion, ocupacion, empresaDTrabaja, direccion, telefonoMovil, telefonoHabitacion, telefonoFamiliar, correoElectronico, rif, planillaSige, codigoPatria, serialPatria):
@@ -125,10 +147,10 @@ class database:
     # -----------------------------------
 
     ## Modificación de Estudiante
-    def ModifyEstudend (self, Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, estIMG, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces, observaciones, grado, turno):
+    def ModifyEstudend (self, Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, estIMG, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces, observaciones, grado, turno, tipoStudiante):
         self.cursor.execute('''
-    UPDATE Estudend SET Nombre=?, Apellido=?, CedulaEscolar=?, Edad=?, Genero=?, FN=?, Lateralidad=?, Nacionalidad=?, Estado=?, Municipio=?, DA=?, PTR=?, Altura=?, Peso=?, Zapatos=?, Camisa=?, Pantalon=?, NDH=?, APRN=?, AlergicoA=?, AlgunaDificultad=?, EspecifiqueDificultad=?, CorreoElectronico=?, TelefonoHabitacion=?, estIMG=?, CartonVacunas=?, TipodeSangre=?, EDH=?, observaciones=?, grado=?, turno=? WHERE CedulaEscolar=?
-    ''', (Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, estIMG, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces, observaciones, grado, turno, Cedula_Escolar))
+    UPDATE Estudend SET Nombre=?, Apellido=?, CedulaEscolar=?, Edad=?, Genero=?, FN=?, Lateralidad=?, Nacionalidad=?, Estado=?, Municipio=?, DA=?, PTR=?, Altura=?, Peso=?, Zapatos=?, Camisa=?, Pantalon=?, NDH=?, APRN=?, AlergicoA=?, AlgunaDificultad=?, EspecifiqueDificultad=?, CorreoElectronico=?, TelefonoHabitacion=?, estIMG=?, CartonVacunas=?, TipodeSangre=?, EDH=?, observaciones=?, grado=?, turno=?, tipoStudiante=? WHERE CedulaEscolar=?
+    ''', (Nombre, Apellido, Cedula_Escolar, Edad, Genero, Fecha_de_Nacimiento, Lateralidad, Nacionalidad, Estado, Municipio, Direccion_Actual, Punto_de_Referencia, Altura, Peso, Talla_Zapatos, Talla_Camisa, Talla_Pantalon, Numero_de_Hermanos, Autorizado_para_Retirar_al_Niño, Alergico_a, Alguna_Dificultad, Especificar_Dificultad, Correo_Electronico, Telefono_de_Habitacion, estIMG, Carton_Vacunas, Tipo_de_Sangre, Examen_de_Heces, observaciones, grado, turno, tipoStudiante, Cedula_Escolar))
         self.connection.commit()
 
     ## Modificación de Representante
@@ -178,10 +200,10 @@ class database:
 
         # Obtener IDs de la familia desde el registro del estudiante
         # Asumiendo que las FKs están al final de la tabla Estudend
-        # IDEST(0), ..., grado(30), turno(31), IDRPL(32), IDP(33), IDM(34)
-        id_representante = estudiante[32] if len(estudiante) > 32 else None
-        id_padre = estudiante[33] if len(estudiante) > 33 else None
-        id_madre = estudiante[34] if len(estudiante) > 34 else None
+        # IDEST(0), ..., grado(30), turno(31), tipoStudiante(32), IDRPL(33), IDP(34), IDM(35)
+        id_representante = estudiante[33] if len(estudiante) > 33 else None
+        id_padre = estudiante[34] if len(estudiante) > 34 else None
+        id_madre = estudiante[35] if len(estudiante) > 35 else None
 
         # Obtener datos del representante, padre y madre usando sus IDs
         cursor.execute("SELECT * FROM REPL WHERE IDRPL=?", (id_representante,))
@@ -207,7 +229,7 @@ class database:
                 'Camisa', 'Pantalon', 'NDH', 'APRN', 'alergicoA', 'algunaDificultad',
                 'especificarDificultad', 'correoElectronico', 'telefonoHabitacion', 'estIMG',
                 'cartonVacunas', 'tipoDSangre',
-                'EDH', 'observaciones', 'grado', 'turno'
+                'EDH', 'observaciones', 'grado', 'turno', 'tipoStudiante'
             ]
             for i, key in enumerate(estudiante_keys):
                 if i < len(estudiante):
