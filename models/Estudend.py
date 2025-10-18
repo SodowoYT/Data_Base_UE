@@ -1,7 +1,7 @@
 class Estudend:
   def __init__(self, nombre="", apellido="", cedulaEscolar="", edad="", genero="", fechaDNacimiento="", lateralidad="", nacionalidad="", estado="", municipio="", direccionActual="", puntoDReferencia="", altura="", peso="", tallaZapatos="", tallaCamisa="", tallaPantalon="", numeroDHermanos="", autorizadoPRetirarANiño="", alergicoA="", algunaDificultad="", especificarDificultad="", correoElectronico="", telefonoDHabitacion="", estIMG="", cartonVacunas="", tipoDSangre="", examenDHeces="", observaciones="", grado="", turno="" , tipoStudiante=""):
 
-    # Datos Estudiante
+    # Datos del Estudiante
     self.nombre = nombre
     self.apellido = apellido
     self.cedulaEscolar = cedulaEscolar

@@ -1,4 +1,4 @@
-# Data Base UE
+# Sistema integral de administración de datos en la unidad educativa Angel Emiro Araujo Ortega
 
 Este proyecto es una aplicación de escritorio desarrollada en Python que permite la gestión y registro de estudiantes, representantes, padres y madres en una institución educativa. La aplicación facilita el almacenamiento, consulta, modificación, impresión y respaldo de los datos, todo a través de una interfaz gráfica intuitiva.
 

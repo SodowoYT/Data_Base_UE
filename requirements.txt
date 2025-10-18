@@ -1,0 +1,16 @@
+# Si en el futuro se agrega nuevas librerías externas, es necesario añadirlas aqui tambien
+
+# Requerimientos importantes para el proyecto
+pyside6>=6.9.0
+reportlab>=4.4.3
+
+# Dependencias opcionales
+## Para pruebas automáticas y desarrollo
+pytest>=7.0.0  # Opcional, para ejecutar tests
+flake8>=6.0.0  # Opcional, para análisis de estilo de código
+matplotlib>=3.0.0  # Opcional, para gráficos en el dashboard
+
+# En un entorno limpio si se usa el virtualenv se debe ejecutar
+# python -m venv venv
+# .\\venv\\Scripts\\activate
+# pip install -r requirements.txt

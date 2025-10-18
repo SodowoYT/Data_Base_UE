@@ -25,192 +25,195 @@ try:
 except Exception:
     HAS_REPORTLAB = False
 
-def generar_planilla_inscripcion_pdf(
-    file_path,
-    datos,
-    logo1_path="utilities/resources/LgAERJ.png",
-    logo2_path="utilities/resources/LogoBG.png"
-):
-    print("Entrando a generar_planilla_inscripcion_pdf")
-    print("Datos recibidos:", datos)
+def generar_planilla_inscripcion_pdf(file_path, datos):
     if not HAS_REPORTLAB:
-        # Si se llama directamente desde código sin GUI, lanzamos excepción clara
         raise RuntimeError("El paquete 'reportlab' no está instalado. Instale con: python -m pip install reportlab")
 
     c = canvas.Canvas(file_path, pagesize=letter)
     width, height = letter
 
-    # --- Cabecera con logos y título ---
-    try:
-        c.drawImage(logo1_path, 40, height-90, width=70, height=70, preserveAspectRatio=True, mask='auto')
-    except Exception as e:
-        print("Error dibujando logo1:", e)
-    try:
-        c.drawImage(logo2_path, width-110, height-90, width=70, height=70, preserveAspectRatio=True, mask='auto')
-    except Exception as e:
-        print("Error dibujando logo2:", e)
+    # --- Constantes de layout ---
+    LEFT_MARGIN = 40
+    RIGHT_MARGIN = width - 40
+    COL1_X = LEFT_MARGIN
+    COL2_X = 320
+    LINE_HEIGHT = 22
+
+    # --- Helper para dibujar campos ---
+    def draw_field(x, y, label, value, value_offset=90):
+        c.setFont("Helvetica-Bold", 9)
+        c.drawString(x, y, label)
+        c.setFont("Helvetica", 9)
+        c.drawString(x + value_offset, y, str(value or ''))
+
+    # --- Encabezado ---
+    y = height - 50
+    c.drawImage("utilities/resources/LgAERJ.png", LEFT_MARGIN, y - 15, width=80, height=80, preserveAspectRatio=True, mask='auto')
+    c.drawImage("utilities/resources/LogoBG.png", RIGHT_MARGIN - 80, y - 15, width=80, height=80, preserveAspectRatio=True, mask='auto')
+    
+    c.setFont("Helvetica-Bold", 16)
+    c.drawCentredString(width / 2, y + 10, "PLANILLA DE INSCRIPCIÓN")
     c.setFont("Helvetica-Bold", 14)
-    c.drawCentredString(width/2, height-50, "PLANILLA DE INSCRIPCIÓN")
-    c.setFont("Helvetica-BoldOblique", 12)
-    c.drawCentredString(width/2, height-70, "EDUCACIÓN INICIAL")
+    c.drawCentredString(width / 2, y - 10, "EDUCACIÓN INICIAL")
 
-    # --- Cuadros para fotos ---
-    c.rect(130, height-110, 60, 60)  # Foto izquierda
-    c.rect(width-190, height-110, 60, 60)  # Foto derecha
+    # --- Cajas de fotos (más abajo) ---
+    y -= 100
+    c.rect(LEFT_MARGIN, y, 80, 80)
+    c.rect(RIGHT_MARGIN - 80, y, 80, 80)
 
-    # --- Sección: Datos del Niño(a) ---
-    y = height-130
-    c.setFont("Helvetica-Bold", 11)
-    c.drawString(40, y, "Datos del Niño(a):")
-    y -= 18
-    c.setFont("Helvetica", 9)
-    c.drawString(45, y, f"Nombres: {datos.get('NombreS', '')}")
-    c.drawString(250, y, f"Apellidos: {datos.get('apellido', '') or ''}")
-    c.drawString(450, y, f"Cédula Escolar: {datos.get('cedulaEscolar', '') or ''}")
-    y -= 14
-    c.drawString(45, y, f"F.N.: {datos.get('fechaNacimiento', '') or ''}")
-    c.drawString(120, y, f"Edad: {datos.get('edad', '') or ''}")
-    c.drawString(180, y, f"Género: {datos.get('genero', '') or ''}")
-    c.drawString(250, y, f"Lateralidad: {datos.get('lateralidad', '') or ''}")
-    c.drawString(350, y, f"Nacionalidad: {datos.get('nacionalidad', '') or ''}")
-    c.drawString(470, y, f"Estado: {datos.get('estado', '') or ''}")
-    y -= 14
-    c.drawString(45, y, f"Municipio: {datos.get('municipio', '') or ''}")
-    c.drawString(200, y, f"Dirección Actual: {datos.get('direccionActual', '') or ''}")
-    y -= 14
-    c.drawString(45, y, f"Punto de Referencia: {datos.get('puntoDReferencia', '') or ''}")
-    y -= 14
-    c.drawString(45, y, f"Altura: {datos.get('altura', '') or ''}")
-    c.drawString(120, y, f"Peso: {datos.get('peso', '') or ''}")
-    c.drawString(180, y, f"Zapatos: {datos.get('tallaZapatos', '') or ''}")
-    c.drawString(250, y, f"Camisa: {datos.get('tallaCamisa', '') or ''}")
-    c.drawString(320, y, f"Pantalón: {datos.get('tallaPantalon', '') or ''}")
-    c.drawString(400, y, f"N° de Hermanos: {datos.get('numeroDHermanos', '') or ''}")
-    y -= 14
-    c.drawString(45, y, f"Autorizado para retirar al niño(a): {datos.get('autorizadoPRetirarANiño', '') or ''}")
-    c.drawString(250, y, f"Alérgico a: {datos.get('alergicoA', '') or ''}")
-    y -= 14
-    c.drawString(45, y, f"Alguna Dificultad: {datos.get('algunaDificultad', '') or ''}")
-    c.drawString(200, y, f"Especifique: {datos.get('especificarDificultad', '') or ''}")
-    y -= 14
-    c.drawString(45, y, f"Correo Electrónico: {datos.get('correoElectronico', '') or ''}")
-    c.drawString(250, y, f"Teléfono de Habitación: {datos.get('telefonoDHabitacion', '') or ''}")
-    y -= 14
-    c.drawString(45, y, f"Cartón de Vacunas: {'Presentado' if datos.get('cartonVacunas') else 'No presentado'}")
-    c.drawString(200, y, f"Tipo de Sangre: {datos.get('tipoDSangre', '') or ''}")
-    c.drawString(320, y, f"Examen de Heces: {datos.get('examenDHeces', '') or ''}")
-
-    # --- Salto de página si es necesario ---
-    if y < 120:
-        c.showPage()
-        y = height - 80
-
-    # --- Sección: Datos del Representante Legal ---
-    y -= 24
-    c.setFont("Helvetica-Bold", 11)
-    c.drawString(40, y, "Datos del Representante Legal:")
-    y -= 18
-    c.setFont("Helvetica", 9)
-    c.drawString(45, y, f"Nombre y Apellido: {datos.get('nombreR', '') or ''} {datos.get('apellidoR', '') or ''}")
-    c.drawString(250, y, f"Cédula: {datos.get('cedulaR', '') or ''}")
-    c.drawString(350, y, f"F.N.: {datos.get('fechaNacimientoR', '') or ''}")
-    c.drawString(420, y, f"Edad: {datos.get('edadR', '') or ''}")
-    y -= 14
-    c.drawString(45, y, f"Estado Civil: {datos.get('estadoCivilR', '') or ''}")
-    c.drawString(150, y, f"Nacionalidad: {datos.get('nacionalidadR', '') or ''}")
-    c.drawString(250, y, f"Afinidad: {datos.get('afinidad', '') or ''}")
-    c.drawString(350, y, f"Profesión: {datos.get('profesionR', '') or ''}")
-    c.drawString(450, y, f"Ocupación: {datos.get('ocupacionR', '') or ''}")
-    y -= 14
-    c.drawString(45, y, f"Empresa donde Trabaja: {datos.get('empresaDTrabajaR', '') or ''}")
-    c.drawString(250, y, f"Dirección: {datos.get('direccionR', '') or ''}")
-    y -= 14
-    c.drawString(45, y, f"Teléfono Móvil: {datos.get('telefonoMovilR', '') or ''}")
-    c.drawString(200, y, f"Teléfono Habitación: {datos.get('telefonoHabitacionR', '') or ''}")
-    c.drawString(350, y, f"Teléfono Familiar: {datos.get('telefonoFamiliarR', '') or ''}")
-    y -= 14
-    c.drawString(45, y, f"Correo Electrónico: {datos.get('correoElectronicoR', '') or ''}")
-    c.drawString(250, y, f"Rif: {datos.get('rifR', '') or ''}")
-    c.drawString(350, y, f"Planilla Sige: {datos.get('planillaSigeR', '') or ''}")
-    y -= 14
-    c.drawString(45, y, f"Código de la patria: {datos.get('codigoPatriaR', '') or ''}")
-    c.drawString(200, y, f"Serial de la patria: {datos.get('serialPatriaR', '') or ''}")
-
-    if y < 120:
-        c.showPage()
-        y = height - 80
-
-    # --- Sección: Datos del Padre ---
-    y -= 24
-    c.setFont("Helvetica-Bold", 11)
-    c.drawString(40, y, "Datos del Padre:")
-    y -= 18
-    c.setFont("Helvetica", 9)
-    c.drawString(45, y, f"Nombre y Apellido: {datos.get('nombreP', '') or ''} {datos.get('apellidoP', '') or ''}")
-    c.drawString(250, y, f"Cédula: {datos.get('cedulaP', '') or ''}")
-    c.drawString(350, y, f"F.N.: {datos.get('fechaNacimientoP', '') or ''}")
-    c.drawString(420, y, f"Edad: {datos.get('edadP', '') or ''}")
-    y -= 14
-    c.drawString(45, y, f"Tipo de Empleo: {datos.get('tipoEmpleoP', '') or ''}")
-    c.drawString(200, y, f"Empresa donde Trabaja: {datos.get('empresaDTrabajaP', '') or ''}")
-    y -= 14
-    c.drawString(45, y, f"¿Vive con el niño(a)?: {datos.get('viveConNinoP', '') or ''}")
-    c.drawString(200, y, f"Causa: {datos.get('causaPNoViveP', '') or ''}")
-    c.drawString(350, y, f"Dirección: {datos.get('direccionP', '') or ''}")
-    c.drawString(500, y, f"Teléfono Móvil: {datos.get('telefonoMovilP', '') or ''}")
-
-    if y < 120:
-        c.showPage()
-        y = height - 80
-
-    # --- Sección: Datos de la Madre (si no es representante) ---
-    y -= 24
-    c.setFont("Helvetica-Bold", 11)
-    c.drawString(40, y, "Datos de la Madre en caso de no ser la Representante:")
-    y -= 18
-    c.setFont("Helvetica", 9)
-    c.drawString(45, y, f"Nombre y Apellido: {datos.get('nombreM', '') or ''} {datos.get('apellidoM', '') or ''}")
-    c.drawString(250, y, f"Cédula: {datos.get('cedulaM', '') or ''}")
-    c.drawString(350, y, f"F.N.: {datos.get('fechaNacimientoM', '') or ''}")
-    c.drawString(420, y, f"Edad: {datos.get('edadM', '') or ''}")
-    y -= 14
-    c.drawString(45, y, f"Tipo de Empleo: {datos.get('tipoEmpleoM', '') or ''}")
-    c.drawString(200, y, f"Empresa donde Trabaja: {datos.get('empresaDTrabajaM', '') or ''}")
-    y -= 14
-    c.drawString(45, y, f"¿Vive con el niño(a)?: {datos.get('viveConNinoM', '') or ''}")
-    c.drawString(200, y, f"Causa: {datos.get('causaPNoViveM', '') or ''}")
-    c.drawString(350, y, f"Dirección: {datos.get('direccionM', '') or ''}")
-    c.drawString(500, y, f"Teléfono Móvil: {datos.get('telefonoMovilM', '') or ''}")
-
-    if y < 120:
-        c.showPage()
-        y = height - 80
-
-    # --- Sección: Observaciones (dividir por salto de línea) ---
-    y -= 30
-    c.setFont("Helvetica-Bold", 11)
-    c.drawString(40, y, "OBSERVACIONES:")
-    y -= 18
-    c.setFont("Helvetica", 9)
-    obs = (datos.get('observaciones', '') or '').split('\n')
-    c.drawString(45, y, f"I SALA: {obs[0] if len(obs) > 0 else ''}")
-    y -= 14
-    c.drawString(45, y, f"II SALA: {obs[1] if len(obs) > 1 else ''}")
-    y -= 14
-    c.drawString(45, y, f"III SALA: {obs[2] if len(obs) > 2 else ''}")
-
-    # --- Compromiso ---
-    y -= 30
-    c.setFont("Helvetica", 8)
-    c.drawString(45, y, "Los datos planteados en esta planilla son verdaderos, me comprometo a trabajar junto a la maestra colaborando con el material necesario para el bienestar y desarrollo de mi hijo(a) y de la institución.")
-
-    # --- Firmas ---
+    # --- Datos del Niño(a) ---
     y -= 40
-    c.setFont("Helvetica", 9)
+    c.setFont("Helvetica-Bold", 11)
+    c.drawString(LEFT_MARGIN, y, "Datos del Niño(a):")
+    y -= LINE_HEIGHT
+
+    draw_field(COL1_X, y, "Nombres:", datos.get('NombreS'))
+    draw_field(COL2_X, y, "Apellidos:", datos.get('apellido'))
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "F.N.:", datos.get('FN'))
+    draw_field(COL2_X, y, "Edad:", datos.get('edad'))
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Género:", datos.get('genero'))
+    draw_field(COL2_X, y, "Lateralidad:", datos.get('lateralidad'))
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Nacionalidad:", datos.get('nacionalidad'))
+    draw_field(COL2_X, y, "Cédula Escolar:", datos.get('cedulaEscolar'))
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Estado:", datos.get('estado'))
+    draw_field(COL2_X, y, "Municipio:", datos.get('municipio'))
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Dirección Actual:", datos.get('DA'), 100)
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Punto de Referencia:", datos.get('PTR'), 110)
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Altura:", datos.get('altura'))
+    draw_field(COL2_X, y, "Peso:", datos.get('peso'))
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Zapatos:", datos.get('Zapatos'))
+    draw_field(COL2_X, y, "Camisa:", datos.get('Camisa'))
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Pantalón:", datos.get('Pantalon'))
+    draw_field(COL2_X, y, "N° de Hermanos:", datos.get('NDH'))
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Autorizado para retirar:", datos.get('APRN'), 120)
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Alérgico a:", datos.get('alergicoA'))
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Alguna Dificultad:", datos.get('algunaDificultad'))
+    draw_field(COL2_X, y, "Especifique:", datos.get('especificarDificultad'))
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Correo Electrónico:", datos.get('correoElectronico'), 100)
+    draw_field(COL2_X, y, "Teléfono Habitación:", datos.get('telefonoHabitacion'), 110)
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Cartón de Vacunas:", 'Presentado' if datos.get('cartonVacunas') else 'No')
+    draw_field(COL2_X, y, "Tipo de Sangre:", datos.get('tipoDSangre'))
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Examen de Heces:", datos.get('EDH'))
+
+    # --- Datos del Representante Legal ---
+    y -= (LINE_HEIGHT * 1.5)
+    c.setFont("Helvetica-Bold", 11)
+    c.drawString(LEFT_MARGIN, y, "Datos del Representante Legal:")
+    y -= LINE_HEIGHT
+    
+    draw_field(COL1_X, y, "Nombre y Apellido:", f"{datos.get('nombreR', '')} {datos.get('apellidoR', '')}", 100)
+    draw_field(COL2_X, y, "Cédula:", datos.get('cedulaR'))
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "F.N.:", datos.get('FN'))
+    draw_field(COL2_X, y, "Edad:", datos.get('edadR'))
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Estado Civil:", datos.get('EC'))
+    draw_field(COL2_X, y, "Nacionalidad:", datos.get('nacionalidadR'))
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Afinidad:", datos.get('afinidad'))
+    draw_field(COL2_X, y, "Profesión:", datos.get('profesionR'))
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Ocupación:", datos.get('ocupacionR'))
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Empresa donde Trabaja:", datos.get('EMPDT'), 130)
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Dirección:", datos.get('direccionR'), 60)
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Teléfono Móvil:", datos.get('telefonoMovilR'))
+    draw_field(COL2_X, y, "Teléfono Habitación:", datos.get('telefonoHabitacionR'), 110)
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Teléfono Familiar:", datos.get('telefonoDFamiliar'), 100)
+    draw_field(COL2_X, y, "Correo Electrónico:", datos.get('correoElectronicoR'), 100)
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Rif:", datos.get('RIF'))
+    draw_field(COL2_X, y, "Planilla Sige:", datos.get('planillaSigeR'))
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Código de la patria:", datos.get('codigoPatriaR'), 110)
+    draw_field(COL2_X, y, "Serial de la patria:", datos.get('serialPatriaR'), 100)
+
+    c.showPage() # Nueva página para el resto de los datos
+    y = height - 50
+
+    # --- Datos del Padre ---
+    c.setFont("Helvetica-Bold", 11)
+    c.drawString(LEFT_MARGIN, y, "Datos del Padre:")
+    y -= LINE_HEIGHT
+
+    draw_field(COL1_X, y, "Nombre y Apellido:", f"{datos.get('nombreP', '')} {datos.get('apellidoP', '')}", 100)
+    draw_field(COL2_X, y, "Cédula:", datos.get('cedulaP'))
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "F.N.:", datos.get('FNP'))
+    draw_field(COL2_X, y, "Tipo de Empleo:", datos.get('TEDP'))
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Empresa donde Trabaja:", datos.get('EMDTP'), 130)
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "¿Vive con el niño(a)?:", datos.get('VCNP'), 110)
+    draw_field(COL2_X, y, "Causa:", datos.get('CPNVCNP'))
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Dirección:", datos.get('direccionP'), 60)
+    draw_field(COL2_X, y, "Teléfono Móvil:", datos.get('telefonoMovilP'))
+
+    # --- Datos de la Madre en caso de no ser la Representante ---
+    y -= (LINE_HEIGHT * 1.5)
+    c.setFont("Helvetica-Bold", 11)
+    c.drawString(LEFT_MARGIN, y, "Datos de la Madre en caso de no ser la Representante:")
+    y -= LINE_HEIGHT
+
+    draw_field(COL1_X, y, "Nombre y Apellido:", f"{datos.get('nombreM', '')} {datos.get('apellidoM', '')}", 100)
+    draw_field(COL2_X, y, "Cédula:", datos.get('cedulaM'))
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "F.N.:", datos.get('FNM'))
+    draw_field(COL2_X, y, "Tipo de Empleo:", datos.get('TEDM'))
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Empresa donde Trabaja:", datos.get('EMDTM'), 130)
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "¿Vive con el niño(a)?:", datos.get('VCNM'), 110)
+    draw_field(COL2_X, y, "Causa:", datos.get('CPNVCNM'))
+    y -= LINE_HEIGHT
+    draw_field(COL1_X, y, "Dirección:", datos.get('direccionM'), 60)
+    draw_field(COL2_X, y, "Teléfono Móvil:", datos.get('telefonoMovilM'))
+
+    # --- OBSERVACIONES ---
+    y -= (LINE_HEIGHT * 1.5)
+    c.setFont("Helvetica-Bold", 11)
+    c.drawString(LEFT_MARGIN, y, "OBSERVACIONES:")
+    y -= LINE_HEIGHT
+    obs = (datos.get('observaciones', '') or '').split('\n')
+    c.drawString(LEFT_MARGIN, y, "I SALA:")
+    c.drawString(LEFT_MARGIN + 60, y, obs[0] if len(obs) > 0 else '')
+    y -= LINE_HEIGHT
+    c.drawString(LEFT_MARGIN, y, "II SALA:")
+    c.drawString(LEFT_MARGIN + 60, y, obs[1] if len(obs) > 1 else '')
+    y -= LINE_HEIGHT
+    c.drawString(LEFT_MARGIN, y, "III SALA:")
+    c.drawString(LEFT_MARGIN + 60, y, obs[2] if len(obs) > 2 else '')
+
+    # --- Compromiso y Firmas ---
+    y -= 100 # Más espacio antes de las firmas
+    c.setFont("Helvetica", 8)
+    compromiso = "Los datos planteados en esta planilla son verdaderos, me comprometo a trabajar junto a la maestra colaborando con el material necesario para el bienestar y de"
+    c.drawCentredString(width/2, y, compromiso)
+    
+    y -= 50
     c.line(100, y, 250, y)
-    c.drawString(130, y-12, "Firma del Representante")
-    c.line(350, y, 500, y)
-    c.drawString(400, y-12, "Firma del Docente")
+    c.drawCentredString(175, y - 15, "Firma del Representante")
+    c.line(width - 250, y, width - 100, y)
+    c.drawCentredString(width - 175, y - 15, "Firma del Docente")
 
     c.save()
 

@@ -319,6 +319,32 @@ class database:
             'madres': self.count_madres()
         }
 
+    def get_students_by_turno(self):
+        """Retorna un diccionario con el número de estudiantes por turno.
+        Devuelve {'Mañana': X, 'Tarde': Y} asegurando claves incluso si no hay registros.
+        """
+        try:
+            # Normalizar valores de turno en la DB (puede contener 'Turno Mañana', 'Turno Tarde' u otras variantes)
+            self.cursor.execute("SELECT turno, COUNT(*) FROM Estudend GROUP BY turno")
+            rows = self.cursor.fetchall()
+            counts = { 'Mañana': 0, 'Tarde': 0 }
+            for turno, cnt in rows:
+                if turno is None:
+                    continue
+                t = str(turno).lower()
+                if 'mañ' in t or 'man' in t or 'mañana' in t:
+                    counts['Mañana'] += int(cnt)
+                elif 'tar' in t or 'tarde' in t:
+                    counts['Tarde'] += int(cnt)
+                else:
+                    # Si hay otros valores, intentar inferir: valores numéricos o texto
+                    # Por defecto, sumar a 'Mañana'
+                    counts['Mañana'] += int(cnt)
+            return counts
+        except Exception as e:
+            print(f"Error obteniendo estudiantes por turno: {e}")
+            return {'Mañana': 0, 'Tarde': 0}
+
     # -----------------------------------
     # Métodos de Eliminación
     # -----------------------------------

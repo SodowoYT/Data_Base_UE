@@ -7,6 +7,9 @@ from views.Options import Options
 from views.Creditos import CreditosWindow
 from PySide6.QtWidgets import QStackedLayout, QVBoxLayout as QVBoxLayout2, QHBoxLayout as QHBoxLayout2
 from services.Connection import database
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
+
 class MenuWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -264,7 +267,6 @@ class MenuWindow(QMainWindow):
                 box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
             }
         """)
-        
         dashboard_layout = QVBoxLayout()
         dashboard_layout.setContentsMargins(12, 12, 12, 12)
         dashboard_layout.setSpacing(12)
@@ -289,6 +291,7 @@ class MenuWindow(QMainWindow):
         
         # Obtener estadísticas
         stats = self.db.get_dashboard_stats()
+        turno_stats = self.db.get_students_by_turno()  # {'Mañana': X, 'Tarde': Y}
         
         # Crear tarjetas para cada estadística 
         self.stats_cards = {}
@@ -296,9 +299,10 @@ class MenuWindow(QMainWindow):
             ("👨‍🎓", "ESTUDIANTES", stats['estudiantes'], "#4CAF50"),
             ("👨‍💼", "REPRESENTANTES", stats['representantes'], "#2196F3"),
             ("👨", "PADRES", stats['padres'], "#FF9800"),
-            ("👩", "MADRES", stats['madres'], "#E91E63")
+            ("👩", "MADRES", stats['madres'], "#E91E63"),
+            ("🌅", "MAÑANA", turno_stats.get('Mañana', 0), "#1A82F8"),
+            ("🌇", "TARDE", turno_stats.get('Tarde', 0), "#9010F8")
         ]
-        
         for i, (icon, title, count, color) in enumerate(cards_data):
             card = self.create_compact_stat_card(icon, title, count, color)
             self.stats_cards[title.lower()] = card
@@ -323,6 +327,25 @@ class MenuWindow(QMainWindow):
         
         dashboard_frame.setLayout(dashboard_layout)
         parent_layout.addWidget(dashboard_frame)
+
+    def create_turno_chart(self, turno_counts):
+        """Crea un gráfico de barras con la cantidad de niños por turno (mañana/tarde)."""
+        fig = Figure(figsize=(3, 1.2), dpi=100)
+        ax = fig.add_subplot(111)
+        labels = list(turno_counts.keys())
+        values = list(turno_counts.values())
+        bars = ax.bar(labels, values, color=['#1976D2', '#F57C00'])
+        ax.set_ylabel('Cantidad')
+        ax.set_title('Niños por Turno')
+        ax.set_ylim(0, max(values) + 2)
+        for bar in bars:
+            height = bar.get_height()
+            ax.annotate(f'{int(height)}', xy=(bar.get_x() + bar.get_width() / 2, height),
+                        xytext=(0, 3), textcoords="offset points",
+                        ha='center', va='bottom', fontsize=9, color='black')
+        fig.tight_layout()
+        canvas = FigureCanvas(fig)
+        return canvas
 
     def create_compact_stat_card(self, icon, title, count, color):
         """Crea una tarjeta compacta individual para mostrar una estadística."""
@@ -473,22 +496,21 @@ class MenuWindow(QMainWindow):
         """Actualiza las estadísticas del dashboard."""
         try:
             stats = self.db.get_dashboard_stats()
-            
+            turno_stats = self.db.get_students_by_turno()  # Añadido para actualizar tarjetas de turnos
             # Actualizar cada tarjeta
             if hasattr(self, 'stats_cards') and self.stats_cards:
                 # Buscar y actualizar los labels de conteo en cada tarjeta
                 for card_name, card in self.stats_cards.items():
-                    # Buscar el label que contiene el número (segundo QLabel en cada tarjeta)
                     labels = card.findChildren(QLabel)
-                    if len(labels) >= 2:  # Debe tener al menos icono y número
-                        count_label = labels[1]  # El segundo label es el número
+                    if len(labels) >= 2:
+                        count_label = labels[1]
                         if card_name == 'estudiantes':
                             count_label.setText(str(stats['estudiantes']))
                         elif card_name == 'representantes':
                             count_label.setText(str(stats['representantes']))
-                        elif card_name == 'padres':
-                            count_label.setText(str(stats['padres']))
-                        elif card_name == 'madres':
-                            count_label.setText(str(stats['madres']))
+                        elif card_name == 'mañana':
+                            count_label.setText(str(turno_stats.get('Mañana', 0)))
+                        elif card_name == 'tarde':
+                            count_label.setText(str(turno_stats.get('Tarde', 0)))
         except Exception as e:
             print(f"Error actualizando estadísticas: {e}")
