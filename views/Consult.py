@@ -1,16 +1,12 @@
-from PySide6.QtWidgets import (
-    QPushButton, QMainWindow, QVBoxLayout, QWidget, QTableView, QLineEdit,
-    QMessageBox, QHBoxLayout, QDialog, QLabel, QScrollArea, QFormLayout, QFileDialog, QApplication,
-    QHeaderView, QGroupBox, QComboBox
-)
+from PySide6.QtWidgets import (QPushButton, QMainWindow, QVBoxLayout, QWidget, QTableView, QLineEdit, QMessageBox, QHBoxLayout, QDialog, QLabel, QScrollArea, QFormLayout, QFileDialog, QApplication, QHeaderView, QGroupBox, QComboBox)
 from PySide6.QtGui import QStandardItemModel, QStandardItem, QPixmap, QIcon, QPainter
 from PySide6.QtPrintSupport import QPrinter
 from PySide6.QtCore import Qt
 import os
 
-from services.Connection import database
 from views.Modify import ModifyData
 
+from services.Connection import database
 import tempfile
 
 # reportlab es opcional en tiempo de ejecución. Si no está instalado,
@@ -20,7 +16,7 @@ try:
     from reportlab.pdfgen import canvas
     from reportlab.lib.pagesizes import letter
     from reportlab.lib.utils import ImageReader
-    from reportlab.lib import colors
+    from reportlab.lib import colors 
     HAS_REPORTLAB = True
 except Exception:
     HAS_REPORTLAB = False
@@ -32,168 +28,221 @@ def generar_planilla_inscripcion_pdf(file_path, datos):
     c = canvas.Canvas(file_path, pagesize=letter)
     width, height = letter
 
-    # --- Constantes de layout ---
+    # --- Constantes de layout para planilla oficial ---
     LEFT_MARGIN = 40
     RIGHT_MARGIN = width - 40
-    COL1_X = LEFT_MARGIN
-    COL2_X = 320
-    LINE_HEIGHT = 22
+    LINE_HEIGHT = 18
+    SECTION_SPACING = 25
 
-    # --- Helper para dibujar campos ---
-    def draw_field(x, y, label, value, value_offset=90):
+    # --- Helper para dibujar campos sin líneas ---
+    def draw_field(x, y, label, value, value_offset=80):
+        # Dibujar etiqueta
         c.setFont("Helvetica-Bold", 9)
-        c.drawString(x, y, label)
+        c.drawString(x, y, f"{label}:")
+        
+        # Dibujar valor sin línea
         c.setFont("Helvetica", 9)
         c.drawString(x + value_offset, y, str(value or ''))
 
-    # --- Encabezado ---
-    y = height - 50
-    c.drawImage("utilities/resources/LgAERJ.png", LEFT_MARGIN, y - 15, width=80, height=80, preserveAspectRatio=True, mask='auto')
-    c.drawImage("utilities/resources/LogoBG.png", RIGHT_MARGIN - 80, y - 15, width=80, height=80, preserveAspectRatio=True, mask='auto')
-    
-    c.setFont("Helvetica-Bold", 16)
-    c.drawCentredString(width / 2, y + 10, "PLANILLA DE INSCRIPCIÓN")
-    c.setFont("Helvetica-Bold", 14)
-    c.drawCentredString(width / 2, y - 10, "EDUCACIÓN INICIAL")
+    def draw_section_title(title, y):
+        c.setFont("Helvetica-Bold", 11)
+        c.drawString(LEFT_MARGIN, y, title)
+        return y - 15
 
-    # --- Cajas de fotos (más abajo) ---
-    y -= 100
-    c.rect(LEFT_MARGIN, y, 80, 80)
-    c.rect(RIGHT_MARGIN - 80, y, 80, 80)
+    # --- PÁGINA 1: ENCABEZADO Y DATOS DEL ESTUDIANTE ---
+    y = height - 50
+    
+    # Logos (si están disponibles)
+    try:
+        c.drawImage("utilities/resources/LgAERJ.png", LEFT_MARGIN, y - 25, width=50, height=50, preserveAspectRatio=True, mask='auto')
+    except:
+        pass
+    try:
+        c.drawImage("utilities/resources/LogoBG.png", RIGHT_MARGIN - 50, y - 25, width=50, height=50, preserveAspectRatio=True, mask='auto')
+    except:
+        pass
+
+    # Título principal
+    c.setFont("Helvetica-Bold", 16)
+    c.drawCentredString(width / 2, y, "PLANILLA DE INSCRIPCIÓN")
+    c.setFont("Helvetica-Bold", 14)
+    c.drawCentredString(width / 2, y - 20, "EDUCACIÓN INICIAL")
+
+    # --- Cajas para fotos (después del título) ---
+    y -= 80
+    c.setStrokeColor(colors.black)
+    c.setLineWidth(1)
+    c.rect(LEFT_MARGIN + 200, y, 70, 70)  # Foto del estudiante
+    c.rect(RIGHT_MARGIN - 270, y, 70, 70)  # Cartón de vacunas
+
+    # Etiquetas de las fotos
+    c.setFont("Helvetica-Bold", 8)
+    c.drawCentredString(LEFT_MARGIN + 235, y - 10, "FOTO DEL")
+    c.drawCentredString(LEFT_MARGIN + 235, y - 18, "ESTUDIANTE")
+    c.drawCentredString(RIGHT_MARGIN - 235, y - 10, "CARTÓN DE")
+    c.drawCentredString(RIGHT_MARGIN - 235, y - 18, "VACUNAS")
 
     # --- Datos del Niño(a) ---
-    y -= 40
-    c.setFont("Helvetica-Bold", 11)
-    c.drawString(LEFT_MARGIN, y, "Datos del Niño(a):")
+    y = draw_section_title("DATOS DEL NIÑO(A)", y - 30)
+
+    # Primera fila
+    draw_field(LEFT_MARGIN, y, "Nombres", datos.get('NombreS'), 60)
+    draw_field(LEFT_MARGIN + 280, y, "Apellidos", datos.get('apellido'), 60)
     y -= LINE_HEIGHT
 
-    draw_field(COL1_X, y, "Nombres:", datos.get('NombreS'))
-    draw_field(COL2_X, y, "Apellidos:", datos.get('apellido'))
+    # Segunda fila
+    draw_field(LEFT_MARGIN, y, "F.N.", datos.get('FN'), 40)
+    draw_field(LEFT_MARGIN + 150, y, "Edad", datos.get('edad'), 30)
+    draw_field(LEFT_MARGIN + 250, y, "Género", datos.get('genero'), 40)
+    draw_field(LEFT_MARGIN + 380, y, "Lateralidad", datos.get('lateralidad'), 60)
     y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "F.N.:", datos.get('FN'))
-    draw_field(COL2_X, y, "Edad:", datos.get('edad'))
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Género:", datos.get('genero'))
-    draw_field(COL2_X, y, "Lateralidad:", datos.get('lateralidad'))
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Nacionalidad:", datos.get('nacionalidad'))
-    draw_field(COL2_X, y, "Cédula Escolar:", datos.get('cedulaEscolar'))
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Estado:", datos.get('estado'))
-    draw_field(COL2_X, y, "Municipio:", datos.get('municipio'))
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Dirección Actual:", datos.get('DA'), 100)
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Punto de Referencia:", datos.get('PTR'), 110)
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Altura:", datos.get('altura'))
-    draw_field(COL2_X, y, "Peso:", datos.get('peso'))
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Zapatos:", datos.get('Zapatos'))
-    draw_field(COL2_X, y, "Camisa:", datos.get('Camisa'))
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Pantalón:", datos.get('Pantalon'))
-    draw_field(COL2_X, y, "N° de Hermanos:", datos.get('NDH'))
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Autorizado para retirar:", datos.get('APRN'), 120)
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Alérgico a:", datos.get('alergicoA'))
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Alguna Dificultad:", datos.get('algunaDificultad'))
-    draw_field(COL2_X, y, "Especifique:", datos.get('especificarDificultad'))
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Correo Electrónico:", datos.get('correoElectronico'), 100)
-    draw_field(COL2_X, y, "Teléfono Habitación:", datos.get('telefonoHabitacion'), 110)
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Cartón de Vacunas:", 'Presentado' if datos.get('cartonVacunas') else 'No')
-    draw_field(COL2_X, y, "Tipo de Sangre:", datos.get('tipoDSangre'))
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Examen de Heces:", datos.get('EDH'))
 
-    # --- Datos del Representante Legal ---
-    y -= (LINE_HEIGHT * 1.5)
-    c.setFont("Helvetica-Bold", 11)
-    c.drawString(LEFT_MARGIN, y, "Datos del Representante Legal:")
+    # Tercera fila
+    draw_field(LEFT_MARGIN, y, "Nacionalidad", datos.get('nacionalidad'), 60)
+    draw_field(LEFT_MARGIN + 250, y, "Cédula Escolar", datos.get('cedulaEscolar'), 70)
     y -= LINE_HEIGHT
-    
-    draw_field(COL1_X, y, "Nombre y Apellido:", f"{datos.get('nombreR', '')} {datos.get('apellidoR', '')}", 100)
-    draw_field(COL2_X, y, "Cédula:", datos.get('cedulaR'))
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "F.N.:", datos.get('FN'))
-    draw_field(COL2_X, y, "Edad:", datos.get('edadR'))
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Estado Civil:", datos.get('EC'))
-    draw_field(COL2_X, y, "Nacionalidad:", datos.get('nacionalidadR'))
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Afinidad:", datos.get('afinidad'))
-    draw_field(COL2_X, y, "Profesión:", datos.get('profesionR'))
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Ocupación:", datos.get('ocupacionR'))
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Empresa donde Trabaja:", datos.get('EMPDT'), 130)
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Dirección:", datos.get('direccionR'), 60)
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Teléfono Móvil:", datos.get('telefonoMovilR'))
-    draw_field(COL2_X, y, "Teléfono Habitación:", datos.get('telefonoHabitacionR'), 110)
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Teléfono Familiar:", datos.get('telefonoDFamiliar'), 100)
-    draw_field(COL2_X, y, "Correo Electrónico:", datos.get('correoElectronicoR'), 100)
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Rif:", datos.get('RIF'))
-    draw_field(COL2_X, y, "Planilla Sige:", datos.get('planillaSigeR'))
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Código de la patria:", datos.get('codigoPatriaR'), 110)
-    draw_field(COL2_X, y, "Serial de la patria:", datos.get('serialPatriaR'), 100)
 
-    c.showPage() # Nueva página para el resto de los datos
+    # Cuarta fila
+    draw_field(LEFT_MARGIN, y, "Estado", datos.get('estado'), 40)
+    draw_field(LEFT_MARGIN + 150, y, "Municipio", datos.get('municipio'), 50)
+    y -= LINE_HEIGHT
+
+    # Quinta fila
+    draw_field(LEFT_MARGIN, y, "Dirección Actual", datos.get('DA'), 80)
+    y -= LINE_HEIGHT
+
+    # Sexta fila
+    draw_field(LEFT_MARGIN, y, "Punto de Referencia", datos.get('PTR'), 90)
+    y -= LINE_HEIGHT
+
+    # Séptima fila - medidas físicas
+    draw_field(LEFT_MARGIN, y, "Altura", datos.get('altura'), 40)
+    draw_field(LEFT_MARGIN + 120, y, "Peso", datos.get('peso'), 30)
+    draw_field(LEFT_MARGIN + 220, y, "Zapatos", datos.get('Zapatos'), 45)
+    draw_field(LEFT_MARGIN + 320, y, "Camisa", datos.get('Camisa'), 40)
+    draw_field(LEFT_MARGIN + 420, y, "Pantalón", datos.get('Pantalon'), 50)
+    y -= LINE_HEIGHT
+
+    # Octava fila
+    draw_field(LEFT_MARGIN, y, "N° de Hermanos", datos.get('NDH'), 70)
+    draw_field(LEFT_MARGIN + 250, y, "Autorizado para retirar", datos.get('APRN'), 110)
+    y -= LINE_HEIGHT
+
+    # Novena fila
+    draw_field(LEFT_MARGIN, y, "Alérgico a", datos.get('alergicoA'), 50)
+    y -= LINE_HEIGHT
+
+    # Décima fila
+    draw_field(LEFT_MARGIN, y, "Alguna Dificultad", datos.get('algunaDificultad'), 80)
+    draw_field(LEFT_MARGIN + 250, y, "Especifique", datos.get('especificarDificultad'), 60)
+    y -= LINE_HEIGHT
+
+    # Undécima fila
+    draw_field(LEFT_MARGIN, y, "Correo Electrónico", datos.get('correoElectronico'), 80)
+    draw_field(LEFT_MARGIN + 300, y, "Teléfono Habitación", datos.get('telefonoHabitacion'), 100)
+    y -= LINE_HEIGHT
+
+    # Duodécima fila
+    draw_field(LEFT_MARGIN, y, "Cartón de Vacunas", 'Presentado' if datos.get('cartonVacunas') else 'No', 90)
+    draw_field(LEFT_MARGIN + 250, y, "Tipo de Sangre", datos.get('tipoDSangre'), 70)
+    draw_field(LEFT_MARGIN + 420, y, "Examen de Heces", datos.get('EDH'), 80)
+
+    # --- Datos del Representante Legal (final de página 1) ---
+    y = draw_section_title("DATOS DEL REPRESENTANTE LEGAL", y - SECTION_SPACING)
+
+    draw_field(LEFT_MARGIN, y, "Nombre y Apellido", f"{datos.get('nombreR', '')} {datos.get('apellidoR', '')}", 90)
+    draw_field(LEFT_MARGIN + 300, y, "Cédula", datos.get('cedulaR'), 40)
+    y -= LINE_HEIGHT
+
+    draw_field(LEFT_MARGIN, y, "F.N.", datos.get('FNR', ''), 30)
+    draw_field(LEFT_MARGIN + 150, y, "Edad", datos.get('edadR'), 30)
+    draw_field(LEFT_MARGIN + 250, y, "Estado Civil", datos.get('EC'), 60)
+    draw_field(LEFT_MARGIN + 400, y, "Nacionalidad", datos.get('nacionalidadR'), 60)
+    y -= LINE_HEIGHT
+
+    draw_field(LEFT_MARGIN, y, "Afinidad", datos.get('afinidad'), 50)
+    draw_field(LEFT_MARGIN + 150, y, "Profesión", datos.get('profesionR'), 50)
+    draw_field(LEFT_MARGIN + 300, y, "Ocupación", datos.get('ocupacionR'), 60)
+    y -= LINE_HEIGHT
+
+    draw_field(LEFT_MARGIN, y, "Empresa donde Trabaja", datos.get('EMPDT'), 110)
+    y -= LINE_HEIGHT
+
+    draw_field(LEFT_MARGIN, y, "Dirección", datos.get('direccionR'), 50)
+    y -= LINE_HEIGHT
+
+    draw_field(LEFT_MARGIN, y, "Teléfono Móvil", datos.get('telefonoMovilR'), 80)
+    draw_field(LEFT_MARGIN + 250, y, "Teléfono Habitación", datos.get('telefonoHabitacionR'), 100)
+    y -= LINE_HEIGHT
+
+    draw_field(LEFT_MARGIN, y, "Teléfono Familiar", datos.get('telefonoDFamiliar'), 90)
+    draw_field(LEFT_MARGIN + 250, y, "Correo Electrónico", datos.get('correoElectronicoR'), 90)
+    y -= LINE_HEIGHT
+
+    draw_field(LEFT_MARGIN, y, "RIF", datos.get('RIF'), 20)
+    draw_field(LEFT_MARGIN + 150, y, "Planilla Sige", datos.get('planillaSigeR'), 60)
+    y -= LINE_HEIGHT
+
+    draw_field(LEFT_MARGIN, y, "Código de la patria", datos.get('codigoPatriaR'), 90)
+    draw_field(LEFT_MARGIN + 250, y, "Serial de la patria", datos.get('serialPatriaR'), 90)
+
+    # --- PÁGINA 2: DATOS DEL PADRE, MADRE Y OBSERVACIONES ---
+    c.showPage()  # Nueva página
+
+    # Encabezado de la página 2
     y = height - 50
+    c.setFont("Helvetica-Bold", 16)
+    c.drawCentredString(width / 2, y, "PLANILLA DE INSCRIPCIÓN")
+    c.setFont("Helvetica-Bold", 14)
+    c.drawCentredString(width / 2, y - 20, "EDUCACIÓN INICIAL (Continuación)")
 
     # --- Datos del Padre ---
-    c.setFont("Helvetica-Bold", 11)
-    c.drawString(LEFT_MARGIN, y, "Datos del Padre:")
+    y = draw_section_title("DATOS DEL PADRE", y - 50)
+
+    draw_field(LEFT_MARGIN, y, "Nombre y Apellido", f"{datos.get('nombreP', '')} {datos.get('apellidoP', '')}", 90)
+    draw_field(LEFT_MARGIN + 300, y, "Cédula", datos.get('cedulaP'), 40)
     y -= LINE_HEIGHT
 
-    draw_field(COL1_X, y, "Nombre y Apellido:", f"{datos.get('nombreP', '')} {datos.get('apellidoP', '')}", 100)
-    draw_field(COL2_X, y, "Cédula:", datos.get('cedulaP'))
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "F.N.:", datos.get('FNP'))
-    draw_field(COL2_X, y, "Tipo de Empleo:", datos.get('TEDP'))
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Empresa donde Trabaja:", datos.get('EMDTP'), 130)
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "¿Vive con el niño(a)?:", datos.get('VCNP'), 110)
-    draw_field(COL2_X, y, "Causa:", datos.get('CPNVCNP'))
-    y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Dirección:", datos.get('direccionP'), 60)
-    draw_field(COL2_X, y, "Teléfono Móvil:", datos.get('telefonoMovilP'))
-
-    # --- Datos de la Madre en caso de no ser la Representante ---
-    y -= (LINE_HEIGHT * 1.5)
-    c.setFont("Helvetica-Bold", 11)
-    c.drawString(LEFT_MARGIN, y, "Datos de la Madre en caso de no ser la Representante:")
+    draw_field(LEFT_MARGIN, y, "F.N.", datos.get('FNP'), 30)
+    draw_field(LEFT_MARGIN + 150, y, "Tipo de Empleo", datos.get('TEDP'), 80)
     y -= LINE_HEIGHT
 
-    draw_field(COL1_X, y, "Nombre y Apellido:", f"{datos.get('nombreM', '')} {datos.get('apellidoM', '')}", 100)
-    draw_field(COL2_X, y, "Cédula:", datos.get('cedulaM'))
+    draw_field(LEFT_MARGIN, y, "Empresa donde Trabaja", datos.get('EMDTP'), 110)
     y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "F.N.:", datos.get('FNM'))
-    draw_field(COL2_X, y, "Tipo de Empleo:", datos.get('TEDM'))
+
+    draw_field(LEFT_MARGIN, y, "¿Vive con el niño(a)?", datos.get('VCNP'), 100)
+    draw_field(LEFT_MARGIN + 250, y, "Causa", datos.get('CPNVCNP'), 40)
     y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Empresa donde Trabaja:", datos.get('EMDTM'), 130)
+
+    draw_field(LEFT_MARGIN, y, "Dirección", datos.get('direccionP'), 50)
+    draw_field(LEFT_MARGIN + 300, y, "Teléfono Móvil", datos.get('telefonoMovilP'), 80)
+
+    # --- Datos de la Madre ---
+    y = draw_section_title("DATOS DE LA MADRE (en caso de no ser la Representante)", y - SECTION_SPACING)
+
+    draw_field(LEFT_MARGIN, y, "Nombre y Apellido", f"{datos.get('nombreM', '')} {datos.get('apellidoM', '')}", 90)
+    draw_field(LEFT_MARGIN + 300, y, "Cédula", datos.get('cedulaM'), 40)
     y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "¿Vive con el niño(a)?:", datos.get('VCNM'), 110)
-    draw_field(COL2_X, y, "Causa:", datos.get('CPNVCNM'))
+
+    draw_field(LEFT_MARGIN, y, "F.N.", datos.get('FNM'), 30)
+    draw_field(LEFT_MARGIN + 150, y, "Tipo de Empleo", datos.get('TEDM'), 80)
     y -= LINE_HEIGHT
-    draw_field(COL1_X, y, "Dirección:", datos.get('direccionM'), 60)
-    draw_field(COL2_X, y, "Teléfono Móvil:", datos.get('telefonoMovilM'))
+
+    draw_field(LEFT_MARGIN, y, "Empresa donde Trabaja", datos.get('EMDTM'), 110)
+    y -= LINE_HEIGHT
+
+    draw_field(LEFT_MARGIN, y, "¿Vive con el niño(a)?", datos.get('VCNM'), 100)
+    draw_field(LEFT_MARGIN + 250, y, "Causa", datos.get('CPNVCNM'), 40)
+    y -= LINE_HEIGHT
+
+    draw_field(LEFT_MARGIN, y, "Dirección", datos.get('direccionM'), 50)
+    draw_field(LEFT_MARGIN + 300, y, "Teléfono Móvil", datos.get('telefonoMovilM'), 80)
 
     # --- OBSERVACIONES ---
-    y -= (LINE_HEIGHT * 1.5)
-    c.setFont("Helvetica-Bold", 11)
-    c.drawString(LEFT_MARGIN, y, "OBSERVACIONES:")
-    y -= LINE_HEIGHT
+    y = draw_section_title("OBSERVACIONES", y - SECTION_SPACING)
+
     obs = (datos.get('observaciones', '') or '').split('\n')
+    c.setFont("Helvetica", 9)
     c.drawString(LEFT_MARGIN, y, "I SALA:")
     c.drawString(LEFT_MARGIN + 60, y, obs[0] if len(obs) > 0 else '')
     y -= LINE_HEIGHT
@@ -204,16 +253,22 @@ def generar_planilla_inscripcion_pdf(file_path, datos):
     c.drawString(LEFT_MARGIN + 60, y, obs[2] if len(obs) > 2 else '')
 
     # --- Compromiso y Firmas ---
-    y -= 100 # Más espacio antes de las firmas
+    y -= 40
     c.setFont("Helvetica", 8)
-    compromiso = "Los datos planteados en esta planilla son verdaderos, me comprometo a trabajar junto a la maestra colaborando con el material necesario para el bienestar y de"
+    compromiso = "Los datos planteados en esta planilla son verdaderos, me comprometo a trabajar junto a la maestra colaborando con el material necesario para el bienestar y desarrollo integral del niño(a)."
     c.drawCentredString(width/2, y, compromiso)
-    
+
     y -= 50
+    c.setStrokeColor(colors.black)
+    c.setLineWidth(1)
     c.line(100, y, 250, y)
     c.drawCentredString(175, y - 15, "Firma del Representante")
     c.line(width - 250, y, width - 100, y)
     c.drawCentredString(width - 175, y - 15, "Firma del Docente")
+
+    # Fecha
+    c.setFont("Helvetica", 9)
+    c.drawString(LEFT_MARGIN, y - 30, f"Fecha: {datos.get('fechaRegistro', '')}")
 
     c.save()
 
@@ -227,14 +282,12 @@ class BgWidget(QWidget):
         painter = QPainter(self)
         painter.drawPixmap(self.rect(), self.image)  # Fondo ocupa toda la ventana
 
-
 class ConsultWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Consulta de Estudiantes")
         self.setWindowIcon(QIcon("utilities/resources/imgs/ico/IconApp.ico"))
         self.resize(900, 600)
-
 
         # --- Layout principal ---
         main_layout = QVBoxLayout()
@@ -244,18 +297,16 @@ class ConsultWindow(QMainWindow):
         header_layout.setContentsMargins(0, 5, 0, 15)
 
         icon_label = QLabel()
-        icon_pixmap = QPixmap("utilities/resources/imgs/ico/IconApp.ico").scaled(
-            40, 40, Qt.KeepAspectRatio, Qt.SmoothTransformation
-        )
+        icon_pixmap = QPixmap("utilities/resources/imgs/ico/IconApp.ico").scaled(40, 40, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         icon_label.setPixmap(icon_pixmap)
 
         title_label = QLabel("Consulta de Estudiantes")
         title_label.setStyleSheet("""
-            QLabel {
-                color: white;
-                font-size: 22px;
-                font-weight: bold;
-            }
+        QLabel {
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+        }
         """)
 
         header_layout.addStretch()
@@ -271,38 +322,38 @@ class ConsultWindow(QMainWindow):
         self.search_input = QLineEdit(self)
         self.search_input.setPlaceholderText("🔍 Buscar por cédula escolar...")
         self.search_input.setStyleSheet("""
-            QLineEdit {
-                padding: 8px;
-                border: 1px solid #ccc;
-                border-radius: 8px;
-                font-size: 14px;
-                background: rgba(255,255,255,0.6); /* Más translúcido */
-                color: black;
-            }
+        QLineEdit {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+            background: rgba(255,255,255,0.6); /* Más translúcido */
+            color: black;
+        }
         """)
         # ComboBox para filtrar por turno
         self.turno_combo = QComboBox(self)
         self.turno_combo.addItems(["Todos", "Mañana", "Tarde"])
         self.turno_combo.setStyleSheet("""
-            QComboBox {
-                padding: 6px;
-                border-radius: 8px;
-                font-size: 14px;
-                background: rgba(255,255,255,0.7);
-                color: black;
-            }
+        QComboBox {
+            padding: 6px;
+            border-radius: 8px;
+            font-size: 14px;
+            background: rgba(255,255,255,0.7);
+            color: black;
+        }
         """)
         self.turno_combo.currentIndexChanged.connect(self.filtrar_por_turno)
 
         self.search_button = QPushButton("Buscar", self)
         self.search_button.setStyleSheet(self.button_style())
         self.search_button.clicked.connect(self.bpCI)
-        
+
         # Botón de actualizar
         self.refresh_button = QPushButton("Actualizar", self)
         self.refresh_button.setStyleSheet(self.button_style())
         self.refresh_button.clicked.connect(self.actualizar_datos)
-        
+
         buscador_layout.addWidget(self.search_input)
         buscador_layout.addWidget(self.turno_combo)
         buscador_layout.addWidget(self.search_button)
@@ -312,25 +363,25 @@ class ConsultWindow(QMainWindow):
         # --- Tabla con texto negro ---
         self.table_view = QTableView(self)
         self.table_view.setStyleSheet("""
-            QTableView {
-                background: rgba(255,255,255,0.50); /* Más translúcido */
-                border: 1px solid #ccc;
-                border-radius: 8px;
-                gridline-color: #ccc;
-                font-size: 13px;
-                color: black;  /* TEXTO NEGRO */
-            }
-            QHeaderView::section {
-                background: #0c3f67;
-                color: white;
-                padding: 5px;
-                border: none;
-                font-weight: bold;
-            }
-            QTableView::item:selected {
-                background: #0d7acf;
-                color: white;
-            }
+        QTableView {
+            background: rgba(255,255,255,0.50); /* Más translúcido */
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            gridline-color: #ccc;
+            font-size: 13px;
+            color: black;  /* TEXTO NEGRO */
+        }
+        QHeaderView::section {
+            background: #0c3f67;
+            color: white;
+            padding: 5px;
+            border: none;
+            font-weight: bold;
+        }
+        QTableView::item:selected {
+            background: #0d7acf;
+            color: white;
+        }
         """)
         main_layout.addWidget(self.table_view)
 
@@ -347,7 +398,7 @@ class ConsultWindow(QMainWindow):
         self.modificar = QPushButton("Modificar", self)
         self.modificar.setStyleSheet(self.button_style())
         self.modificar.clicked.connect(self.modificarRegistro)  
-        
+
         self.eliminar = QPushButton("Eliminar", self)
         self.eliminar.setStyleSheet(self.button_style())
         self.eliminar.clicked.connect(self.eliminarRegistro)  # Por implementar
@@ -383,16 +434,16 @@ class ConsultWindow(QMainWindow):
 
     def button_style(self):
         return """
-            QPushButton {
-                background-color: #0c3f67;
-                color: white;
-                border-radius: 8px;
-                padding: 8px 16px;
-                font-size: 14px;
-            }
-            QPushButton:hover {
-                background-color: #0d7acf;
-            }
+        QPushButton {
+            background-color: #0c3f67;
+            color: white;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+        QPushButton:hover {
+            background-color: #0d7acf;
+        }
         """
 
     def filtrar_por_turno(self):
@@ -566,11 +617,13 @@ class ConsultWindow(QMainWindow):
         cedula = str(cedula).strip()
 
         # Mensaje de confirmación
-        reply = QMessageBox.question(self, 'Confirmar Eliminación',
-                                     f"¿Está seguro de que desea eliminar el registro del estudiante:\n\n"
-                                     f"<b>{nombre} {apellido}</b> (C.E: {cedula})?\n\n"
-                                     "Esta acción también eliminará los datos del representante, padre y madre asociados y no se puede deshacer.",
-                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        reply = QMessageBox.question(
+        self, 'Confirmar Eliminación',
+        f"¿Está seguro de que desea eliminar el registro del estudiante:\n\n"
+        f"<b>{nombre} {apellido}</b> (C.E: {cedula})?\n\n"
+        "Esta acción también eliminará los datos del representante, padre y madre asociados y no se puede deshacer.",
+        QMessageBox.Yes | QMessageBox.No, QMessageBox.No
+        )
 
         if reply != QMessageBox.Yes:
             return
@@ -605,8 +658,7 @@ class ImagenGrandeDialog(QDialog):
         label.setPixmap(pixmap.scaled(550, 550, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         layout.addWidget(label)
         self.setLayout(layout)
-        
-        
+
 #  <==========================>
 #     Ventana Ver Detalles
 #  <==========================>
@@ -616,63 +668,63 @@ class VentanaTodos(QDialog):
         super().__init__(parent)
         self.bg_image = QPixmap("utilities/resources/imgs/bg/CsltBg.png")
         self.setStyleSheet("""
-            QDialog {
-                background-color: #0c3f67; /* Fallback color */
-            }
-            QGroupBox {
-                background: rgba(0, 0, 0, 0.85 ); /* Fondo negro más oscuro y translúcido */
-                border: 1px solid #0d7acf;
-                border-radius: 8px;
-                margin-top: 10px;
-                font-weight: bold;
-                padding-top: 25px; /* Espacio entre el título y el contenido */
-            }
-            QGroupBox::title {
-                color: white;
-                font-weight: bold;
-                font-size: 16px;
-                font-family: 'Segoe UI', Arial, sans-serif;
-                subcontrol-origin: margin;
-                subcontrol-position: top left;
-                padding: 4px 10px;
-                background-color: #1a237e;
-                border-top-left-radius: 8px;
-                border-bottom-right-radius: 8px;
-            }
-            QLabel {
-                color: #e0e0e0; /* Un blanco más suave */
-                font-size: 14px;
-                font-weight: bold;
-                background: transparent;
-            }
-            QLabel#valor {
-                font-weight: bold;
-                color: #ffffff;
-            }
-            QLabel#foto {
-                border: 2px solid #c0d0e0;
-                border-radius: 4px;
-                background-color: transparent;
-            }
-            QLabel#titulo_principal {
-                font-family: 'Georgia', serif;
-                font-size: 28px;
-                font-weight: bold;
-                color: #fff;
-                padding: 10px;
-            }
-            QPushButton {
-                background-color: #0c3f67;
-                color: white;
-                border-radius: 8px;
-                padding: 6px 12px;
-                font-size: 14px;
-            }
+        QDialog {
+            background-color: #0c3f67; /* Fallback color */
+        }
+        QGroupBox {
+            background: rgba(0, 0, 0, 0.85 ); /* Fondo negro más oscuro y translúcido */
+            border: 1px solid #0d7acf;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-weight: bold;
+            padding-top: 25px; /* Espacio entre el título y el contenido */
+        }
+        QGroupBox::title {
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            subcontrol-origin: margin;
+            subcontrol-position: top left;
+            padding: 4px 10px;
+            background-color: #1a237e;
+            border-top-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+        QLabel {
+            color: #e0e0e0; /* Un blanco más suave */
+            font-size: 14px;
+            font-weight: bold;
+            background: transparent;
+        }
+        QLabel#valor {
+            font-weight: bold;
+            color: #ffffff;
+        }
+        QLabel#foto {
+            border: 2px solid #c0d0e0;
+            border-radius: 4px;
+            background-color: transparent;
+        }
+        QLabel#titulo_principal {
+            font-family: 'Georgia', serif;
+            font-size: 28px;
+            font-weight: bold;
+            color: #fff;
+            padding: 10px;
+        }
+        QPushButton {
+            background-color: #0c3f67;
+            color: white;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 14px;
+        }
         """)
-        
+
         # Obtener todos los datos usando el método mejorado
         self.datos = database.obtener_datos_por_cedula(cedula)
-        
+
         nombre_estudiante = self.datos.get('NombreS', 'Desconocido') if self.datos else 'Desconocido'
         self.setWindowTitle(f"Detalles Completos de: {nombre_estudiante}")
         self.setWindowIcon(QIcon("utilities/resources/imgs/ico/IconApp.ico"))
@@ -684,7 +736,7 @@ class VentanaTodos(QDialog):
         self.fullscreen_button.clicked.connect(self.toggle_fullscreen)
         top_layout.addStretch()
         top_layout.addWidget(self.fullscreen_button, alignment=Qt.AlignTop | Qt.AlignRight)
-        
+
         # Layout principal y área de scroll
         main_layout = QVBoxLayout(self)
         main_layout.addLayout(top_layout)
@@ -737,7 +789,7 @@ class VentanaTodos(QDialog):
     def crear_campo(self, layout, etiqueta, valor_key, datos, es_imagen=False):
         """Función auxiliar para crear un campo de etiqueta y valor."""
         valor_raw = datos.get(valor_key)
-        
+
         # Si el valor es None (no existe en la DB) o es la cadena "none", mostrar "N/A"
         if valor_raw is None or str(valor_raw).strip().lower() == 'none':
             valor = 'N/A'
@@ -766,9 +818,9 @@ class VentanaTodos(QDialog):
     def crear_seccion_estudiante(self, parent_layout, datos):
         group_box = QGroupBox("Datos del Estudiante")
         layout = QHBoxLayout(group_box)
-        
+
         form_layout = QFormLayout() # Layout para los campos de texto
-        
+
         estudiante_keys = [
             ('ID', 'IDEST'), ('Nombre', 'NombreS'), ('Apellido', 'apellido'), ('Cédula Escolar', 'cedulaEscolar'),
             ('Edad', 'edad'), ('Género', 'genero'), ('Fecha Nacimiento', 'FN'), ('Lateralidad', 'lateralidad'),
@@ -794,10 +846,10 @@ class VentanaTodos(QDialog):
 
         # Foto del Estudiante
         self.crear_campo_imagen(fotos_layout, "Foto del Estudiante", 'estIMG', datos)
-        
+
         # Cartón de Vacunas
         self.crear_campo_imagen(fotos_layout, "Cartón de Vacunas", 'cartonVacunas', datos)
-        
+
         layout.addLayout(form_layout, 3)
         layout.addLayout(fotos_layout, 1)
         parent_layout.addWidget(group_box)
@@ -808,13 +860,13 @@ class VentanaTodos(QDialog):
         titulo_label = QLabel(titulo) 
         titulo_label.setStyleSheet("font-weight: bold; color: white; font-size: 14px; margin-top: 10px;")
         titulo_label.setAlignment(Qt.AlignCenter)
-        
+
         # Contenedor de la imagen
         foto_label = QLabel()
         foto_label.setObjectName("foto")
         foto_label.setFixedSize(150, 150)
         foto_label.setAlignment(Qt.AlignCenter)
-        
+
         foto_data = datos.get(clave_datos)
         if foto_data:
             pixmap = QPixmap()
@@ -822,7 +874,7 @@ class VentanaTodos(QDialog):
             foto_label.setPixmap(pixmap.scaled(150, 150, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         else:
             foto_label.setText("Sin Imagen")
-        
+
         layout.addWidget(titulo_label)
         layout.addWidget(foto_label)
 
@@ -880,5 +932,5 @@ class VentanaTodos(QDialog):
         ]
         for etiqueta, clave in madre_keys:
             self.crear_campo(form_layout, etiqueta, clave, datos)
-            
+
         parent_layout.addWidget(group_box)

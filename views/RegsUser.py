@@ -1,12 +1,9 @@
-from PySide6.QtWidgets import (
-    QLineEdit, QPushButton, QMainWindow, QVBoxLayout, QMessageBox, QWidget, QLabel, QGridLayout
-)
+from PySide6.QtWidgets import (QLineEdit, QPushButton, QMainWindow, QVBoxLayout, QMessageBox, QWidget, QLabel, QGridLayout)
 from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtCore import Qt
 
 # Importar tu clase de conexión
 from services.Connection import database
-
 
 class RgtrUser(QMainWindow):
     def __init__(self):
@@ -151,4 +148,3 @@ class RgtrUser(QMainWindow):
                 QMessageBox.warning(self, "Error", "Ese usuario ya existe.")
             else:
                 QMessageBox.critical(self, "Error", f"No se pudo registrar el usuario:\n{e}")
-

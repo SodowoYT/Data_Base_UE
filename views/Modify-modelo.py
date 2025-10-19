@@ -5,8 +5,8 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap, QPainter, QIcon
 from PySide6.QtWidgets import QDateEdit
 from PySide6.QtCore import QDate
-import sqlite3
 
+import sqlite3
 
 class BgWidget(QWidget):
     def __init__(self, image_path):
@@ -47,23 +47,23 @@ class ModifyData(QDialog):
         data = [row for row in data if str(row[3]).strip() == str(cedula)]
 
         headers = [
-            "ID", "Nombre", "Apellido", "Cédula Escolar", "Edad", "Género", "Fecha Nac.",
-            "Lateralidad", "Nacionalidad", "Estado", "Municipio", "Dirección", "Punto Ref.",
-            "Altura", "Peso", "Zapatos", "Camisa", "Pantalón", "Hermanos", "Autorizado Retiro",
-            "Alergias", "Dificultad", "Detalle Dificultad", "Correo", "Teléfono", "Vacunas",
-            "Tipo Sangre", "Examen Heces"
+        "ID", "Nombre", "Apellido", "Cédula Escolar", "Edad", "Género", "Fecha Nac.",
+        "Lateralidad", "Nacionalidad", "Estado", "Municipio", "Dirección", "Punto Ref.",
+        "Altura", "Peso", "Zapatos", "Camisa", "Pantalón", "Hermanos", "Autorizado Retiro",
+        "Alergias", "Dificultad", "Detalle Dificultad", "Correo", "Teléfono", "Vacunas",
+        "Tipo Sangre", "Examen Heces"
         ]
 
         # Fondo oscuro y texto blanco en toda la ventana
         self.setStyleSheet("""
-            QWidget {
-                background-color: #0c3f67;
-                color: white;
-                font-size: 14px;
-            }
-            QLabel {
-                color: white;
-            }
+        QWidget {
+            background-color: #0c3f67;
+            color: white;
+            font-size: 14px;
+        }
+        QLabel {
+            color: white;
+        }
         """)
 
         for row in data:

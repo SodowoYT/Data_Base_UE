@@ -4,7 +4,9 @@ from PySide6.QtGui import QPixmap, QIcon
 from PySide6.QtCore import Qt
 import shutil
 import os
+
 from views.RegsUser import RgtrUser
+
 class Options(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -89,18 +91,18 @@ class Options(QMainWindow):
 
         # Establecer estilos para los botones
         self.Option1.setStyleSheet("""
-QPushButton {
-    background-color: #0c3f67;
-    color: white;
-    border-radius: 15px;
-    padding: 6px 0px;
-    font-size: 15px;
-    min-height: 28px;
-}
-QPushButton:hover {
-    background-color: #14056d;
-}
-""")
+        QPushButton {
+            background-color: #0c3f67;
+            color: white;
+            border-radius: 15px;
+            padding: 6px 0px;
+            font-size: 15px;
+        min-height: 28px;
+        }
+        QPushButton:hover {
+            background-color: #14056d;
+        }
+        """)
         self.Option2.setStyleSheet(self.Option1.styleSheet())
         self.Option3.setStyleSheet(self.Option1.styleSheet())
 

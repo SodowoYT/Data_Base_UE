@@ -47,21 +47,21 @@ class CreditosWindow(QMainWindow):
 
         # Contenido de Ventana Creditos
         autores = QLabel("""
-Desarrollado por:
+        Desarrollado por:
 
-• Dalvin Ramirez (Desarrollador principal) (Diseñador de UI/UX)
-• Aliribet Gonzalez (Diseñadora Gráfica y Colaboradora)
-• Jose Mora (Documentación y Colaborador)
-• Genesis Cordero (Tester y Colaboradora)
-• Tiffany Molero (Documentación Colaboradora)
-• Auditoría Recibida por: Bill Anthony Nino Riera (Guia de Pyside6)
+        • Dalvin Ramirez (Desarrollador principal) (Diseñador de UI/UX)
+        • Aliribet Gonzalez (Diseñadora Gráfica y Colaboradora)
+        • Jose Mora (Documentación y Colaborador)
+        • Genesis Cordero (Tester y Colaboradora)
+        • Tiffany Molero (Documentación Colaboradora)
+        • Auditoría Recibida por: Bill Anthony Nino Riera (Guia de Pyside6)
 
-• Agradecimientos especiales a todos los que contribuyeron al proyecto.
-• A la comunidad de código abierto por su inspiración y recursos.
+        • Agradecimientos especiales a todos los que contribuyeron al proyecto.
+        • A la comunidad de código abierto por su inspiración y recursos.
 
-• Desarrollado por Estudiantes de la Universidad Experimental Rafael María Baralt (UNERMB) de Venezuela.
+        • Desarrollado por Estudiantes de la Universidad Experimental Rafael María Baralt (UNERMB) de Venezuela.
 
-Gracias por usar nuestra aplicación.
+        Gracias por usar nuestra aplicación.
         """)
 
         # Ajustar el texto de los autores

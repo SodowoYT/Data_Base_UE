@@ -5,6 +5,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap, QPainter, QIcon
 from PySide6.QtWidgets import QDateEdit
 from PySide6.QtCore import QDate
+
 import sqlite3
 
 # Clase para el widget de fondo
@@ -40,68 +41,65 @@ class ModifyData(QMainWindow):
         # Establecer imagen de fondo
         ## Establecer el estilo de la ventana
         self.setStyleSheet("""
-            .tituloz {
-                color: white;
-                font-family: Monotype Corsiva, Times, Serif; 
-                font-size: 28px;
-                font-weight: bold;
-                padding: 8px 24px 8px 16px;
-                border-top-left-radius: 10px;
-                border-bottom-left-radius: 10px;
-                border-top-right-radius: 0;
-                border-bottom-right-radius: 0;
-                background: qlineargradient(
-                    x1:0, y1:0, x2:0.85, y2:0,
-                    stop:0 #14056d, stop:0.85 #0c3f67, stop:0.85 #0d7acf, stop:1 transparent
-                );
-                margin-bottom: 8px;
-            }
-            .titulod {
-                color: white;
-                font-family: Monotype Corsiva, Times, Serif; 
-                font-size: 28px;
-                font-weight: bold;
-                padding: 8px 24px 8px 16px;
-                border-top-right-radius: 10px;
-                border-bottom-right-radius: 10px;
-                border-top-left-radius: 0;
-                border-bottom-left-radius: 0;
-                background: qlineargradient(
-                    x1:1, y1:0, x2:0.15, y2:0,
-                    stop:0 #14056d, stop:0.85 #0c3f67, stop:0.85 #0d7acf, stop:1 transparent
-                );
-                margin-bottom: 8px;
-            }
-            QGroupBox {
-                border: 1px solid white;
-                border-radius: 8px;
-                margin-top: 10px;
-                background: transparent;
-            }
-            QGroupBox::title {
-                color: white;
-                font-weight: bold;
-                font-size: 15px;
-                subcontrol-origin: margin;
-                subcontrol-position: top left;
-            }
-            
-            QRadioButton {
-                color: white;
-                font-weight: bold;
-            }
-            
-            QPushButton {
-                background-color: #0c3f67;
-                color: white;
-                border-radius: 15px;
-                padding: 8px 0px;
-                font-size: 16px;
-            }
-            QPushButton:hover {
-                background-color:  #14056d;
-            }
-            
+        .tituloz {
+            color: white;
+            font-family: Monotype Corsiva, Times, Serif; 
+            font-size: 28px;
+            font-weight: bold;
+            padding: 8px 24px 8px 16px;
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            background: qlineargradient(
+                x1:0, y1:0, x2:0.85, y2:0,
+                stop:0 #14056d, stop:0.85 #0c3f67, stop:0.85 #0d7acf, stop:1 transparent
+            );
+            margin-bottom: 8px;
+        }
+        .titulod {
+            color: white;
+            font-family: Monotype Corsiva, Times, Serif; 
+            font-size: 28px;
+            font-weight: bold;
+            padding: 8px 24px 8px 16px;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            background: qlineargradient(
+                x1:1, y1:0, x2:0.15, y2:0,
+                stop:0 #14056d, stop:0.85 #0c3f67, stop:0.85 #0d7acf, stop:1 transparent
+            );
+            margin-bottom: 8px;
+        }
+        QGroupBox {
+            border: 1px solid white;
+            border-radius: 8px;
+            margin-top: 10px;
+            background: transparent;
+        }
+        QGroupBox::title {
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            subcontrol-origin: margin;
+            subcontrol-position: top left;
+        }
+        QRadioButton {
+            color: white;
+            font-weight: bold;
+        }
+        QPushButton {
+            background-color: #0c3f67;
+            color: white;
+            border-radius: 15px;
+            padding: 8px 0px;
+            font-size: 16px;
+        }
+        QPushButton:hover {
+            background-color:  #14056d;
+        }
         """)
 
 
@@ -126,16 +124,16 @@ class ModifyData(QMainWindow):
         self.title_label1 = QLabel("Modificar Datos del Estudiante", self.page1)
         self.title_label1.setAlignment(Qt.AlignCenter)
         self.title_label1.setStyleSheet("""
-            font-family: Monotype Corsiva, Times, Serif;
-            font-size: 42px;
-            font-weight: bold;
-            color: #fff;
-            background: rgba(12, 63, 103, 0.82);
-            border-radius: 18px;
-            padding: 18px 32px 18px 32px;
-            margin-bottom: 16px;
-            border: 2px solid #0d7acf;
-            text-shadow: 2px 2px 8px #0c3f67, 0 2px 12px #000;
+        font-family: Monotype Corsiva, Times, Serif;
+        font-size: 42px;
+        font-weight: bold;
+        color: #fff;
+        background: rgba(12, 63, 103, 0.82);
+        border-radius: 18px;
+        padding: 18px 32px 18px 32px;
+        margin-bottom: 16px;
+        border: 2px solid #0d7acf;
+        text-shadow: 2px 2px 8px #0c3f67, 0 2px 12px #000;
         """)
         self.layoutP1.addWidget(self.title_label1, 0, 0, 1, 3, Qt.AlignCenter)  # Ocupa 3 columnas
 
@@ -264,7 +262,7 @@ class ModifyData(QMainWindow):
         self.stType_button_group.addButton(self.QrBTra)
         self.grid1.addWidget(self.stTypebtn, 4, 2, Qt.AlignBottom | Qt.AlignHCenter)
         self.layoutP1.addLayout(self.grid1, 1, 0, Qt.AlignTop)
-        
+
         # Variable para la imagen del Estudiante
         self.EIMG = None
         self.PushbuttonEIMG = QPushButton("Subir Imagen de Estudiante", self)
@@ -275,7 +273,7 @@ class ModifyData(QMainWindow):
         self.estudianteIMG.setFixedSize(150, 150)
         self.estudianteIMG.setScaledContents(True)
         self.grid1.addWidget(self.estudianteIMG, 4, 1, Qt.AlignCenter)
-        
+
         # Fila 2: Título de Datos Médicos
         self.grid2 = QGridLayout()
         self.ala = QLineEdit(self)
@@ -296,19 +294,18 @@ class ModifyData(QMainWindow):
         self.tds = QLineEdit(self)
         self.tds.setPlaceholderText("Tipo de Sangre")
         self.grid2.addWidget(self.tds, 1, 1)
-        
+
         # Variable para la imagen de la vacuna
         self.vacunaIMGpath = None
         self.PushbuttonVacuna = QPushButton("Subir Imagen de Vacuna", self)
         self.PushbuttonVacuna.clicked.connect(self.upload_vacuna_image)        
         self.grid2.addWidget(self.PushbuttonVacuna, 4, 1 , Qt.AlignTop)
-        
+
         self.vacunaIMG = QLabel(self)
         self.vacunaIMG.setFixedSize(130, 130)
         self.vacunaIMG.setScaledContents(True)
         self.grid2.addWidget(self.vacunaIMG, 4, 0, Qt.AlignRight)
 
-        
         self.exdh = QLineEdit(self)
         self.exdh.setPlaceholderText("Examen de Heces")
         self.grid2.addWidget(self.exdh, 3, 1)
@@ -383,7 +380,7 @@ class ModifyData(QMainWindow):
         self.pdr.setPlaceholderText("Punto de Referencia")
         self.grid4.addWidget(self.pdr, 1, 0)
         self.layoutP1.addLayout(self.grid4, 3, 2, Qt.AlignTop)
-        
+
         # Fila 9: Titulo Observaciones
         self.olabel = QLabel("Observaciones", self)
         self.olabel.setProperty("class", "titulod")
@@ -391,7 +388,7 @@ class ModifyData(QMainWindow):
         self.olabel.setFixedSize(300, 45)
         self.olabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.layoutP1.addWidget(self.olabel, 4, 2, Qt.AlignRight)
-        
+
         # Fila 10: Grid de Observaciones
         self.grid15 = QGridLayout()
         self.obs1 = QTextEdit(self)
@@ -413,7 +410,6 @@ class ModifyData(QMainWindow):
         self.page1.setLayout(self.layoutP1)
         self.Sc_Widget.addWidget(self.page1)
 
-
         # Crear la segunda página
         self.page2 = QWidget()
         self.layoutP2 = QGridLayout()
@@ -422,20 +418,19 @@ class ModifyData(QMainWindow):
         self.title_label2 = QLabel("Datos del Representante", self.page2)
         self.title_label2.setAlignment(Qt.AlignCenter)
         self.title_label2.setStyleSheet("""
-            font-family: Monotype Corsiva, Times, Serif;
-            font-size: 42px;
-            font-weight: bold;
-            color: #fff;
-            background: rgba(12, 63, 103, 0.82);
-            border-radius: 18px;
-            padding: 18px 32px 18px 32px;
-            margin-bottom: 16px;
-            border: 2px solid #0d7acf;
-            text-shadow: 2px 2px 8px #0c3f67, 0 2px 12px #000;
+        font-family: Monotype Corsiva, Times, Serif;
+        font-size: 42px;
+        font-weight: bold;
+        color: #fff;
+        background: rgba(12, 63, 103, 0.82);
+        border-radius: 18px;
+        padding: 18px 32px 18px 32px;
+        margin-bottom: 16px;
+        border: 2px solid #0d7acf;
+        text-shadow: 2px 2px 8px #0c3f67, 0 2px 12px #000;
         """)
         self.layoutP2.addWidget(self.title_label2, 0, 0, 1, 3, Qt.AlignCenter)  # Ocupa 3 columnas
 
-        
         # Fila 0: Títulos Tabla Representante
         self.Rplabel = QLabel("Datos Personales", self)
         self.Rplabel.setProperty("class", "tituloz")
@@ -448,7 +443,7 @@ class ModifyData(QMainWindow):
         self.dclabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.layoutP2.addWidget(self.Rplabel, 0, 0, Qt.AlignLeft)
         self.layoutP2.addWidget(self.dclabel, 0, 2, Qt.AlignRight)
-        
+
         # Fila 1: Grid 6 Datos Personales Representante
         self.grid6 = QGridLayout()
         self.nameR = QLineEdit(self)
@@ -494,14 +489,14 @@ class ModifyData(QMainWindow):
         self.MaritalStatus.setLayout(self.QvbMaritalStatus)
         self.grid6.addWidget(self.MaritalStatus, 3, 0)
         # Final del Boton Marital Status
-        
+
         self.Affi = QLineEdit(self)
         self.Affi.setPlaceholderText("Afinidad")
         self.grid6.addWidget(self.Affi, 4, 1)
         self.Rif = QLineEdit(self)
         self.Rif.setPlaceholderText("RIF")
         self.grid6.addWidget(self.Rif, 4, 0)
-        
+
         # Boton Planilla Sige
         self.Sheet = QGroupBox("Planilla Sige", self)
         self.QrBSi = QRadioButton("Si", self)
@@ -514,7 +509,7 @@ class ModifyData(QMainWindow):
         self.grid6.addWidget(self.Sheet, 3, 1)
         self.layoutP2.addLayout(self.grid6, 1, 0, Qt.AlignTop)
         # Final del Boton Planilla Sige
-        
+
         # Fila 2: Grid 7 Datos de Contacto Representante
         self.grid7 = QGridLayout()
         self.PhoneM = QLineEdit(self)
@@ -542,7 +537,7 @@ class ModifyData(QMainWindow):
         self.Serial.setPlaceholderText("Serial de la Patria")
         self.grid7.addWidget(self.Serial, 4, 1)
         self.layoutP2.addLayout(self.grid7, 1, 2, Qt.AlignTop)
-        
+
         # Fila 3: Grid 8 Datos de Profesión
         ## Titulo Grid 8
         self.Rplabel = QLabel("Datos de Profesión")
@@ -562,48 +557,47 @@ class ModifyData(QMainWindow):
         self.Epdt.setPlaceholderText("Empresa donde Trabaja")
         self.grid8.addWidget(self.Epdt, 2, 0)
         self.layoutP2.addLayout(self.grid8, 3, 0, Qt.AlignTop)
-        
-        
+
         # Boton de Back a la Pagina 1
         self.backBt = QPushButton("Pagina Anterior")
         self.backBt.clicked.connect(self.RegisterPage1)
         self.layoutP2.addWidget(self.backBt, 5, 1)  # Agrega el botón después de crearlo
         self.page2.setLayout(self.layoutP2)
-        
+
         # Boton de Next a la Pagina 2
         self.NextP3 = QPushButton("Siguiente Pagina")
         self.NextP3.clicked.connect(self.RegisterPage3)
         self.layoutP2.addWidget(self.NextP3, 4, 1)
         self.page2.setLayout(self.layoutP2)
-        
+
         # Espaciador entre columnas 
         self.layoutP2.addItem(QSpacerItem(200, 20, QSizePolicy.Minimum, QSizePolicy.Expanding), 0, 1, 5, 1)
-        
+
         # Muestra los Items en la Ventana 2
         self.page2.setLayout(self.layoutP2)
         self.Sc_Widget.addWidget(self.page2)
-        
+
         # Crear La Tercera Pagina
         self.page3 = QWidget()
         self.layoutP3 = QGridLayout()
-        
+
         # Título centrado 
         self.title_label3 = QLabel("Datos del Padre", self.page3)
         self.title_label3.setAlignment(Qt.AlignCenter)
         self.title_label3.setStyleSheet("""
-            font-family: Monotype Corsiva, Times, Serif;
-            font-size: 42px;
-            font-weight: bold;
-            color: #fff;
-            background: rgba(12, 63, 103, 0.82);
-            border-radius: 18px;
-            padding: 18px 32px 18px 32px;
-            margin-bottom: 16px;
-            border: 2px solid #0d7acf;
-            text-shadow: 2px 2px 8px #0c3f67, 0 2px 12px #000;
+        font-family: Monotype Corsiva, Times, Serif;
+        font-size: 42px;
+        font-weight: bold;
+        color: #fff;
+        background: rgba(12, 63, 103, 0.82);
+        border-radius: 18px;
+        padding: 18px 32px 18px 32px;
+        margin-bottom: 16px;
+        border: 2px solid #0d7acf;
+        text-shadow: 2px 2px 8px #0c3f67, 0 2px 12px #000;
         """)
         self.layoutP3.addWidget(self.title_label3, 0, 0, 1, 3, Qt.AlignCenter)  # Ocupa 3 columnas
-        
+
         # Fila 0: Titulos Tabla Datos del Padre.
         self.dpLabel = QLabel("Datos Personales", self)
         self.dpLabel.setProperty("class", "tituloz")
@@ -616,7 +610,7 @@ class ModifyData(QMainWindow):
         self.dclabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.layoutP3.addWidget(self.dpLabel, 0, 0, Qt.AlignLeft)
         self.layoutP3.addWidget(self.dclabel, 0, 2, Qt.AlignRight)
-        
+
         # Fila 1: Grid 9 Datos Personales
         self.grid9 = QGridLayout() #
         self.nameP = QLineEdit(self)
@@ -648,12 +642,12 @@ class ModifyData(QMainWindow):
         self.lwtc.setLayout(self.QvLwtc)
         self.grid9.addWidget(self.lwtc, 3, 0)
         # Final del Boton Vive Con el Niño #
-        
+
         self.Cnn = QLineEdit(self)
         self.Cnn.setPlaceholderText("¿Causa por la que no vive con el Niño?")
         self.grid9.addWidget(self.Cnn, 4, 0)
         self.layoutP3.addLayout(self.grid9, 1, 0, Qt.AlignLeft)
-        
+
         # Fila 2: Grid 10 Datos de Contacto
         self.grid10 = QGridLayout()
         self.PhoneMp = QLineEdit(self)
@@ -663,14 +657,14 @@ class ModifyData(QMainWindow):
         self.Dcp.setPlaceholderText("Dirección")
         self.grid10.addWidget(self.Dcp, 2, 0)
         self.layoutP3.addLayout(self.grid10, 1, 2, Qt.AlignTop)
-        
+
         # Fila 3: Titulo Datos de Profesion
         self.Plabel = QLabel("Datos de Profesión")
         self.Plabel.setProperty("class", "tituloz")
         self.Plabel.setFixedSize(300, 45)
         self.Plabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.layoutP3.addWidget(self.Plabel, 2, 0, Qt.AlignLeft)
-        
+
         # Fila 3: Grid 11 Datos de Profesion
         self.grid11 = QGridLayout() #
         self.EmpdtP = QLineEdit(self)
@@ -680,45 +674,44 @@ class ModifyData(QMainWindow):
         self.TedP.setPlaceholderText("Tipo de Empleo que Desempeña")
         self.grid11.addWidget(self.TedP, 2, 0)
         self.layoutP3.addLayout(self.grid11, 3, 0, Qt.AlignTop) #
-        
+
         # Boton de Back a la Pagina 2
         self.backP2 = QPushButton("Pagina Anterior")
         self.backP2.clicked.connect(self.RegisterPage2)
         self.layoutP3.addWidget(self.backP2, 6, 1)
         self.page3.setLayout(self.layoutP3)
-        
+
         # Boton de Next a la Pagina 4
         self.NextP4 = QPushButton("Siguiente Pagina")
         self.NextP4.clicked.connect(self.RegisterPage4)
         self.layoutP3.addWidget(self.NextP4, 5, 1)
         self.page3.setLayout(self.layoutP3)
-        
+
         # Espaciador entre columnas
         self.layoutP3.addItem(QSpacerItem(200, 20, QSizePolicy.Minimum, QSizePolicy.Expanding), 0, 1, 6, 1)
-        
+
         # Muestra los Items en la Ventana 3
         self.page3.setLayout(self.layoutP3)
         self.Sc_Widget.addWidget(self.page3)
-        
-        
+
         # Crear La Cuarta Pagina
         self.page4 = QWidget()
         self.layoutP4 = QGridLayout()
-        
+
         # Título centrado
         self.title_label4 = QLabel("Datos de Madre", self.page4)
         self.title_label4.setAlignment(Qt.AlignCenter)
         self.title_label4.setStyleSheet("""
-            font-family: Monotype Corsiva, Times, Serif;
-            font-size: 42px;
-            font-weight: bold;
-            color: #fff;
-            background: rgba(12, 63, 103, 0.82);
-            border-radius: 18px;
-            padding: 18px 32px 18px 32px;
-            margin-bottom: 16px;
-            border: 2px solid #0d7acf;
-            text-shadow: 2px 2px 8px #0c3f67, 0 2px 12px #000;
+        font-family: Monotype Corsiva, Times, Serif;
+        font-size: 42px;
+        font-weight: bold;
+        color: #fff;
+        background: rgba(12, 63, 103, 0.82);
+        border-radius: 18px;
+        padding: 18px 32px 18px 32px;
+        margin-bottom: 16px;
+        border: 2px solid #0d7acf;
+        text-shadow: 2px 2px 8px #0c3f67, 0 2px 12px #000;
         """)
         self.layoutP4.addWidget(self.title_label4, 0, 0, 1, 3, Qt.AlignCenter)  # Ocupa 3 columnas
         # Fila 0: Titutlos Tabla Datos del Madre.
@@ -733,7 +726,7 @@ class ModifyData(QMainWindow):
         self.dclabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.layoutP4.addWidget(self.dpLabel, 0, 0, Qt.AlignLeft)
         self.layoutP4.addWidget(self.dclabel, 0, 2, Qt.AlignRight)
-        
+
         # Fila 1: Grid 12 Datos Personales
         self.grid12 = QGridLayout()
         self.nameM = QLineEdit(self)
@@ -754,7 +747,6 @@ class ModifyData(QMainWindow):
         self.dateofbirthM.setDate(QDate.currentDate())
         self.grid12.addWidget(self.dateofbirthM, 2, 2)
 
-
         # Boton Vive Con el Niño
         self.lwtcM = QGroupBox("¿Vive Con el Niño?")
         self.QrMSi = QRadioButton("Si")
@@ -766,12 +758,12 @@ class ModifyData(QMainWindow):
         self.lwtcM.setLayout(self.QvLwtcM)
         self.grid12.addWidget(self.lwtcM, 3, 0)
         # Final del Boton Vive Con el Niño
-        
+
         self.CnnM = QLineEdit(self)
         self.CnnM.setPlaceholderText("¿Causa por la que no vive con el Niño?")
         self.grid12.addWidget(self.CnnM, 4, 0)
         self.layoutP4.addLayout(self.grid12, 1, 0, Qt.AlignLeft)
-        
+
         # Fila 2: Grid 13 Datos de Contacto
         self.grid13 = QGridLayout()
         self.PhoneMM = QLineEdit(self)
@@ -788,7 +780,7 @@ class ModifyData(QMainWindow):
         self.Mlabel.setFixedSize(300, 45)
         self.Mlabel.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.layoutP4.addWidget(self.Mlabel, 2, 0, Qt.AlignLeft)
-        
+
         # Fila 3: Grid 14 Datos de Profesion
         self.grid14 = QGridLayout()
         self.EmpdtM = QLineEdit(self)
@@ -798,21 +790,21 @@ class ModifyData(QMainWindow):
         self.TedM.setPlaceholderText("Tipo de Empleo que Desempeña")
         self.grid14.addWidget(self.TedM, 2, 0)
         self.layoutP4.addLayout(self.grid14, 3, 0, Qt.AlignTop)
-        
+
         # Boton de Back a la Pagina 3
         self.backP3 = QPushButton("Pagina Anterior")
         self.backP3.clicked.connect(self.RegisterPage3)
         self.layoutP4.addWidget(self.backP3, 6, 1)
         self.page4.setLayout(self.layoutP4)
-        
+
         # Boton de Registro Final
         self.registerBton = QPushButton("Guardar Cambios")
         self.registerBton.clicked.connect(self.save_changes)
         self.layoutP4.addWidget(self.registerBton, 5, 1)
-        
+
         # Espaciador entre columnas
         self.layoutP4.addItem(QSpacerItem(200, 20, QSizePolicy.Minimum, QSizePolicy.Expanding), 0, 1, 6, 1)
-        
+
         # Muestra los Items en la Ventana 3
         self.page4.setLayout(self.layoutP4)
         self.Sc_Widget.addWidget(self.page4)
@@ -821,27 +813,26 @@ class ModifyData(QMainWindow):
         if database and cedula:
             self.cargar_datos_estudiante(database, cedula)
 
-        
     # Def de Pagina 1
     ## Comando Funcion de Registro en la Pagina 1
     def RegisterPage1(self):
         self.Sc_Widget.setCurrentIndex(0)
-        
+
     # Def de Pagina 2
     ## Comando Funcion de Registro en la Pagina 2
     def RegisterPage2(self):
         self.Sc_Widget.setCurrentIndex(1)
-        
+
     # Def de Pagina 3
     ## Comando Funcion de Registro en la Pagina 3
     def RegisterPage3(self):
         self.Sc_Widget.setCurrentIndex(2)
-        
+
     # Def de Pagina 4
     ## Comando Funcion de Registro en la Pagina 4
     def RegisterPage4(self):
         self.Sc_Widget.setCurrentIndex(3)
-    
+
     # Funcion para guardar los cambios del estudiante
     def save_changes(self):
         # Inicio Pagina Estudiante Pagina 1
@@ -869,7 +860,7 @@ class ModifyData(QMainWindow):
         especificarDificultad = self.epdf.text() 
         correoElectronico = self.email.text()
         telefonoDHabitacion = self.tfh.text()
-        
+
         # Priorizar nueva imagen si existe, si no, usar la existente
         estIMG = self.estudianteIMGdata
         if self.estudianteIMGpath:
@@ -893,7 +884,7 @@ class ModifyData(QMainWindow):
         turno = self.turno_button_group.checkedButton().text() if self.turno_button_group.checkedButton() else ""
         tipoStudiante = "Regular" if self.QrBReg.isChecked() else "Repitiente" if self.QrBRep.isChecked() else "Promovido" if self.QrBPro.isChecked() else "Trasladado" if self.QrBTra.isChecked() else "none"
         # Final Pagina Estudiante Pagina 1
-        
+
         # Inicio Pagina Representante Pagina 2
         NombreR = self.nameR.text()
         ApellidoR = self.lastNR.text()
@@ -915,9 +906,9 @@ class ModifyData(QMainWindow):
         ProfesionR = self.Pfson.text()
         OcupacionR = self.Occu.text()
         EmpresaDTrabajaR = self.Epdt.text()
-        
+
         # Final Pagina Representante Pagina 2
-        
+
         # Inicio Pagina Padre Pagina 3
         NombreP = self.nameP.text()
         ApellidoP = self.lastNP.text()
@@ -931,7 +922,7 @@ class ModifyData(QMainWindow):
         TelefonoMovilP = self.PhoneMp.text()
         DireccionP = self.Dcp.text()
         # Final Pagina Padre Pagina 3
-        
+
         # Inicio Pagina Madre Pagina 4
         NombreM = self.nameM.text()
         ApellidoM = self.lastNM.text()
@@ -944,9 +935,9 @@ class ModifyData(QMainWindow):
         TipoEmpleoqDesempeñaM = self.TedM.text()
         DireccionM = self.DcpM.text()
         TelefonoMovilM = self.PhoneMM.text()
-    
+
         # Final Pagina Madre Pagina 4
-        
+
         # Validar campos
         if nombre and apellido and cedulaEscolar and edad and fechaDNacimiento and lateralidad and nacionalidad and estado and municipio and direccionActual and puntoDReferencia and altura and peso and tallaZapatos and tallaCamisa and tallaPantalon and numeroDHermanos and autorizadoPRetirarANiño and alergicoA and algunaDificultad and especificarDificultad and correoElectronico and telefonoDHabitacion and estIMG and cartonVacunas and tipoDSangre and examenDHeces and observaciones and grado and turno and tipoStudiante\
         and NombreR and ApellidoR and EdadR and CedulaR and FechaDeNacimientoR and rpstIMG and EstadoCivil and Afinidad and RifR and PlanillaSigeR and TelefonoMovilR and TelefonoHabitacionR and CorreoElectronicoR and TelefonoFamiliarR and NacionalidadR and DireccionR and CodigoPatriaR and SerialPatriaR \
@@ -976,8 +967,7 @@ class ModifyData(QMainWindow):
                 QMessageBox.critical(self, "Error", f"No se pudo guardar: {e}")
         else:
             QMessageBox.warning(self, "Campos Vacíos", "Por favor, complete todos los campos obligatorios.")
-    
-    
+
     ## Funcinamiento correcto     
     # Función para subir la imagen del estudiante
     def upload_estudiante_image(self):
@@ -998,7 +988,6 @@ class ModifyData(QMainWindow):
             self.rpstIMGpath = filepathrpst
             pixmaprpst = QPixmap(filepathrpst)
             self.rpstIMG.setPixmap(pixmaprpst.scaled(self.rpstIMG.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
-
 
     # Función para subir la imagen de la vacuna
     def upload_vacuna_image(self):
@@ -1064,6 +1053,7 @@ class ModifyData(QMainWindow):
                 self.rpstIMGdata = rpst_img_data
             else:
                 self.rpstIMGdata = None
+
             self.tds.setText(str(self.datos.get('tipoDSangre', '')))
             self.exdh.setText(str(self.datos.get('EDH', '')))
             self.email.setText(str(self.datos.get('correoElectronico', '')))
@@ -1094,13 +1084,13 @@ class ModifyData(QMainWindow):
                 if button.text().strip() == grado_db:
                     button.setChecked(True)
                     break
-            
+
             turno_db = str(self.datos.get('turno', '')).strip()
             for button in self.turno_button_group.buttons():
                 if button.text().strip() == turno_db:
                     button.setChecked(True)
                     break
-            
+
             # Cargar tipo de estudiante
             tipo_studiante_db = str(self.datos.get('tipoStudiante', '')).strip()
             if tipo_studiante_db.lower() == 'regular':
@@ -1114,7 +1104,6 @@ class ModifyData(QMainWindow):
             else:
                 self.QrBNi.setChecked(True)  # Por defecto "Nuevo Ingreso"
 
-            
             # Página 2 (Representante)
             self.nameR.setText(str(self.datos.get('nombreR', '')))
             self.lastNR.setText(str(self.datos.get('apellidoR', '')))
@@ -1137,7 +1126,7 @@ class ModifyData(QMainWindow):
             fecha_nac_r_str = self.datos.get('FN', '')
             if fecha_nac_r_str:
                 self.dateofbirthR.setDate(QDate.fromString(fecha_nac_r_str, "dd/MM/yyyy"))
-            
+
             # Configurar radio buttons del representante
             estado_civil = str(self.datos.get('EC', ''))
             if estado_civil.lower() == 'casado':
@@ -1152,7 +1141,7 @@ class ModifyData(QMainWindow):
                 self.QrBNo.setChecked(True)
             else:
                 self.QrBSi.setChecked(True)
-            
+
             # Página 3 (Padre)
             self.nameP.setText(str(self.datos.get('nombreP', '')))
             self.lastNP.setText(str(self.datos.get('apellidoP', '')))
@@ -1163,14 +1152,14 @@ class ModifyData(QMainWindow):
             self.Dcp.setText(str(self.datos.get('direccionP', '')))
             self.EmpdtP.setText(str(self.datos.get('EMDTP', '')))
             self.TedP.setText(str(self.datos.get('TEDP', '')))
-            
+
             # Configurar radio buttons del padre
             vive_con_nino = str(self.datos.get('VCNP', ''))
             if vive_con_nino.lower() == 'no':
                 self.QrPNo.setChecked(True)
             else:
                 self.QrPSi.setChecked(True)
-            
+
             fecha_nac_p_str = self.datos.get('FNP', '')
             if fecha_nac_p_str:
                 self.dateofbirthP.setDate(QDate.fromString(fecha_nac_p_str, "dd/MM/yyyy"))
@@ -1185,7 +1174,7 @@ class ModifyData(QMainWindow):
             self.DcpM.setText(str(self.datos.get('direccionM', '')))
             self.EmpdtM.setText(str(self.datos.get('EMDTM', '')))
             self.TedM.setText(str(self.datos.get('TEDM', '')))
-            
+
             # Configurar radio buttons de la madre
             vive_con_nino_m = str(self.datos.get('VCNM', ''))
             if vive_con_nino_m.lower() == 'no':
@@ -1196,6 +1185,6 @@ class ModifyData(QMainWindow):
             fecha_nac_m_str = self.datos.get('FNM', '')
             if fecha_nac_m_str:
                 self.dateofbirthM.setDate(QDate.fromString(fecha_nac_m_str, "dd/MM/yyyy"))
-                
+
         else:
             QMessageBox.warning(self, "Error", "No se encontraron datos para la cédula seleccionada.")

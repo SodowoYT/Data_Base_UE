@@ -1,14 +1,11 @@
-from PySide6.QtWidgets import (
-    QLineEdit, QPushButton, QMainWindow, QVBoxLayout, QMessageBox,
-    QWidget, QLabel, QHBoxLayout
-)
+from PySide6.QtWidgets import (QLineEdit, QPushButton, QMainWindow, QVBoxLayout, QMessageBox, QWidget, QLabel, QHBoxLayout)
 from PySide6.QtGui import QPixmap, QIcon
 from PySide6.QtCore import Qt
+
 from views.Menu import MenuWindow
 
 # Importar tu clase database de connections.py
 from services.Connection import database
-
 
 class LoginWindow(QMainWindow):
     def __init__(self):
@@ -58,16 +55,16 @@ class LoginWindow(QMainWindow):
         self.Buttonlogin = QPushButton("Login", self)
         self.Buttonlogin.clicked.connect(self.handle_login)
         self.Buttonlogin.setStyleSheet("""
-            QPushButton {
-                background-color: #0c3f67;
-                color: white;
-                border-radius: 15px;
-                padding: 8px 0px;
-                font-size: 16px;
-            }
-            QPushButton:hover {
-                background-color:  #14056d;
-            }
+        QPushButton {
+            background-color: #0c3f67;
+            color: white;
+            border-radius: 15px;
+            padding: 8px 0px;
+            font-size: 16px;
+        }
+        QPushButton:hover {
+            background-color:  #14056d;
+        }
         """)
 
         # Agregar widgets al layout derecho
