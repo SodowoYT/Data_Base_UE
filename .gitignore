@@ -12,3 +12,6 @@ wheels/
 # Ignorar test y docs cuando sea necesario
 # test/
 # docs/
+
+# Ignorar archivos de salida
+output/

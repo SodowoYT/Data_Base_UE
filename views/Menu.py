@@ -3,8 +3,6 @@ from PySide6.QtGui import QPixmap, QIcon, QFont
 from PySide6.QtCore import Qt, QTimer, QDateTime
 from PySide6.QtWidgets import QStackedLayout, QVBoxLayout as QVBoxLayout2, QHBoxLayout as QHBoxLayout2
 from services.Connection import database
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
 
 from views.Forms import FormsStudend
 from views.Consult import ConsultWindow
@@ -330,25 +328,6 @@ class MenuWindow(QMainWindow):
 
         dashboard_frame.setLayout(dashboard_layout)
         parent_layout.addWidget(dashboard_frame)
-
-    def create_turno_chart(self, turno_counts):
-        """Crea un gráfico de barras con la cantidad de niños por turno (mañana/tarde)."""
-        fig = Figure(figsize=(3, 1.2), dpi=100)
-        ax = fig.add_subplot(111)
-        labels = list(turno_counts.keys())
-        values = list(turno_counts.values())
-        bars = ax.bar(labels, values, color=['#1976D2', '#F57C00'])
-        ax.set_ylabel('Cantidad')
-        ax.set_title('Niños por Turno')
-        ax.set_ylim(0, max(values) + 2)
-        for bar in bars:
-            height = bar.get_height()
-            ax.annotate(f'{int(height)}', xy=(bar.get_x() + bar.get_width() / 2, height),
-                        xytext=(0, 3), textcoords="offset points",
-                        ha='center', va='bottom', fontsize=9, color='black')
-        fig.tight_layout()
-        canvas = FigureCanvas(fig)
-        return canvas
 
     def create_compact_stat_card(self, icon, title, count, color):
         """Crea una tarjeta compacta individual para mostrar una estadística."""
