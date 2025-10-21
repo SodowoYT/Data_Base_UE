@@ -20,7 +20,6 @@ class database:
         except Exception as e:
             print(f"Warning: no se pudo asegurar columna tipoStudiante: {e}")
 
-
     # -----------------------------
     # Creación de tablas
     # -----------------------------
@@ -217,10 +216,10 @@ class database:
 
         # Obtener datos del padre (asumiendo que hay una relación por cédula)
         conn.close()
-        
+
         # Crear diccionario con todos los datos
         datos = {}
-        
+
         # Datos del estudiante (primeros 28 campos)
         if estudiante:
             estudiante_keys = [ # Asegúrate que el orden y cantidad coincida con tu tabla
@@ -234,7 +233,7 @@ class database:
             for i, key in enumerate(estudiante_keys):
                 if i < len(estudiante):
                     datos[key] = estudiante[i]
-        
+
         # Datos del representante
         if representante:
             representante_keys = [ # Asegúrate que el orden y cantidad coincida con tu tabla
@@ -246,7 +245,7 @@ class database:
             for i, key in enumerate(representante_keys):
                 if i < len(representante):
                     datos[key] = representante[i]
-        
+
         # Datos del padre
         if padre:
             padre_keys = [ # Asegúrate que el orden y cantidad coincida con tu tabla
@@ -256,7 +255,7 @@ class database:
             for i, key in enumerate(padre_keys):
                 if i < len(padre):
                     datos[key] = padre[i]
-        
+
         # Datos de la madre
         if madre:
             madre_keys = [
@@ -266,7 +265,7 @@ class database:
             for i, key in enumerate(madre_keys):
                 if i < len(madre):
                     datos[key] = madre[i]
-        
+
         return datos
 
     # -----------------------------------
