@@ -166,7 +166,7 @@ class ModifyData(QMainWindow):
         self.QhbL.addWidget(self.QrBD)
         self.QhbL.addWidget(self.QrBI)
         self.gbl.setLayout(self.QhbL)
-        self.grid1.addWidget(self.gbl, 3, 0)
+        self.grid1.addWidget(self.gbl, 3, 0, 2, 1, Qt.AlignTop)
         self.lastNS = QLineEdit(self)
         self.lastNS.setPlaceholderText("Apellidos")
         self.grid1.addWidget(self.lastNS, 1, 1)
@@ -226,7 +226,7 @@ class ModifyData(QMainWindow):
         self.grado_button_group.addButton(self.QrBCua)
         self.grado_button_group.addButton(self.QrBQui)
         self.grado_button_group.addButton(self.QrBSex)
-        self.grid1.addWidget(self.gradobtn, 4, 0)
+        self.grid1.addWidget(self.gradobtn, 1, 4, 4, 1, Qt.AlignVCenter)
         self.turnbtn = QGroupBox("Turno", self) # Boton Turno
         self.QrBTM = QRadioButton("Turno Mañana", self)        # Radio Button Turno Mañana
         self.QrTTV = QRadioButton("Turno Tarde", self)        # Radio Button Turno Tarde
@@ -238,12 +238,12 @@ class ModifyData(QMainWindow):
         self.turno_button_group = QButtonGroup(self)
         self.turno_button_group.addButton(self.QrBTM)
         self.turno_button_group.addButton(self.QrTTV)
-        self.grid1.addWidget(self.turnbtn, 4, 2, Qt.AlignTop)
+        self.grid1.addWidget(self.turnbtn, 3, 5, 2, 1, Qt.AlignTop)
         self.stTypebtn = QGroupBox("Tipo de Estudiante", self) # Boton Tipo de Estudiante
         self.QrBNi = QRadioButton("Nuevo Ingreso", self)        # Radio Button Nuevo Ingreso
         self.QrBReg = QRadioButton("Regular", self)        # Radio Button Regular
         self.QrBRep = QRadioButton("Repitente", self)        # Radio Button Repitente
-        # Botones adicionales para tipos de estudiante (solucionan AttributeError en register_estudend)
+        # Botones adicionales para tipos de estudiante 
         self.QrBPro = QRadioButton("Promovido", self)      # Radio Button Promovido
         self.QrBTra = QRadioButton("Trasladado", self)     # Radio Button Trasladado
         self.QrBNi.setChecked(True)
@@ -260,19 +260,21 @@ class ModifyData(QMainWindow):
         self.stType_button_group.addButton(self.QrBRep)
         self.stType_button_group.addButton(self.QrBPro)
         self.stType_button_group.addButton(self.QrBTra)
-        self.grid1.addWidget(self.stTypebtn, 4, 2, Qt.AlignBottom | Qt.AlignHCenter)
+        self.grid1.addWidget(self.stTypebtn, 1, 5, 2, 1, Qt.AlignBottom | Qt.AlignHCenter)
         self.layoutP1.addLayout(self.grid1, 1, 0, Qt.AlignTop)
-
+        
         # Variable para la imagen del Estudiante
         self.EIMG = None
+        # Ruta temporal del archivo seleccionado para la imagen del estudiante
+        self.estudianteIMGpath = None
         self.PushbuttonEIMG = QPushButton("Subir Imagen de Estudiante", self)
-        self.PushbuttonEIMG.clicked.connect(self.upload_estudiante_image)        
-        self.grid1.addWidget(self.PushbuttonEIMG, 4, 1, Qt.AlignTop)
+        self.PushbuttonEIMG.clicked.connect(self.upload_estudiante_image)
+        self.grid1.addWidget(self.PushbuttonEIMG, 4, 1, 2, 1, Qt.AlignTop)
 
         self.estudianteIMG = QLabel(self)
-        self.estudianteIMG.setFixedSize(150, 150)
+        self.estudianteIMG.setFixedSize(100, 100)
         self.estudianteIMG.setScaledContents(True)
-        self.grid1.addWidget(self.estudianteIMG, 4, 1, Qt.AlignCenter)
+        self.grid1.addWidget(self.estudianteIMG, 4, 2, 1, 1, Qt.AlignCenter)
 
         # Fila 2: Título de Datos Médicos
         self.grid2 = QGridLayout()
@@ -298,11 +300,11 @@ class ModifyData(QMainWindow):
         # Variable para la imagen de la vacuna
         self.vacunaIMGpath = None
         self.PushbuttonVacuna = QPushButton("Subir Imagen de Vacuna", self)
-        self.PushbuttonVacuna.clicked.connect(self.upload_vacuna_image)        
+        self.PushbuttonVacuna.clicked.connect(self.upload_vacuna_image)
         self.grid2.addWidget(self.PushbuttonVacuna, 4, 1 , Qt.AlignTop)
 
         self.vacunaIMG = QLabel(self)
-        self.vacunaIMG.setFixedSize(130, 130)
+        self.vacunaIMG.setFixedSize(100, 100)
         self.vacunaIMG.setScaledContents(True)
         self.grid2.addWidget(self.vacunaIMG, 4, 0, Qt.AlignRight)
 
@@ -400,12 +402,12 @@ class ModifyData(QMainWindow):
         # Boton de Next a la Pagina 2
         self.NextP = QPushButton("Siguiente Pagina")
         self.NextP.clicked.connect(self.RegisterPage2)
-        self.layoutP1.addWidget(self.NextP, 9, 1)
+        self.NextP.setFixedSize(200, 40)
+        self.layoutP1.addWidget(self.NextP, 9, 0, 1, 3, Qt.AlignCenter)
         self.page1.setLayout(self.layoutP1)
 
         # Espaciador entre columnas si lo necesitas
         self.layoutP1.addItem(QSpacerItem(200, 20, QSizePolicy.Minimum, QSizePolicy.Expanding), 0, 1, 8, 1)
-
         # Muestra los items en la ventana 1
         self.page1.setLayout(self.layoutP1)
         self.Sc_Widget.addWidget(self.page1)

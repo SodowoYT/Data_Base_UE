@@ -28,247 +28,239 @@ def generar_planilla_inscripcion_pdf(file_path, datos):
     c = canvas.Canvas(file_path, pagesize=letter)
     width, height = letter
 
-    # --- Constantes de layout para planilla oficial ---
+    # --- Constantes de layout ---
     LEFT_MARGIN = 40
     RIGHT_MARGIN = width - 40
-    LINE_HEIGHT = 18
-    SECTION_SPACING = 25
+    LINE_HEIGHT = 14
+    Y_START = height - 30
 
-    # --- Helper para dibujar campos sin líneas ---
+    # --- Helpers ---
     def draw_field(x, y, label, value, value_offset=80):
-        # Dibujar etiqueta
-        c.setFont("Helvetica-Bold", 9)
+        c.setFont("Helvetica-Bold", 7)
         c.drawString(x, y, f"{label}:")
-        
-        # Dibujar valor sin línea
-        c.setFont("Helvetica", 9)
+        c.setFont("Helvetica", 7)
         c.drawString(x + value_offset, y, str(value or ''))
 
     def draw_section_title(title, y):
-        c.setFont("Helvetica-Bold", 11)
+        c.setFont("Helvetica-Bold", 9)
         c.drawString(LEFT_MARGIN, y, title)
-        return y - 15
+        c.line(LEFT_MARGIN, y - 2, RIGHT_MARGIN, y - 2)
+        return y - 12
 
-    # --- PÁGINA 1: ENCABEZADO Y DATOS DEL ESTUDIANTE ---
-    y = height - 50
+    # --- ENCABEZADO ---
+    y = Y_START
     
-    # Logos (si están disponibles)
+    # Logos
+    logo_width = 45
+    logo_height = 35
+    total_logo_width = logo_width * 3 + 20
+    start_x = (width - total_logo_width) / 2
+
     try:
-        c.drawImage("utilities/resources/LgAERJ.png", LEFT_MARGIN, y - 25, width=50, height=50, preserveAspectRatio=True, mask='auto')
+        c.drawImage("utilities/resources/LgAERJ.png", start_x, y - logo_height, width=logo_width, height=logo_height, preserveAspectRatio=True, mask='auto')
     except:
         pass
     try:
-        c.drawImage("utilities/resources/LogoBG.png", RIGHT_MARGIN - 50, y - 25, width=50, height=50, preserveAspectRatio=True, mask='auto')
+        c.drawImage("utilities/resources/LogoBG.png", start_x + logo_width + 10, y - logo_height, width=logo_width, height=logo_height, preserveAspectRatio=True, mask='auto')
     except:
         pass
+    try:
+        c.drawImage("utilities/resources/MPPELg.png", start_x + (logo_width + 10) * 2, y - logo_height, width=logo_width, height=logo_height, preserveAspectRatio=True, mask='auto')
+    except:
+        pass
+    
+    y -= (logo_height + 5)
 
-    # Título principal
-    c.setFont("Helvetica-Bold", 16)
-    c.drawCentredString(width / 2, y, "PLANILLA DE INSCRIPCIÓN")
-    c.setFont("Helvetica-Bold", 14)
-    c.drawCentredString(width / 2, y - 20, "EDUCACIÓN INICIAL")
-
-    # --- Cajas para fotos (después del título) ---
-    y -= 80
+    # --- FOTOS Y TÍTULO ---
+    y_fotos = y - 5
     c.setStrokeColor(colors.black)
-    c.setLineWidth(1)
-    c.rect(LEFT_MARGIN + 200, y, 70, 70)  # Foto del estudiante
-    c.rect(RIGHT_MARGIN - 270, y, 70, 70)  # Cartón de vacunas
+    c.setLineWidth(0.5)
+    c.rect(LEFT_MARGIN, y_fotos, 50, 50)
+    c.rect(RIGHT_MARGIN - 50, y_fotos, 50, 50)
+    
+    c.setFont("Helvetica-Bold", 6)
+    c.drawCentredString(LEFT_MARGIN + 25, y_fotos - 8, "FOTO ESTUDIANTE")
+    c.drawCentredString(RIGHT_MARGIN - 25, y_fotos - 8, "Foto del Representante")
 
-    # Etiquetas de las fotos
-    c.setFont("Helvetica-Bold", 8)
-    c.drawCentredString(LEFT_MARGIN + 235, y - 10, "FOTO DEL")
-    c.drawCentredString(LEFT_MARGIN + 235, y - 18, "ESTUDIANTE")
-    c.drawCentredString(RIGHT_MARGIN - 235, y - 10, "CARTÓN DE")
-    c.drawCentredString(RIGHT_MARGIN - 235, y - 18, "VACUNAS")
-
-    # --- Datos del Niño(a) ---
-    y = draw_section_title("DATOS DEL NIÑO(A)", y - 30)
-
-    # Primera fila
-    draw_field(LEFT_MARGIN, y, "Nombres", datos.get('NombreS'), 60)
-    draw_field(LEFT_MARGIN + 280, y, "Apellidos", datos.get('apellido'), 60)
-    y -= LINE_HEIGHT
-
-    # Segunda fila
-    draw_field(LEFT_MARGIN, y, "F.N.", datos.get('FN'), 40)
-    draw_field(LEFT_MARGIN + 150, y, "Edad", datos.get('edad'), 30)
-    draw_field(LEFT_MARGIN + 250, y, "Género", datos.get('genero'), 40)
-    draw_field(LEFT_MARGIN + 380, y, "Lateralidad", datos.get('lateralidad'), 60)
-    y -= LINE_HEIGHT
-
-    # Tercera fila
-    draw_field(LEFT_MARGIN, y, "Nacionalidad", datos.get('nacionalidad'), 60)
-    draw_field(LEFT_MARGIN + 250, y, "Cédula Escolar", datos.get('cedulaEscolar'), 70)
-    y -= LINE_HEIGHT
-
-    # Cuarta fila
-    draw_field(LEFT_MARGIN, y, "Estado", datos.get('estado'), 40)
-    draw_field(LEFT_MARGIN + 150, y, "Municipio", datos.get('municipio'), 50)
-    y -= LINE_HEIGHT
-
-    # Quinta fila
-    draw_field(LEFT_MARGIN, y, "Dirección Actual", datos.get('DA'), 80)
-    y -= LINE_HEIGHT
-
-    # Sexta fila
-    draw_field(LEFT_MARGIN, y, "Punto de Referencia", datos.get('PTR'), 90)
-    y -= LINE_HEIGHT
-
-    # Séptima fila - medidas físicas
-    draw_field(LEFT_MARGIN, y, "Altura", datos.get('altura'), 40)
-    draw_field(LEFT_MARGIN + 120, y, "Peso", datos.get('peso'), 30)
-    draw_field(LEFT_MARGIN + 220, y, "Zapatos", datos.get('Zapatos'), 45)
-    draw_field(LEFT_MARGIN + 320, y, "Camisa", datos.get('Camisa'), 40)
-    draw_field(LEFT_MARGIN + 420, y, "Pantalón", datos.get('Pantalon'), 50)
-    y -= LINE_HEIGHT
-
-    # Octava fila
-    draw_field(LEFT_MARGIN, y, "N° de Hermanos", datos.get('NDH'), 70)
-    draw_field(LEFT_MARGIN + 250, y, "Autorizado para retirar", datos.get('APRN'), 110)
-    y -= LINE_HEIGHT
-
-    # Novena fila
-    draw_field(LEFT_MARGIN, y, "Alérgico a", datos.get('alergicoA'), 50)
-    y -= LINE_HEIGHT
-
-    # Décima fila
-    draw_field(LEFT_MARGIN, y, "Alguna Dificultad", datos.get('algunaDificultad'), 80)
-    draw_field(LEFT_MARGIN + 250, y, "Especifique", datos.get('especificarDificultad'), 60)
-    y -= LINE_HEIGHT
-
-    # Undécima fila
-    draw_field(LEFT_MARGIN, y, "Correo Electrónico", datos.get('correoElectronico'), 80)
-    draw_field(LEFT_MARGIN + 300, y, "Teléfono Habitación", datos.get('telefonoHabitacion'), 100)
-    y -= LINE_HEIGHT
-
-    # Duodécima fila
-    draw_field(LEFT_MARGIN, y, "Cartón de Vacunas", 'Presentado' if datos.get('cartonVacunas') else 'No', 90)
-    draw_field(LEFT_MARGIN + 250, y, "Tipo de Sangre", datos.get('tipoDSangre'), 70)
-    draw_field(LEFT_MARGIN + 420, y, "Examen de Heces", datos.get('EDH'), 80)
-
-    # --- Datos del Representante Legal (final de página 1) ---
-    y = draw_section_title("DATOS DEL REPRESENTANTE LEGAL", y - SECTION_SPACING)
-
-    draw_field(LEFT_MARGIN, y, "Nombre y Apellido", f"{datos.get('nombreR', '')} {datos.get('apellidoR', '')}", 90)
-    draw_field(LEFT_MARGIN + 300, y, "Cédula", datos.get('cedulaR'), 40)
-    y -= LINE_HEIGHT
-
-    draw_field(LEFT_MARGIN, y, "F.N.", datos.get('FNR', ''), 30)
-    draw_field(LEFT_MARGIN + 150, y, "Edad", datos.get('edadR'), 30)
-    draw_field(LEFT_MARGIN + 250, y, "Estado Civil", datos.get('EC'), 60)
-    draw_field(LEFT_MARGIN + 400, y, "Nacionalidad", datos.get('nacionalidadR'), 60)
-    y -= LINE_HEIGHT
-
-    draw_field(LEFT_MARGIN, y, "Afinidad", datos.get('afinidad'), 50)
-    draw_field(LEFT_MARGIN + 150, y, "Profesión", datos.get('profesionR'), 50)
-    draw_field(LEFT_MARGIN + 300, y, "Ocupación", datos.get('ocupacionR'), 60)
-    y -= LINE_HEIGHT
-
-    draw_field(LEFT_MARGIN, y, "Empresa donde Trabaja", datos.get('EMPDT'), 110)
-    y -= LINE_HEIGHT
-
-    draw_field(LEFT_MARGIN, y, "Dirección", datos.get('direccionR'), 50)
-    y -= LINE_HEIGHT
-
-    draw_field(LEFT_MARGIN, y, "Teléfono Móvil", datos.get('telefonoMovilR'), 80)
-    draw_field(LEFT_MARGIN + 250, y, "Teléfono Habitación", datos.get('telefonoHabitacionR'), 100)
-    y -= LINE_HEIGHT
-
-    draw_field(LEFT_MARGIN, y, "Teléfono Familiar", datos.get('telefonoDFamiliar'), 90)
-    draw_field(LEFT_MARGIN + 250, y, "Correo Electrónico", datos.get('correoElectronicoR'), 90)
-    y -= LINE_HEIGHT
-
-    draw_field(LEFT_MARGIN, y, "RIF", datos.get('RIF'), 20)
-    draw_field(LEFT_MARGIN + 150, y, "Planilla Sige", datos.get('planillaSigeR'), 60)
-    y -= LINE_HEIGHT
-
-    draw_field(LEFT_MARGIN, y, "Código de la patria", datos.get('codigoPatriaR'), 90)
-    draw_field(LEFT_MARGIN + 250, y, "Serial de la patria", datos.get('serialPatriaR'), 90)
-
-    # --- PÁGINA 2: DATOS DEL PADRE, MADRE Y OBSERVACIONES ---
-    c.showPage()  # Nueva página
-
-    # Encabezado de la página 2
-    y = height - 50
-    c.setFont("Helvetica-Bold", 16)
+    c.setFont("Helvetica-Bold", 12)
     c.drawCentredString(width / 2, y, "PLANILLA DE INSCRIPCIÓN")
-    c.setFont("Helvetica-Bold", 14)
-    c.drawCentredString(width / 2, y - 20, "EDUCACIÓN INICIAL (Continuación)")
+    c.setFont("Helvetica-Bold", 10)
+    c.drawCentredString(width / 2, y - 12, "EDUCACIÓN INICIAL")
+    y -= 65
 
-    # --- Datos del Padre ---
-    y = draw_section_title("DATOS DEL PADRE", y - 50)
-
-    draw_field(LEFT_MARGIN, y, "Nombre y Apellido", f"{datos.get('nombreP', '')} {datos.get('apellidoP', '')}", 90)
-    draw_field(LEFT_MARGIN + 300, y, "Cédula", datos.get('cedulaP'), 40)
+    # --- DATOS DEL NIÑO(A) ---
+    y = draw_section_title("DATOS DEL NIÑO(A)", y)
+    
+    col1_x = LEFT_MARGIN
+    col2_x = LEFT_MARGIN + 260
+    
+    draw_field(col1_x, y, "Nombres", datos.get('NombreS'), 50)
+    draw_field(col2_x, y, "Apellidos", datos.get('apellido'), 50)
     y -= LINE_HEIGHT
 
-    draw_field(LEFT_MARGIN, y, "F.N.", datos.get('FNP'), 30)
-    draw_field(LEFT_MARGIN + 150, y, "Tipo de Empleo", datos.get('TEDP'), 80)
+    draw_field(col1_x, y, "F.N.", datos.get('FN'), 50)
+    draw_field(col1_x + 130, y, "Edad", datos.get('edad'), 30)
+    draw_field(col2_x, y, "Género", datos.get('genero'), 50)
+    draw_field(col2_x + 120, y, "Lateralidad", datos.get('lateralidad'), 50)
     y -= LINE_HEIGHT
 
-    draw_field(LEFT_MARGIN, y, "Empresa donde Trabaja", datos.get('EMDTP'), 110)
+    draw_field(col1_x, y, "Nacionalidad", datos.get('nacionalidad'), 60)
+    draw_field(col2_x, y, "Cédula Escolar", datos.get('cedulaEscolar'), 70)
     y -= LINE_HEIGHT
 
-    draw_field(LEFT_MARGIN, y, "¿Vive con el niño(a)?", datos.get('VCNP'), 100)
-    draw_field(LEFT_MARGIN + 250, y, "Causa", datos.get('CPNVCNP'), 40)
+    draw_field(col1_x, y, "Estado", datos.get('estado'), 50)
+    draw_field(col2_x, y, "Municipio", datos.get('municipio'), 50)
     y -= LINE_HEIGHT
 
-    draw_field(LEFT_MARGIN, y, "Dirección", datos.get('direccionP'), 50)
-    draw_field(LEFT_MARGIN + 300, y, "Teléfono Móvil", datos.get('telefonoMovilP'), 80)
-
-    # --- Datos de la Madre ---
-    y = draw_section_title("DATOS DE LA MADRE (en caso de no ser la Representante)", y - SECTION_SPACING)
-
-    draw_field(LEFT_MARGIN, y, "Nombre y Apellido", f"{datos.get('nombreM', '')} {datos.get('apellidoM', '')}", 90)
-    draw_field(LEFT_MARGIN + 300, y, "Cédula", datos.get('cedulaM'), 40)
+    draw_field(col1_x, y, "Dirección", datos.get('DA'), 50)
     y -= LINE_HEIGHT
 
-    draw_field(LEFT_MARGIN, y, "F.N.", datos.get('FNM'), 30)
-    draw_field(LEFT_MARGIN + 150, y, "Tipo de Empleo", datos.get('TEDM'), 80)
+    draw_field(col1_x, y, "Punto de Ref.", datos.get('PTR'), 60)
     y -= LINE_HEIGHT
 
-    draw_field(LEFT_MARGIN, y, "Empresa donde Trabaja", datos.get('EMDTM'), 110)
+    draw_field(col1_x, y, "Altura", datos.get('altura'), 40)
+    draw_field(col1_x + 100, y, "Peso", datos.get('peso'), 30)
+    draw_field(col2_x, y, "Zapatos", datos.get('Zapatos'), 45)
+    draw_field(col2_x + 100, y, "Camisa", datos.get('Camisa'), 40)
+    draw_field(col2_x + 180, y, "Pantalón", datos.get('Pantalon'), 50)
     y -= LINE_HEIGHT
 
-    draw_field(LEFT_MARGIN, y, "¿Vive con el niño(a)?", datos.get('VCNM'), 100)
-    draw_field(LEFT_MARGIN + 250, y, "Causa", datos.get('CPNVCNM'), 40)
+    draw_field(col1_x, y, "N° Hermanos", datos.get('NDH'), 60)
+    draw_field(col2_x, y, "Autorizado a retirar", datos.get('APRN'), 90)
     y -= LINE_HEIGHT
 
-    draw_field(LEFT_MARGIN, y, "Dirección", datos.get('direccionM'), 50)
-    draw_field(LEFT_MARGIN + 300, y, "Teléfono Móvil", datos.get('telefonoMovilM'), 80)
+    draw_field(col1_x, y, "Alérgico a", datos.get('alergicoA'), 50)
+    y -= LINE_HEIGHT
+
+    draw_field(col1_x, y, "Dificultad", datos.get('algunaDificultad'), 50)
+    draw_field(col2_x, y, "Especifique", datos.get('especificarDificultad'), 60)
+    y -= LINE_HEIGHT
+
+    draw_field(col1_x, y, "Correo", datos.get('correoElectronico'), 50)
+    draw_field(col2_x, y, "Tlf. Habitación", datos.get('telefonoHabitacion'), 70)
+    y -= LINE_HEIGHT
+
+    draw_field(col1_x, y, "Vacunas", 'Presentado' if datos.get('cartonVacunas') else 'No', 50)
+    draw_field(col1_x + 130, y, "Tipo de Sangre", datos.get('tipoDSangre'), 70)
+    draw_field(col2_x, y, "Ex. Heces", datos.get('EDH'), 50)
+    y -= (LINE_HEIGHT + 3)
+
+    # --- DATOS DEL REPRESENTANTE LEGAL ---
+    y = draw_section_title("DATOS DEL REPRESENTANTE LEGAL", y)
+    
+    draw_field(col1_x, y, "Nombre", f"{datos.get('nombreR', '')} {datos.get('apellidoR', '')}", 50)
+    draw_field(col2_x, y, "Cédula", datos.get('cedulaR'), 50)
+    y -= LINE_HEIGHT
+
+    draw_field(col1_x, y, "F.N.", datos.get('FNR', ''), 50)
+    draw_field(col1_x + 130, y, "Edad", datos.get('edadR'), 30)
+    draw_field(col2_x, y, "Edo. Civil", datos.get('EC'), 50)
+    draw_field(col2_x + 120, y, "Nacionalidad", datos.get('nacionalidadR'), 60)
+    y -= LINE_HEIGHT
+
+    draw_field(col1_x, y, "Afinidad", datos.get('afinidad'), 50)
+    draw_field(col2_x, y, "Profesión", datos.get('profesionR'), 50)
+    y -= LINE_HEIGHT
+    
+    draw_field(col1_x, y, "Ocupación", datos.get('ocupacionR'), 50)
+    draw_field(col2_x, y, "Empresa", datos.get('EMPDT'), 50)
+    y -= LINE_HEIGHT
+
+    draw_field(col1_x, y, "Dirección", datos.get('direccionR'), 50)
+    y -= LINE_HEIGHT
+
+    draw_field(col1_x, y, "Tlf. Móvil", datos.get('telefonoMovilR'), 50)
+    draw_field(col2_x, y, "Tlf. Habitación", datos.get('telefonoHabitacionR'), 70)
+    y -= LINE_HEIGHT
+
+    draw_field(col1_x, y, "Tlf. Familiar", datos.get('telefonoDFamiliar'), 60)
+    draw_field(col2_x, y, "Correo", datos.get('correoElectronicoR'), 50)
+    y -= LINE_HEIGHT
+
+    draw_field(col1_x, y, "RIF", datos.get('RIF'), 50)
+    draw_field(col2_x, y, "Planilla Sige", datos.get('planillaSigeR'), 60)
+    y -= LINE_HEIGHT
+
+    draw_field(col1_x, y, "Cod. Patria", datos.get('codigoPatriaR'), 60)
+    draw_field(col2_x, y, "Serial Patria", datos.get('serialPatriaR'), 60)
+    y -= (LINE_HEIGHT + 3)
+
+    # --- DATOS DEL PADRE ---
+    y = draw_section_title("DATOS DEL PADRE", y)
+    
+    draw_field(col1_x, y, "Nombre", f"{datos.get('nombreP', '')} {datos.get('apellidoP', '')}", 50)
+    draw_field(col2_x, y, "Cédula", datos.get('cedulaP'), 50)
+    y -= LINE_HEIGHT
+
+    draw_field(col1_x, y, "F.N.", datos.get('FNP'), 50)
+    draw_field(col1_x + 130, y, "Edad", datos.get('edadP'), 30)
+    draw_field(col2_x, y, "Tipo Empleo", datos.get('TEDP'), 60)
+    y -= LINE_HEIGHT
+
+    draw_field(col1_x, y, "Empresa", datos.get('EMDTP'), 50)
+    y -= LINE_HEIGHT
+    
+    draw_field(col1_x, y, "Vive con el niño(a)", datos.get('VCNP'), 90)
+    draw_field(col2_x, y, "Causa", datos.get('CPNVCNP'), 40)
+    y -= LINE_HEIGHT
+
+    draw_field(col1_x, y, "Dirección", datos.get('direccionP'), 50)
+    draw_field(col2_x, y, "Tlf. Móvil", datos.get('telefonoMovilP'), 50)
+    y -= (LINE_HEIGHT + 3)
+
+    # --- DATOS DE LA MADRE ---
+    y = draw_section_title("DATOS DE LA MADRE", y)
+
+    draw_field(col1_x, y, "Nombre", f"{datos.get('nombreM', '')} {datos.get('apellidoM', '')}", 50)
+    draw_field(col2_x, y, "Cédula", datos.get('cedulaM'), 50)
+    y -= LINE_HEIGHT
+
+    draw_field(col1_x, y, "F.N.", datos.get('FNM'), 50)
+    draw_field(col1_x + 130, y, "Edad", datos.get('edadM'), 30)
+    draw_field(col2_x, y, "Tipo Empleo", datos.get('TEDM'), 60)
+    y -= LINE_HEIGHT
+
+    draw_field(col1_x, y, "Empresa", datos.get('EMDTM'), 50)
+    y -= LINE_HEIGHT
+
+    draw_field(col1_x, y, "Vive con el niño(a)", datos.get('VCNM'), 90)
+    draw_field(col2_x, y, "Causa", datos.get('CPNVCNM'), 40)
+    y -= LINE_HEIGHT
+
+    draw_field(col1_x, y, "Dirección", datos.get('direccionM'), 50)
+    draw_field(col2_x, y, "Tlf. Móvil", datos.get('telefonoMovilM'), 50)
+    y -= (LINE_HEIGHT + 3)
 
     # --- OBSERVACIONES ---
-    y = draw_section_title("OBSERVACIONES", y - SECTION_SPACING)
-
+    y = draw_section_title("OBSERVACIONES", y)
     obs = (datos.get('observaciones', '') or '').split('\n')
-    c.setFont("Helvetica", 9)
-    c.drawString(LEFT_MARGIN, y, "I SALA:")
-    c.drawString(LEFT_MARGIN + 60, y, obs[0] if len(obs) > 0 else '')
-    y -= LINE_HEIGHT
-    c.drawString(LEFT_MARGIN, y, "II SALA:")
-    c.drawString(LEFT_MARGIN + 60, y, obs[1] if len(obs) > 1 else '')
-    y -= LINE_HEIGHT
-    c.drawString(LEFT_MARGIN, y, "III SALA:")
-    c.drawString(LEFT_MARGIN + 60, y, obs[2] if len(obs) > 2 else '')
+    c.setFont("Helvetica", 7)
+    if len(obs) > 0:
+        c.drawString(LEFT_MARGIN, y, f"I SALA: {obs[0]}")
+        y -= LINE_HEIGHT
+    if len(obs) > 1:
+        c.drawString(LEFT_MARGIN, y, f"II SALA: {obs[1]}")
+        y -= LINE_HEIGHT
+    if len(obs) > 2:
+        c.drawString(LEFT_MARGIN, y, f"III SALA: {obs[2]}")
+        y -= LINE_HEIGHT
 
-    # --- Compromiso y Firmas ---
-    y -= 40
-    c.setFont("Helvetica", 8)
+    y -= 15
+
+    # --- COMPROMISO Y FIRMAS ---
+    c.setFont("Helvetica", 6)
     compromiso = "Los datos planteados en esta planilla son verdaderos, me comprometo a trabajar junto a la maestra colaborando con el material necesario para el bienestar y desarrollo integral del niño(a)."
     c.drawCentredString(width/2, y, compromiso)
+    y -= 25
 
-    y -= 50
-    c.setStrokeColor(colors.black)
-    c.setLineWidth(1)
     c.line(100, y, 250, y)
-    c.drawCentredString(175, y - 15, "Firma del Representante")
+    c.drawCentredString(175, y - 10, "Firma del Representante")
     c.line(width - 250, y, width - 100, y)
-    c.drawCentredString(width - 175, y - 15, "Firma del Docente")
+    c.drawCentredString(width - 175, y - 10, "Firma del Docente")
+    y -= 15
 
-    # Fecha
-    c.setFont("Helvetica", 9)
-    c.drawString(LEFT_MARGIN, y - 30, f"Fecha: {datos.get('fechaRegistro', '')}")
+    c.setFont("Helvetica", 7)
+    c.drawString(LEFT_MARGIN, y, f"Fecha de Registro: {datos.get('fechaRegistro', '')}")
 
     c.save()
 

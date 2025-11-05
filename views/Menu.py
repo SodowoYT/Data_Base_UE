@@ -14,8 +14,8 @@ class MenuWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("Menu")
         self.setWindowIcon(QIcon("utilities/resources/imgs/ico/IconApp.ico"))
-        self.setGeometry(100, 100, 1000, 850)
-        self.setFixedSize(1000, 850)
+        self.setGeometry(100, 100, 1100, 700)
+        self.setFixedSize(1100, 700)
         self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint | Qt.WindowMinimizeButtonHint)
 
         # Inicializar base de datos para estadísticas
@@ -95,13 +95,8 @@ class MenuWindow(QMainWindow):
 
         # Layout principal del lado derecho
         main_right_layout = QHBoxLayout()
-        main_right_layout.setContentsMargins(0, 0, 0, 0)
+        main_right_layout.setContentsMargins(20, 0, 20, 0)
         main_right_layout.setSpacing(0)
-
-        # Espacio para mostrar el fondo (lado izquierdo del panel derecho)
-        background_space = QWidget()
-        background_space.setMinimumWidth(400)  # Espacio para mostrar el fondo
-        main_right_layout.addWidget(background_space, stretch=2)
 
         # Contenedor para centrar verticalmente el dashboard
         center_container = QWidget()
@@ -112,16 +107,14 @@ class MenuWindow(QMainWindow):
         # Espaciador superior para centrar
         center_layout.addStretch(1)
 
-        # Dashboard compacto centrado
+        # Dashboard centrado
         dashboard_container = QWidget()
-        dashboard_container.setMaximumWidth(300)  # Limitar ancho del dashboard
-        dashboard_container.setMinimumWidth(280)
         dashboard_layout = QVBoxLayout()
         dashboard_layout.setContentsMargins(10, 15, 20, 15)
         dashboard_layout.setSpacing(12)
 
-        # Crear dashboard compacto
-        self.create_compact_dashboard(dashboard_layout)
+        # Crear dashboard
+        self.create_dashboard(dashboard_layout)
 
         # Fecha/hora en la parte inferior del dashboard
         date_time_layout = QVBoxLayout2()
@@ -179,9 +172,13 @@ class MenuWindow(QMainWindow):
         self.right_logo.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
         self.right_logo.setStyleSheet("background: transparent; border: none; margin-top: 05px; margin-bottom: 05px;")
         right_layout.addWidget(self.right_logo, alignment=Qt.AlignHCenter | Qt.AlignTop)
-        main_right_layout.addWidget(center_container, stretch=1)
+        main_right_layout.addStretch(1)
+        main_right_layout.addWidget(center_container)
+        main_right_layout.addStretch(1)
         
+        right_layout.addStretch(1)
         right_layout.addLayout(main_right_layout)
+        right_layout.addStretch(1)
         right_container.setLayout(right_layout)
 
         # Layout principal sobre el fondo
@@ -256,45 +253,45 @@ class MenuWindow(QMainWindow):
         self.close()
 
     # Crear dashboard compacto con estadísticas
-    def create_compact_dashboard(self, parent_layout):
-        """Crea el dashboard compacto con las estadísticas de la base de datos."""
+    def create_dashboard(self, parent_layout):
+        """Crea el dashboard con las estadísticas de la base de datos."""
         # Contenedor principal del dashboard
         dashboard_frame = QFrame()
         dashboard_frame.setStyleSheet("""
         QFrame {
-            background: rgba(255, 255, 255, 0.75);
+            background: rgba(255, 255, 255, 0.85);
             border-radius: 15px;
-            border: 2px solid rgba(26, 35, 126, 0.3);
+            border: 1px solid rgba(26, 35, 126, 0.2);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
         }
         """)
         dashboard_layout = QVBoxLayout()
-        dashboard_layout.setContentsMargins(12, 12, 12, 12)
-        dashboard_layout.setSpacing(12)
+        dashboard_layout.setContentsMargins(15, 15, 15, 15)
+        dashboard_layout.setSpacing(15)
 
-        # Título del dashboard 
+        # Título del dashboard
         title_label = QLabel("📊 ESTADÍSTICAS")
         title_label.setAlignment(Qt.AlignCenter)
         title_label.setStyleSheet("""
         QLabel {
             color: #1a237e;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             letter-spacing: 1px;
         }
         """)
         dashboard_layout.addWidget(title_label)
 
-        # Grid para las tarjetas de estadísticas 
-        stats_grid = QGridLayout()
-        stats_grid.setSpacing(8)
+        # Layout horizontal para las tarjetas de estadísticas
+        stats_layout = QHBoxLayout()
+        stats_layout.setSpacing(15)
 
         # Obtener estadísticas
         stats = self.db.get_dashboard_stats()
-        turno_stats = self.db.get_students_by_turno()  # {'Mañana': X, 'Tarde': Y}
+        turno_stats = self.db.get_students_by_turno()
 
-        # Crear tarjetas para cada estadística 
+        # Crear tarjetas para cada estadística
         self.stats_cards = {}
         cards_data = [
             ("👨‍🎓", "ESTUDIANTES", stats['estudiantes'], "#4CAF50"),
@@ -304,24 +301,22 @@ class MenuWindow(QMainWindow):
             ("🌅", "MAÑANA", turno_stats.get('Mañana', 0), "#1A82F8"),
             ("🌇", "TARDE", turno_stats.get('Tarde', 0), "#9010F8")
         ]
-        for i, (icon, title, count, color) in enumerate(cards_data):
-            card = self.create_compact_stat_card(icon, title, count, color)
+        for icon, title, count, color in cards_data:
+            card = self.create_stat_card(icon, title, count, color)
             self.stats_cards[title.lower()] = card
-            row = i // 2
-            col = i % 2
-            stats_grid.addWidget(card, row, col)
+            stats_layout.addWidget(card)
 
-        dashboard_layout.addLayout(stats_grid)
+        dashboard_layout.addLayout(stats_layout)
 
-        # Información adicional 
-        info_label = QLabel("💡 Datos Actuales")
+        # Información adicional
+        info_label = QLabel("💡 Datos en Tiempo Real")
         info_label.setAlignment(Qt.AlignCenter)
         info_label.setStyleSheet("""
         QLabel {
-            color: #666;
-            font-size: 10px;
+            color: #555;
+            font-size: 12px;
             font-style: italic;
-            margin-top: 5px;
+            margin-top: 8px;
         }
         """)
         dashboard_layout.addWidget(info_label)
@@ -336,17 +331,17 @@ class MenuWindow(QMainWindow):
         QFrame {{
             background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
                 stop:0 {self.add_transparency(color, 0.8)}, stop:1 {self.add_transparency(self.darken_color(color), 0.8)});
-            border-radius: 10px;
+            border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
         }}
         QFrame:hover {{
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }}
         """)
 
         card_layout = QVBoxLayout()
-        card_layout.setContentsMargins(10, 10, 10, 10)
+        card_layout.setContentsMargins(15, 15, 15, 15)
         card_layout.setSpacing(6)
 
         # Icono (más pequeño)
@@ -356,7 +351,7 @@ class MenuWindow(QMainWindow):
         QLabel {
             font-size: 24px;
             color: white;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
         }
         """)
         card_layout.addWidget(icon_label)
@@ -367,7 +362,7 @@ class MenuWindow(QMainWindow):
         count_label.setStyleSheet("""
         QLabel {
             color: white;
-            font-size: 20px;
+            font-size: 16px;
             font-weight: bold;
             margin: 2px 0;
         }
@@ -380,7 +375,7 @@ class MenuWindow(QMainWindow):
         title_label.setStyleSheet("""
         QLabel {
             color: white;
-            font-size: 10px;
+            font-size: 6px;
             font-weight: bold;
             letter-spacing: 0.5px;
         }
@@ -393,32 +388,33 @@ class MenuWindow(QMainWindow):
     def create_stat_card(self, icon, title, count, color):
         """Crea una tarjeta individual para mostrar una estadística."""
         card = QFrame()
+        card.setFixedWidth(140)
         card.setStyleSheet(f"""
         QFrame {{
             background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
-                stop:0 {color}, stop:1 {self.darken_color(color)});
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                stop:0 {self.add_transparency(color, 0.9)}, stop:1 {self.add_transparency(self.darken_color(color), 1.0)});
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }}
         QFrame:hover {{
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
             transform: translateY(-2px);
         }}
         """)
 
         card_layout = QVBoxLayout()
-        card_layout.setContentsMargins(15, 15, 15, 15)
-        card_layout.setSpacing(10)
+        card_layout.setContentsMargins(12, 12, 12, 12)
+        card_layout.setSpacing(6)
 
         # Icono
         icon_label = QLabel(icon)
         icon_label.setAlignment(Qt.AlignCenter)
         icon_label.setStyleSheet("""
         QLabel {
-            font-size: 40px;
+            font-size: 22px;
             color: white;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
         """)
         card_layout.addWidget(icon_label)
@@ -429,9 +425,9 @@ class MenuWindow(QMainWindow):
         count_label.setStyleSheet("""
         QLabel {
             color: white;
-            font-size: 36px;
+            font-size: 18px;
             font-weight: bold;
-            margin: 5px 0;
+            margin: 2px 0;
         }
         """)
         card_layout.addWidget(count_label)
@@ -442,9 +438,9 @@ class MenuWindow(QMainWindow):
         title_label.setStyleSheet("""
         QLabel {
             color: white;
-            font-size: 14px;
+            font-size: 11px;
             font-weight: bold;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
         """)
         card_layout.addWidget(title_label)
@@ -456,9 +452,11 @@ class MenuWindow(QMainWindow):
         """Oscurece un color hexadecimal para crear gradientes."""
         color_map = {
             "#4CAF50": "#388E3C",
-            "#2196F3": "#1976D2", 
+            "#2196F3": "#1976D2",
             "#FF9800": "#F57C00",
-            "#E91E63": "#C2185B"
+            "#E91E63": "#C2185B",
+            "#1A82F8": "#1565C0",
+            "#9010F8": "#6A00B5"
         }
         return color_map.get(color, color)
 

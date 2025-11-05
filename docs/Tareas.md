@@ -5,7 +5,6 @@
 * Acomodar los index.
 
 ## Importante
-* Configurar Print (Anexar logos faltantes).
 
 
 ## Actualizacion de APP Futura

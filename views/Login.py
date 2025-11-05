@@ -15,7 +15,7 @@ class LoginWindow(QMainWindow):
         # Configuración de la ventana
         self.setWindowTitle("Login")
         self.setWindowIcon(QIcon("utilities/resources/imgs/ico/IconApp.ico"))
-        self.setGeometry(100, 100, 650, 400)
+        self.setGeometry(100, 100, 750, 500)
         self.setFixedSize(650, 400)
         self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint | Qt.WindowMinimizeButtonHint)
 

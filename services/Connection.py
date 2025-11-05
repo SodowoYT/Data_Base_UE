@@ -181,7 +181,7 @@ class database:
     ## Consulta de Estudiante
     def SelectEstudend(self):
         self.cursor.execute('''
-          SELECT * FROM Estudend
+          SELECT IDEST, Nombre, Apellido, CedulaEscolar, Edad, Genero, FN, turno FROM Estudend
         ''')
         return self.cursor.fetchall() # Considera usar fetchone() si solo esperas un resultado
 
