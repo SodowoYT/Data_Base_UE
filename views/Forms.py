@@ -28,10 +28,10 @@ class FormsStudend(QMainWindow):
         self.viewmodel = EstudendViewModel()  
 
         # Propiedades de la ventana
+        ## Establecer imagen de fondo
         self.setWindowTitle("Datos del Estudiante")
         self.setWindowIcon(QIcon("utilities/resources/imgs/ico/IconApp.ico"))
         self.setGeometry(100, 100, 1000, 600)
-        # Establecer imagen de fondo
         ## Establecer el estilo de la ventana
         self.setStyleSheet("""
         .tituloz {
@@ -95,6 +95,30 @@ class FormsStudend(QMainWindow):
         QPushButton:hover {
             background-color:  #14056d;
         }
+        QLineEdit {
+                background-color: rgba(43, 43, 43, 0.90);
+                border: 2px solid #0c3f67;
+                border-radius: 8px;
+                padding: 4px;
+                font-size: 10px;
+                color: #ffffff;
+            }
+        QDateEdit {
+                background-color: rgba(43, 43, 43, 0.90);
+                border: 2px solid #0c3f67;
+                border-radius: 8px;
+                padding: 4px;
+                font-size: 10px;
+                color: #ffffff;
+            }
+        QTextEdit {
+                background-color: rgba(43, 43, 43, 0.90);
+                border: 2px solid #0c3f67;
+                border-radius: 8px;
+                padding: 4px;
+                font-size: 10px;
+                color: #ffffff;
+            }
         """)
 
         # Crear el widget de fondo

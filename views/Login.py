@@ -71,6 +71,8 @@ class LoginWindow(QMainWindow):
             border: 2px solid #0c3f67;
             border-radius: 10px;
             font-size: 14px;
+            background-color: rgba(43, 43, 43, 0.90);
+            color: #ffffff;
         }
         """)
         self.inputpassword = QLineEdit(self)
@@ -82,6 +84,8 @@ class LoginWindow(QMainWindow):
             border: 2px solid #0c3f67;
             border-radius: 10px;
             font-size: 14px;
+            background-color: rgba(43, 43, 43, 0.90);
+            color: #ffffff;
         }
         """)
         # Botón login

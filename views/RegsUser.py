@@ -11,9 +11,21 @@ class RgtrUser(QMainWindow):
         self.setWindowTitle("Registro de Usuario")
         self.setWindowIcon(QIcon("utilities/resources/imgs/ico/IconApp.ico"))
         self.setGeometry(200, 200, 650, 500)
-
+        # Establecer el estilo de la ventana
+        self.setStyleSheet("""
+        QLineEdit {
+                background-color: rgba(43, 43, 43, 0.90);
+                border: 2px solid #0c3f67;
+                border-radius: 8px;
+                padding: 4px;
+                font-size: 10px;
+                color: #ffffff;
+            }
+        """)
+        
         # Conexión con la base de datos
         self.db = database()
+
 
         # Widget central
         central_widget = QWidget(self)
