@@ -51,17 +51,13 @@ def generar_planilla_inscripcion_pdf(file_path, datos):
     y = Y_START
     
     # Logos
-    logo_width = 45
-    logo_height = 35
+    logo_width = 75
+    logo_height = 65
     total_logo_width = logo_width * 3 + 20
     start_x = (width - total_logo_width) / 2
 
     try:
         c.drawImage("utilities/resources/LgAERJ.png", start_x, y - logo_height, width=logo_width, height=logo_height, preserveAspectRatio=True, mask='auto')
-    except:
-        pass
-    try:
-        c.drawImage("utilities/resources/LogoBG.png", start_x + logo_width + 10, y - logo_height, width=logo_width, height=logo_height, preserveAspectRatio=True, mask='auto')
     except:
         pass
     try:
